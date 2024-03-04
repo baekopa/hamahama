@@ -15,3 +15,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: ${JPA_HIBERNATE_DDL_AUTO}
+
+springdoc:
+  api-docs:
+  swagger-ui:
+    doc-expansion: none
+    tags-sorter: alpha
+    operationsSorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+    info:
+      title: ???? API Server
+      description: ???? ????
+      version: 0.0.1
