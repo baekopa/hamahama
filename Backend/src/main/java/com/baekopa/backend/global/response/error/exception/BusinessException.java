@@ -1,7 +1,7 @@
-package com.baekopa.backend.global.response.error.business;
+package com.baekopa.backend.global.response.error.exception;
 
-import com.baekopa.backend.global.response.error.presentation.ErrorCode;
-import com.baekopa.backend.global.response.error.presentation.ErrorResponse;
+import com.baekopa.backend.global.response.error.ErrorCode;
+import com.baekopa.backend.global.response.error.ErrorResponse;
 import lombok.Builder;
 import lombok.Getter;
 

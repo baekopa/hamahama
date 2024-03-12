@@ -1,4 +1,4 @@
-package com.baekopa.backend.global.response.error.presentation;
+package com.baekopa.backend.global.response.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
