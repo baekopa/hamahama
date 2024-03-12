@@ -27,3 +27,16 @@ springdoc:
       title: 하마하마 API Server
       description: 녹음하마 요약하마
       version: 0.0.1
+
+cloud:
+  aws:
+    s3:
+      bucket: p22d105s3
+    credentials:
+      access-key: ${S3_ACCESSKEY}
+      secret-key: ${S3_SECRETKEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
