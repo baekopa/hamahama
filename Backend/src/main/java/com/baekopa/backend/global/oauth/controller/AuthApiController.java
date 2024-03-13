@@ -1,5 +1,6 @@
 package com.baekopa.backend.global.oauth.controller;
 
+import com.baekopa.backend.global.oauth.infra.google.GoogleApiParams;
 import com.baekopa.backend.global.oauth.infra.kakao.KakaoApiParams;
 import com.baekopa.backend.global.oauth.infra.naver.NaverApiParams;
 import com.baekopa.backend.global.oauth.service.OAuthApiService;
@@ -28,6 +29,12 @@ public class AuthApiController {
 
     @PostMapping("/naver")
     public ResponseEntity<?> loginNaver(@RequestBody NaverApiParams params) {
+        oAuthApiService.login(params);
+        return ResponseEntity.ok(ApiResponse.of(SuccessCode.LOGIN_SUCCESS));
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<?> loginGoogle(@RequestBody GoogleApiParams params) {
         oAuthApiService.login(params);
         return ResponseEntity.ok(ApiResponse.of(SuccessCode.LOGIN_SUCCESS));
     }
