@@ -10,32 +10,29 @@ import lombok.Getter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GoogleInfoResponse implements OAuthInfoResponse {
 
-    private GoogleResponse response;
+    @JsonProperty("name")
+    private String name;
 
-    public class GoogleResponse {
-        @JsonProperty("name")
-        private String name;
+    @JsonProperty("picture")
+    private String picture;
 
-        @JsonProperty("picture")
-        private String picture;
+    @JsonProperty("email")
+    private String email;
 
-        @JsonProperty("email")
-        private String email;
-    }
 
     @Override
     public String getEmail() {
-        return response.email;
+        return this.email;
     }
 
     @Override
     public String getName() {
-        return response.name;
+        return this.name;
     }
 
     @Override
     public String getProfileImage() {
-        return response.picture;
+        return this.picture;
     }
 
     @Override

@@ -31,7 +31,7 @@ public class GoogleApiClient implements OAuthApiClient {
     @Value("${oauth.google.client-id}")
     private String clientId;
 
-    @Value("${oauth.google.secret")
+    @Value("${oauth.google.secret}")
     private String clientSecret;
 
     private final RestTemplate restTemplate;
@@ -59,7 +59,7 @@ public class GoogleApiClient implements OAuthApiClient {
         body.add("client_id", clientId);
         body.add("client_secret", clientSecret);
 
-        log.warn("body가 제대로 들어갔나요??", body.get("code"));
+        log.warn("body가 제대로 들어갔나요?? : {}", body.get("code"));
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
@@ -87,7 +87,7 @@ public class GoogleApiClient implements OAuthApiClient {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("scope", "profile email");
-//        scope: https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
+
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
         return restTemplate.postForObject(url, request, GoogleInfoResponse.class);
@@ -95,16 +95,5 @@ public class GoogleApiClient implements OAuthApiClient {
 
     @Override
     public void requestUnlink(String accessToken) {
-//        String url = apiUrl + "/v1/user/unlink";
-//
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-//        httpHeaders.set("Authorization", "Bearer " + accessToken);
-//
-//        HttpEntity<?> request = new HttpEntity<>("", httpHeaders);
-//
-//        String response = restTemplate.postForObject(url, request, String.class);
-//
-//        assert response != null;
     }
 }

@@ -13,6 +13,8 @@ import java.net.URLDecoder;
 @NoArgsConstructor
 public class GoogleApiParams implements OAuthApiParams {
     private String authorizationCode;
+    private String redirectUri;
+
     @Override
     public OAuthProvider oAuthProvider() {
         return OAuthProvider.GOOGLE;
@@ -23,6 +25,7 @@ public class GoogleApiParams implements OAuthApiParams {
         authorizationCode = URLDecoder.decode(authorizationCode, java.nio.charset.StandardCharsets.UTF_8);
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("code", authorizationCode);
+        body.add("redirect_uri", redirectUri);
         return body;
     }
 }
