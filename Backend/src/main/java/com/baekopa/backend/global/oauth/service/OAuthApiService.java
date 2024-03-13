@@ -30,8 +30,8 @@ public class OAuthApiService {
 
         Member member = Member.builder()
                 .email(oAuthInfoResponse.getEmail())
-                .name(oAuthInfoResponse.getNickname())
-                .image(oAuthInfoResponse.getImage())
+                .name(oAuthInfoResponse.getName())
+                .image(oAuthInfoResponse.getProfileImage())
                 .provider(oAuthInfoResponse.getOAuthProvider())
                 .build();
 
