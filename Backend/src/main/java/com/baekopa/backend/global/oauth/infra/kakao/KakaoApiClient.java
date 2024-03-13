@@ -62,6 +62,7 @@ public class KakaoApiClient implements OAuthApiClient {
 
     /**
      * 사용자 정보 요청
+     *
      * @param accessToken
      * @return 사용자 정보
      */
