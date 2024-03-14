@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -26,15 +28,15 @@ public class SecurityConfig {
 
         http
                 // click jacking 방지
-                .headers(header -> header.frameOptions(frame -> frame.disable()))
+                .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 // csrf 설정 비활성화 -> jwt 방식을 사용하기 때문
-                .csrf((auth) -> auth.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 // cors 설정
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // Form 로그인 방식 비활성화
-                .formLogin((auth) -> auth.disable())
+                .formLogin(AbstractHttpConfigurer::disable)
                 // HTTP Basic 인증 방식 비활성화
-                .httpBasic((auth) -> auth.disable())
+                .httpBasic(AbstractHttpConfigurer::disable)
                 // OAuth2
                 .oauth2Login(Customizer.withDefaults())
                 .authorizeHttpRequests((auth) -> auth
