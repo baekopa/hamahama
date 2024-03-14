@@ -1,11 +1,22 @@
 <template>
-  <div class="page d-flex justify-center align-center flex-row">
-    <img src="" alt="LOGO" />
-    <p>Link</p>
-    <p>로그인</p>
-  </div>
+  <v-container class="d-flex align-center">
+    <v-row>
+      <img src="@/assets/image/logo.png" alt="LOGO" width="50px" />
+
+      <p>Link</p>
+
+      <p @click="goLogin">로그인</p>
+    </v-row>
+  </v-container>
 </template>
 
-<script setup></script>
+<script setup>
+import { useRoute, useRouter } from 'vue-router'
+
+const router = useRouter()
+const goLogin = function () {
+  router.push({ name: 'login' })
+}
+</script>
 
 <style scoped></style>
