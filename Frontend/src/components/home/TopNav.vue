@@ -1,7 +1,7 @@
 <template>
   <v-container class="d-flex align-center">
     <v-row>
-      <img src="@/assets/image/Main/logo.png" alt="LOGO" width="50px" />
+      <img src="@/assets/image/logo.png" alt="LOGO" width="50px" />
 
       <p>Link</p>
 

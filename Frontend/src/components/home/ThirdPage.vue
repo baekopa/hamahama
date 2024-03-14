@@ -3,7 +3,7 @@
     <v-container>
       <v-row>
         <v-col cols="6">
-          <img src="@/assets/image/Main/main3.png" alt="하마3" />
+          <img src="@/assets/image/home/main3.png" alt="하마3" width="510px" height="480px" />
         </v-col>
         <v-col cols="6" class="oval-background d-flex flex-column align-center justify-center">
           <div data-aos="zoom-in-down">

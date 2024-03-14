@@ -15,7 +15,7 @@
           </div>
         </v-col>
         <v-col cols="6">
-          <img src="@/assets/image/Main/hama1.png" alt="하마1" />
+          <img src="@/assets/image/home/hama1.png" alt="하마1" />
         </v-col>
       </v-row>
     </v-container>
