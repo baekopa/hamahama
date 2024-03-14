@@ -11,7 +11,7 @@
               </p>
             </div>
             <p class="my-2 text-h6">스터디 녹음본으로 멋드러진 요약 정리 하마하마....</p>
-            <v-btn>시작하기</v-btn>
+            <v-btn @click="goLogin">시작하기</v-btn>
           </div>
         </v-col>
         <v-col cols="6">
@@ -22,7 +22,15 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useRoute, useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goLogin = function () {
+  router.push({ name: 'login' })
+}
+</script>
 
 <style scoped>
 .page {
