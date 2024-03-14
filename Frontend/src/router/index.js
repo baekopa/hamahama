@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import StudyRoutes from './study'
 import MyPageRoutes from './mypage'
 import HomeView from '../views/HomeView.vue'
+import LoginView from '@/views/LoginView.vue'
 
 const routes = [
   {
@@ -9,9 +10,13 @@ const routes = [
     name: 'home',
     component: HomeView
   },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView
+  },
   ...StudyRoutes,
   ...MyPageRoutes
-
   // 라우트 추가
 ]
 

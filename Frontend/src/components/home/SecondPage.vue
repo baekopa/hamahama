@@ -4,6 +4,7 @@
       <p>우리 스터디의 녹음본을 <span class="text-light-blue-accent-2">쉽게</span> 요약해보장구</p>
     </div>
     <p data-aos="zoom-in">좋은 말로 할 때 요약하자</p>
+    <img src="@/assets/image/Main/main2.png" alt="" />
   </div>
 </template>
 
