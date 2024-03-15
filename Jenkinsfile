@@ -11,7 +11,7 @@ pipeline {
                     mattermostSend (
                         color: '#D0E0E3',
                         icon: "https://jenkins.io/images/logos/jenkins/jenkins.png",
-                        message: "배포 출발 합니다 🛫 "
+                        // message: "배포 출발 합니다 🛫 "
                         message: "배포 출발 합니다 🛫 \n${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)"
                     )
                 }
