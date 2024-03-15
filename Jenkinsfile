@@ -30,8 +30,8 @@ pipeline {
                 echo '백엔드 빌드 시작!'
 
                 dir("./Backend") {
-                    sh "chmod +x ./gradlew"
-                    sh "./gradlew clean build"
+                    // sh "chmod +x ./gradlew"
+                    // sh "./gradlew clean build"
                 }
 
                 echo '백엔드 빌드 완료!'
