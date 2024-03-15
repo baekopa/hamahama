@@ -29,19 +29,19 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'secret-db', variable: 'dbConfigFile')]) {
                     script {
-                        sh 'cp $dbConfigFile ./Backend/src/main/resources/application-db.yml'
+                        sh 'sudo cp $dbConfigFile ./Backend/src/main/resources/application-db.yml'
                     }
                 }
 
                 withCredentials([file(credentialsId: 'secret-jwt', variable: 'jwtConfigFile')]) {
                     script {
-                        sh 'cp $jwtConfigFile ./Backend/src/main/resources/application-jwt.yml'
+                        sh 'sudo cp $jwtConfigFile ./Backend/src/main/resources/application-jwt.yml'
                     }
                 }
 
                 withCredentials([file(credentialsId: 'secret-oauth', variable: 'oauthConfigFile')]) {
                     script {
-                        sh 'cp $oauthConfigFile ./Backend/src/main/resources/application-oauth.yml'
+                        sh 'sudo cp $oauthConfigFile ./Backend/src/main/resources/application-oauth.yml'
                     }
                 }
 
