@@ -25,6 +25,29 @@ pipeline {
             }
         }
 
+        stage("secret.yml download") {
+            steps {
+                withCredentials([file(credentialsId: 'secret-db', variable: 'dbConfigFile')]) {
+                    script {
+                        sh 'cp $dbConfigFile ./Backend/src/main/resources/application-db.yml'
+                    }
+                }
+
+                withCredentials([file(credentialsId: 'secret-jwt', variable: 'jwtConfigFile')]) {
+                    script {
+                        sh 'cp $jwtConfigFile ./Backend/src/main/resources/application-jwt.yml'
+                    }
+                }
+
+                withCredentials([file(credentialsId: 'secert-oauth', variable: 'oauthConfigFile')]) {
+                    script {
+                        sh 'cp $oauthConfigFile ./Backend/src/main/resources/application-oauth.yml'
+                    }
+                }
+
+            }
+        }
+
         stage("BE Build") {
             steps {
                 echo '백엔드 빌드 시작!'
