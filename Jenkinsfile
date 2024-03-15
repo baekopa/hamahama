@@ -43,7 +43,7 @@ pipeline {
                 echo '백엔드 도커 이미지 빌드 시작!'
                 dir("./Backend") {
                     // 빌드된 JAR 파일을 Docker 이미지로 빌드
-                    sh "docker build -t oistmil/d105-be:latest ."
+                    sh "docker build -t oiatmil/d105-be:latest ."
                 }
                 echo '백엔드 도커 이미지 빌드 완료!'
             }
@@ -56,7 +56,7 @@ pipeline {
                     sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
                 }
                 dir("./Backend") {
-                    sh "docker push oistmil/d105-be:latest"
+                    sh "docker push oiatmil/d105-be:latest"
                 }
                 echo '백엔드 도커 이미지를 Docker Hub에 푸시 완료!'
             }
@@ -68,9 +68,9 @@ pipeline {
                 // 여기에서는 SSH 플러그인이나 SSH 스크립트를 사용하여 EC2로 연결하고 Docker 컨테이너 실행
                 sshagent(['aws-key']) {
                     sh "docker rm -f backend"
-                    sh "docker rmi oistmil/d105-be:latest"
+                    sh "docker rmi oiatmil/d105-be:latest"
                     sh "docker image prune -f"
-                    sh "docker pull oistmil/d105-be:latest && docker run -d -p 8080:8080 --name backend oistmil/d105-be:latest"
+                    sh "docker pull oiatmil/d105-be:latest && docker run -d -p 8080:8080 --name backend oiatmil/d105-be:latest"
                 }
                 echo '백엔드 EC2에 배포 완료!'
             }
