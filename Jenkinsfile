@@ -39,7 +39,7 @@ pipeline {
                     }
                 }
 
-                withCredentials([file(credentialsId: 'secert-oauth', variable: 'oauthConfigFile')]) {
+                withCredentials([file(credentialsId: 'secret-oauth', variable: 'oauthConfigFile')]) {
                     script {
                         sh 'cp $oauthConfigFile ./Backend/src/main/resources/application-oauth.yml'
                     }
