@@ -1,9 +1,9 @@
 package com.baekopa.backend.global.security.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -17,11 +17,11 @@ import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Value("${whitelist}")
+    @Value("${WHITE_LIST}")
     private String[] whiteList;
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -38,7 +38,10 @@ public class SecurityConfig {
                 // HTTP Basic 인증 방식 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable)
                 // OAuth2
-                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login((oauth2) -> oauth2
+                        // OAuth 2.0 인증 후 사용자 정보를 가져오는 엔드포인트
+                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
+                                .userService(null))) // OAuth2UserService가 들어갈 자리
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(whiteList).permitAll()
                         .anyRequest().authenticated())
