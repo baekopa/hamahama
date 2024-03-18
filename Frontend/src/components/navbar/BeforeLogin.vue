@@ -1,5 +1,5 @@
 <template>
-  <v-container class="d-flex align-center">
+  <v-container class="d-flex align-center bg-white w-screen">
     <v-row class="justify-space-between">
       <img
         @click="goHome"
