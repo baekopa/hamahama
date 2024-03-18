@@ -2,17 +2,19 @@
   <v-container>
     <v-row align="center" class="mb-2">
       <span class="text-light-blue-accent-2"> {{ authStore.userName }} </span> 님의 노트
-      <v-chip prepend-icon="mdi-brightness-5" @click="createNote" class="ml-2"> 노트 만들기</v-chip>
+      <v-chip class="create-note ml-2" prepend-icon="mdi-plus" @click="createNote"
+        >노트 생성</v-chip
+      >
     </v-row>
 
     <v-row justify="center">
-      <v-col cols="12" md="2" v-for="study in StudyList" :key="study.id">
-        <v-card class="mb-4" @click="handleCardClick(study)" hover>
-          <v-img :src="study.imgUrl" height="200px"></v-img>
-          <v-card-title>{{ study.title }}</v-card-title>
-          <v-card-subtitle>{{ study.description }}</v-card-subtitle>
+      <v-col cols="12" md="2" v-for="note in NoteList" :key="note.id">
+        <v-card class="mb-4" @click="goNoteDetail(note)" hover>
+          <v-img :src="note.imgUrl" height="200px"></v-img>
+          <v-card-title>{{ note.title }}</v-card-title>
+          <v-card-subtitle>{{ note.description }}</v-card-subtitle>
           <v-card-actions>
-            <v-btn text color="blue">Learn More</v-btn>
+            <v-btn text color="blue">이건 뺄까? 어차피 누르면 가지는데?</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -32,22 +34,21 @@ const createNote = () => {
   router.push({ name: 'createnote' })
 }
 
-const handleCardClick = (study) => {
-  console.log(study.id)
-  alert('아직 안만듬 ㅇㅇ', study.id)
+const goNoteDetail = (study) => {
+  router.push({ name: 'note', params: { id: study.id } })
 }
 
-const StudyList = ref([
+const NoteList = ref([
   {
     id: 1,
-    title: '공부하자',
-    description: 'Learn the basics of Vue.js, a progressive JavaScript framework.',
+    title: '내 노트 1',
+    description: '여기엔 뭐가 들어가면 좋을까? 마지막 수정 시간?',
     imgUrl: 'https://vuejs.org/images/logo.png'
   },
   {
     id: 2,
     title: 'OAtuh란 무엇인가',
-    description: 'Dive deeper into Vue.js and explore advanced concepts and techniques.',
+    description: '2024-03-14',
     imgUrl: 'https://vuejs.org/images/logo.png'
   },
   {
@@ -75,4 +76,9 @@ onMounted(() => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.create-note {
+  background-color: #3fb1fa;
+  color: white;
+}
+</style>
