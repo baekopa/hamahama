@@ -1,4 +1,4 @@
-package com.baekopa.backend.global.response.error.presentation;
+package com.baekopa.backend.global.response.error;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;

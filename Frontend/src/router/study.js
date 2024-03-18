@@ -1,6 +1,6 @@
 export default [
   {
-    path: '/study',
+    path: '/study/:id',
     name: 'study',
     component: () => import('@/views/StudyView.vue')
   },
