@@ -1,9 +1,6 @@
 <template>
   <main>
     <div class="d-flex justify-center align-center">
-      <TopNav />
-    </div>
-    <div class="d-flex justify-center align-center">
       <FirstPage />
     </div>
     <div class="d-flex justify-center align-center">
