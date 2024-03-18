@@ -1,21 +1,29 @@
 <template>
-  <v-container class="entire">
-    <div>공부하마 노트 작성 <span>혼자 공부한 내용을 정리해보세요!!</span></div>
-    <div>
-      <v-text-field v-model="title" label="제목"></v-text-field>
-      <v-textarea v-model="content" label="내용" variant="outlined"></v-textarea>
-      <div class="d-flex justify-end">
-        <v-chip @click="share" class="export" variant="flat">내보내기</v-chip>
-        <v-chip @click="CreateNote" class="save" variant="flat">저장</v-chip>
+  <div class="bg-gray d-flex flex-column align-center justify-center">
+    <div class="d-flex flex-column align-center justify-center bg-white">
+      <div class="justify">
+        <img width="50" src="@/components/icons/note/pencil.svg" alt="연필 이미지" />
+        <span class="text-h6 ml-4">공부하마 노트 작성</span>
+      </div>
+      <div style="width: 1000px">
+        <v-text-field v-model="title" label="제목"></v-text-field>
+        <v-textarea v-model="content" label="내용" outlined rows="20"></v-textarea>
+      </div>
+      <div class="justify-end">
+        <v-chip @click="share" class="export" flat>내보내기</v-chip>
+        <v-chip @click="CreateNote" class="save" flat>저장</v-chip>
       </div>
     </div>
-  </v-container>
+  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { apiInstance } from '@/api/index'
 import { useRouter } from 'vue-router'
+import Swal from 'sweetalert2'
+import NoteDetailView from './NoteDetailView.vue'
+
 const api = apiInstance()
 const router = useRouter()
 const title = ref('')
@@ -30,42 +38,47 @@ function share() {
 }
 
 function CreateNote() {
-  api
-    .post(
-      `api/notes`,
-      {
-        title,
-        content
-      },
-      {
-        headers: {
-          AUTHORIZATION: 'a'
-        }
+  if (title.value === '') {
+    alert('제목은 필수 내용은 선택')
+  } else {
+    Swal.fire({
+      title: '노트를 저장하시겠습니까?',
+      showCancelButton: true,
+      confirmButtonText: '저장하기'
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        api
+          .post(
+            `api/notes`,
+            {
+              title,
+              content
+            },
+            {
+              headers: {
+                AUTHORIZATION: 'a'
+              }
+            }
+          )
+          .then((res) => {
+            Swal.fire('Saved!', '', 'success')
+            console.log('저장성공')
+            noteId = 1
+            // noteId = res.data.noteId
+            router.push({ name: 'note', params: { id: noteId } })
+          })
+          .catch((err) => {
+            const noteId = 1
+            router.push({ name: 'note', params: { id: noteId } })
+            Swal.fire('저장에 실패했어요<br>잠시 후 다시 시도해주세요', '', 'info')
+            // alert('저장에 실패했어요 잠시 후 다시 시도해주세요')
+            console.log('저장실패', err)
+            router.push({ name: 'note', params: { id: noteId } })
+          })
       }
-    )
-    .then((res) => {
-      console.log('저장성공')
-      // router.push({name:''})
     })
-    .catch((err) => {
-      alert('저장실패')
-      console.log('저장실패', err)
-    })
-}
-
-function kakaoLogin(param) {
-  return new Promise((resolve, reject) => {
-    api
-      .post(`api/auth/kakao?redirect_uri=${param}`)
-      .then((response) => {
-        // 여기서 필요한 처리를 수행합니다.
-        resolve(response.data) // 예시: 성공 시 데이터를 resolve합니다.
-      })
-      .catch((error) => {
-        // 에러 처리
-        reject(error) // 에러를 reject합니다.
-      })
-  })
+  }
 }
 </script>
 

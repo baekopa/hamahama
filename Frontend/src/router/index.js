@@ -8,6 +8,8 @@ import MainView from '@/views/MainView.vue'
 import ErrorView from '@/views/ErrorView.vue'
 import CreateNoteView from '@/views/CreateNoteView.vue'
 import NoteDetailView from '@/views/NoteDetailView.vue'
+import { useAuthStore } from '@/stores/auth'
+
 const routes = [
   {
     path: '/',
@@ -49,5 +51,16 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
+router.beforeEach((to, from, next) => {
+  window.scrollTo(0, 0)
+  next()
+})
+// const authStore = useAuthStore()
+
+// router.beforeEach((to, from) => {
+//   if (!authStore.isLogin && to.name !== 'login') {
+//     return { name: 'login' }
+//   }
+// })
 
 export default router

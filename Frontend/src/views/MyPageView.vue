@@ -3,6 +3,7 @@
     <v-card>
       <v-layout>
         <v-navigation-drawer floating permanent>
+          <p class="text-h5 text-center mt-4">마이페이지</p>
           <v-list density="compact" nav>
             <v-list-item three-line>
               <v-list-item-avatar class="d-flex justify-center align-center">
