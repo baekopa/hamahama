@@ -1,5 +1,5 @@
 <template>
-  <v-container class="d-flex align-center">
+  <v-container class="d-flex align-center bg-white w-screen">
     <v-row class="justify-space-between">
       <img
         @click="goMain"
@@ -11,13 +11,11 @@
 
       <div class="d-flex align-center">
         <v-btn class="mr-10" rounded="l">스터디 생성</v-btn>
-        <button class="mr-5">
-          <img
-            width="32"
-            height="32"
-            src="https://img.icons8.com/office/16/alarm.png"
-            alt="alarm"
-          />
+        <button v-if="isAlarmExist" class="mr-5">
+          <img width="32" height="32" src="../icons/nav/alarmExist.svg" alt="alarm" />
+        </button>
+        <button v-else class="mr-5">
+          <img width="32" height="32" src="../icons/nav/alarmNone.svg" alt="alarm" />
         </button>
 
         <v-menu offset-y>
@@ -43,12 +41,14 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 
 const router = useRouter()
+const isAlarmExist = ref(false)
 
 const goToMyPage = () => {
   router.push({ name: 'mypage' })
