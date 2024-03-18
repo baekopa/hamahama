@@ -2,7 +2,7 @@ package com.baekopa.backend.global.security.config;
 
 import com.baekopa.backend.global.jwt.filter.JWTFilter;
 import com.baekopa.backend.global.jwt.handler.CustomSuccessHandler;
-import com.baekopa.backend.global.jwt.repository.RefreshRepository;
+//import com.baekopa.backend.global.jwt.repository.RefreshRepository;
 import com.baekopa.backend.global.jwt.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +26,7 @@ import java.util.Collections;
 public class SecurityConfig {
     private final CustomSuccessHandler customSuccessHandler;
     private final JWTUtil jwtUtil;
-    private final RefreshRepository refreshRepository;
+//    private final RefreshRepository refreshRepository;
 
     @Value("${WHITE_LIST}")
     private String[] whiteList;
