@@ -2,9 +2,10 @@ import axios from 'axios'
 
 function apiInstance() {
   const instance = axios.create({
-    // baseURL: process.env.VUE_APP_API_BASE_URL,
-    baseURL: 'http://localhost:8080/',
+    baseURL: import.meta.env.VITE_BASE_URL,
+
     headers: {
+      Authorization: 'fa',
       'Content-Type': 'application/json;charset=utf-8'
     }
   })

@@ -11,7 +11,7 @@
 
         <v-row justify="center">
           <v-col cols="12" md="2" v-for="study in StudyList" :key="study.id">
-            <v-card class="mb-4" @click="handleCardClick(study)" hover>
+            <v-card class="mb-4" @click="goStudyPage(study)" hover>
               <v-card-title>{{ study.time }}</v-card-title>
               <v-img :src="study.imgUrl" height="150px"></v-img>
               <v-card-title>{{ study.studyName }}</v-card-title>
@@ -28,13 +28,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
+const router = useRouter()
 
-const handleCardClick = (study) => {
-  console.log(study.id)
-  alert('아직 안만듬 ㅇㅇ', study.id)
+const goStudyPage = (study) => {
+  router.push({ name: 'note', params: { id: study.id } })
 }
 
 const StudyList = ref([
