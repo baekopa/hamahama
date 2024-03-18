@@ -1,16 +1,10 @@
 <!-- 로그인 후 메인페이지 -->
 <template>
-  <div class="mainpage">
-    <div>
-      <Slider />
-    </div>
-    <div class="study-list">
-      <StudyList />
-    </div>
-    <div class="my-note">
-      <MyNote />
-    </div>
-  </div>
+  <v-container>
+    <Slider class="my-10" />
+    <StudyList class="my-10" />
+    <MyNote class="my-10" />
+  </v-container>
 </template>
 
 <script setup>

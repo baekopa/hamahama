@@ -1,81 +1,77 @@
 <template>
-  <div class="swiper-container">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide" v-for="(item, index) in items" :key="index">
-        {{ item }}
-      </div>
-    </div>
-    <div class="swiper-pagination"></div>
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
-  </div>
+  <v-container style="width: 1200px">
+    <Carousel :itemsToShow="1.5" :wrapAround="true" :transition="500" :button-visibility="true">
+      <Slide v-for="feat in MainFeat" :key="feat.id">
+        <div class="carousel__item">
+          <img :src="feat.imgUrl" :alt="feat.id" class="carousel__image" />
+        </div>
+      </Slide>
+    </Carousel>
+  </v-container>
 </template>
 
-<script>
-import Swiper from 'swiper'
+<script setup>
+import { ref } from 'vue'
+import { Carousel, Slide, Pagination } from 'vue3-carousel'
+import 'vue3-carousel/dist/carousel.css'
 
-export default {
-  data() {
-    return {
-      items: ['Slide 1', 'Slide 2', 'Slide 3', 'Slide 4', 'Slide 5'] // 아이템은 필요에 따라 변경 가능합니다.
-    }
-  },
-  mounted() {
-    this.swiper = new Swiper('.swiper-container', {
-      slidesPerView: 1,
-      spaceBetween: 30,
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true
-      },
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev'
-      }
-    })
-  },
-  destroyed() {
-    if (this.swiper) this.swiper.destroy()
-  }
-}
+import Main_1 from '../../assets/image/main/karina.jpg'
+import Main_2 from '../../assets/image/main/irean.jpg'
+import Main_3 from '../../assets/image/main/ajeong.png'
+
+const MainFeat = ref([
+  { id: 1, imgUrl: Main_1 },
+  { id: 2, imgUrl: Main_2 },
+  { id: 3, imgUrl: Main_3 }
+])
 </script>
 
-<style>
-/* Swiper 스타일 */
-.swiper-container {
+<style scoped>
+.carousel__slide {
+  padding: 5px;
+
+  height: 300px;
+}
+
+.carousel__viewport {
+  perspective: 100px;
+}
+
+.carousel__track {
+  transform-style: preserve-3d;
+}
+
+.carousel__slide--sliding {
+  transition: 0.5s;
+}
+
+.carousel__slide {
+  opacity: 0.9;
+  transform: rotateY(-20deg) scale(1);
+}
+
+.carousel__slide--active ~ .carousel__slide {
+  transform: rotateY(20deg) scale(0.9);
+}
+
+.carousel__slide--prev {
+  opacity: 1;
+  transform: rotateY(-10deg) scale(0.9);
+}
+
+.carousel__slide--next {
+  opacity: 1;
+  transform: rotateY(10deg) scale(0.9);
+}
+
+.carousel__slide--active {
+  opacity: 1;
+  transform: rotateY(0) scale(1);
+}
+
+.carousel__image {
   width: 100%;
   height: 100%;
-}
-
-.swiper-slide {
-  text-align: center;
-  font-size: 18px;
-  background: #fff;
-}
-
-.swiper-pagination {
-  position: relative;
-  bottom: 10px;
-}
-
-.swiper-button-next,
-.swiper-button-prev {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 30px;
-  height: 30px;
-  background-color: #000;
-  color: #fff;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.swiper-button-next {
-  right: 10px;
-}
-
-.swiper-button-prev {
-  left: 10px;
+  object-fit: cover; /* 이미지 비율 유지 및 잘림 방지 */
 }
 </style>
