@@ -1,8 +1,11 @@
 package com.baekopa.backend.domain.study.service;
 
 import com.baekopa.backend.domain.study.dto.request.CreateStudyRequestDto;
+import com.baekopa.backend.domain.study.dto.response.StudyInfoResponseDto;
 import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.domain.study.repository.StudyRepository;
+import com.baekopa.backend.global.response.error.ErrorCode;
+import com.baekopa.backend.global.response.error.exception.BusinessException;
 import com.baekopa.backend.global.service.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,9 +27,7 @@ public class StudyService {
         String backgroundImageUrl = uploadImage(requestDto.getBackgroundImage());
 
         // 새로운 스터디 생성
-        Study study = Study.of(requestDto.getTitle(), requestDto.getDescription(), backgroundImageUrl, requestDto.getCategory(),
-                requestDto.getStartDate(), requestDto.getEndDate(),
-                requestDto.getDay(), requestDto.getStartTime(), requestDto.getEndTime());
+        Study study = Study.of(requestDto.getTitle(), requestDto.getDescription(), backgroundImageUrl, requestDto.getCategory(), requestDto.getStartDate(), requestDto.getEndDate(), requestDto.getDay(), requestDto.getStartTime(), requestDto.getEndTime());
 
         // 스터디장 지정
 
@@ -37,6 +38,13 @@ public class StudyService {
         // DB에 스터디 저장
         study = studyRepository.save(study);
         return study.getId();
+    }
+
+    public StudyInfoResponseDto getStudyInfo(Long studyId) {
+
+        Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "올바르지 않은 studyId."));
+
+        return StudyInfoResponseDto.from(study);
     }
 
     // 스터디 이미지 업로드

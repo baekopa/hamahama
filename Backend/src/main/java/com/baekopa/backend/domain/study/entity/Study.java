@@ -17,10 +17,6 @@ import java.time.LocalTime;
 @SQLDelete(sql = "UPDATE study SET deleted_at = CONVERT_TZ(NOW(), 'UTC', 'Asia/Seoul') WHERE id = ?")
 public class Study extends BaseEntity {
 
-    public enum StudyType {
-        GROUP, PERSONAL
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_id")
