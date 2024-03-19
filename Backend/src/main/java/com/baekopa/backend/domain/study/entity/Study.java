@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -39,32 +39,47 @@ public class Study extends BaseEntity {
     @Column(name = "background_image")
     private String backgroundImage;
 
+    @Column(name = "category", length = 20)
+    private String category;
+
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
+
     @Column(name = "day")
     private String day; // 비트마스킹 (일월화수목금토 기준)
 
-    @Column(name = "start_date")
+    @Column(name = "start_time")
     private LocalTime startTime;
 
     @Column(name = "end_time")
     private LocalTime endTime;
 
     @Builder
-    private Study(StudyType type, String title, String description, String backgroundImage, String day, LocalTime startTime, LocalTime endTime) {
+    public Study(StudyType type, String title, String description, String backgroundImage, String category, LocalDate startDate, LocalDate endDate, String day, LocalTime startTime, LocalTime endTime) {
         this.type = type;
         this.title = title;
         this.description = description;
         this.backgroundImage = backgroundImage;
+        this.category = category;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.day = day;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public static Study of(String title, String description, String backgroundImage, String day, LocalTime startTime, LocalTime endTime) {
+    public static Study of(String title, String description, String backgroundImage, String category, LocalDate startDate, LocalDate endDate, String day, LocalTime startTime, LocalTime endTime) {
         return builder()
                 .type(StudyType.GROUP)
                 .title(title)
                 .description(description)
                 .backgroundImage(backgroundImage)
+                .category(category)
+                .startDate(startDate)
+                .endDate(endDate)
                 .day(day)
                 .startTime(startTime)
                 .endTime(endTime)

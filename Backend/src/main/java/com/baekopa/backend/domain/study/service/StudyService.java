@@ -24,7 +24,9 @@ public class StudyService {
         String backgroundImageUrl = uploadImage(requestDto.getBackgroundImage());
 
         // 새로운 스터디 생성
-        Study study = Study.of(requestDto.getTitle(), requestDto.getDescription(), backgroundImageUrl, requestDto.getDay(), requestDto.getStartTime(), requestDto.getEndTime());
+        Study study = Study.of(requestDto.getTitle(), requestDto.getDescription(), backgroundImageUrl, requestDto.getCategory(),
+                requestDto.getStartDate(), requestDto.getEndDate(),
+                requestDto.getDay(), requestDto.getStartTime(), requestDto.getEndTime());
 
         // 스터디장 지정
 
