@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
@@ -18,6 +18,14 @@ public class CreateStudyRequestDto {
     private String description;
 
     private MultipartFile backgroundImage;
+
+    private String category;
+
+    @JsonFormat(pattern = "YYYY-MM-DD")
+    private LocalDate startDate;
+
+    @JsonFormat(pattern = "YYYY-MM-DD")
+    private LocalDate endDate;
 
     private String day;
 
