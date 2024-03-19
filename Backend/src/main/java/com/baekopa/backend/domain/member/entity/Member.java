@@ -1,6 +1,6 @@
 package com.baekopa.backend.domain.member.entity;
 
-import com.baekopa.backend.global.oauth.provider.OAuthProvider;
+import com.baekopa.backend.global.oauth2.dto.OAuthProvider;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,31 +14,40 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    Long id;
+    private Long id;
 
-    String name;
+    private String name;
 
-    String email;
+    private String providerCode;
+
+    private String email;
 
     @Column(name = "profile_image")
-    String image;
+    private String image;
 
-    String role;
+    private String role;
 
     @Enumerated(EnumType.STRING)
     private OAuthProvider provider;
 
-    public void updateImage(String image) {
-        this.image = image;
-    }
-
     @Builder
-    public Member(String name, String email, String image, String role, OAuthProvider provider){
+    public Member(String name, String providerCode, String email, String image, String role, OAuthProvider provider) {
         this.name = name;
         this.email = email;
         this.image = image;
-        this.role = role;
         this.provider = provider;
+        this.role = role;
     }
 
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateImage(String image) {
+        this.image = image;
+    }
 }
