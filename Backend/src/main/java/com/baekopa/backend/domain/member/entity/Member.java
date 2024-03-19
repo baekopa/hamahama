@@ -1,6 +1,6 @@
 package com.baekopa.backend.domain.member.entity;
 
-import com.baekopa.backend.global.oauth.provider.OAuthProvider;
+import com.baekopa.backend.global.oauth2.dto.OAuthProvider;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +18,8 @@ public class Member {
 
     private String name;
 
+    private String providerCode;
+
     private String email;
 
     @Column(name = "profile_image")
@@ -28,12 +30,8 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private OAuthProvider provider;
 
-    public void updateImage(String image) {
-        this.image = image;
-    }
-
     @Builder
-    public Member(String name, String email, String image, String role, OAuthProvider provider){
+    public Member(String name, String providerCode, String email, String image, String role, OAuthProvider provider) {
         this.name = name;
         this.email = email;
         this.image = image;
@@ -47,5 +45,9 @@ public class Member {
 
     public void updateName(String name) {
         this.name = name;
+    }
+
+    public void updateImage(String image) {
+        this.image = image;
     }
 }

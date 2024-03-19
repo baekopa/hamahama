@@ -1,7 +1,5 @@
 package com.baekopa.backend.global.oauth2.dto;
 
-import com.baekopa.backend.global.oauth.provider.OAuthProvider;
-
 import java.util.Map;
 
 public class NaverResponse implements OAuth2Response {
@@ -10,7 +8,6 @@ public class NaverResponse implements OAuth2Response {
 
     public NaverResponse(Map<String, Object> attribute) {
         this.attribute = (Map<String, Object>) attribute.get("response");
-
     }
 
     @Override

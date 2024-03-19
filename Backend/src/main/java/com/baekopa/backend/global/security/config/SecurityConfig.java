@@ -5,8 +5,8 @@ import com.baekopa.backend.global.jwt.filter.JWTFilter;
 import com.baekopa.backend.global.jwt.handler.CustomSuccessHandler;
 import com.baekopa.backend.global.jwt.repository.RefreshRepository;
 import com.baekopa.backend.global.jwt.util.JWTUtil;
-import lombok.RequiredArgsConstructor;
 import com.baekopa.backend.global.oauth2.service.CustomOAuth2UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,18 +51,11 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 // OAuth2LoginAuthenticationFilter 후에 JWTFilter로 검증
                 .addFilterAfter(new JWTFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class)
-                // OAuth2
-                //.oauth2Login((oauth2) -> oauth2
-                //        // OAuth 2.0 인증 후 사용자 정보를 가져오는 엔드포인트
-                //        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-                //                // OAuth2UserService가 들어갈 자리
-                //                .userService(null))
-                //        // OAuth 2.0 로그인 성공 후에 수행될 커스텀 핸들러
-                //        .successHandler(customSuccessHandler))
-                // OAuth2
+                // OAuth
                 .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                                .userService(customOAuth2UserService)))
+                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig   // OAuth 2.0 인증 후 사용자 정보를 가져오는 엔드포인트
+                                .userService(customOAuth2UserService))
+                        .successHandler(customSuccessHandler))  // OAuth 2.0 로그인 성공 후에 수행될 커스텀 핸들러
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(whiteList).permitAll()
                         .anyRequest().authenticated())

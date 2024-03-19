@@ -1,7 +1,5 @@
 package com.baekopa.backend.global.oauth2.dto;
 
-import com.baekopa.backend.global.oauth.provider.OAuthProvider;
-
 import java.util.Map;
 
 public class GoogleResponse implements OAuth2Response {
