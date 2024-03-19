@@ -33,7 +33,7 @@ public class Member {
     }
 
     @Builder
-    public Member(String name, String email, String image, OAuthProvider provider, String role) {
+    public Member(String name, String email, String image, String role, OAuthProvider provider){
         this.name = name;
         this.email = email;
         this.image = image;
