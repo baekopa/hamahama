@@ -58,7 +58,7 @@ public class Study extends BaseEntity {
     private LocalTime endTime;
 
     @Builder
-    public Study(StudyType type, String title, String description, String backgroundImage, String category, LocalDate startDate, LocalDate endDate, String day, LocalTime startTime, LocalTime endTime) {
+    private Study(StudyType type, String title, String description, String backgroundImage, String category, LocalDate startDate, LocalDate endDate, String day, LocalTime startTime, LocalTime endTime) {
         this.type = type;
         this.title = title;
         this.description = description;
