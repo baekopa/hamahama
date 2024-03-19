@@ -14,14 +14,16 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    Long id;
+    private Long id;
 
-    String name;
+    private String name;
 
-    String email;
+    private String email;
 
     @Column(name = "profile_image")
-    String image;
+    private String image;
+
+    private String role;
 
     @Enumerated(EnumType.STRING)
     private OAuthProvider provider;
@@ -31,11 +33,19 @@ public class Member {
     }
 
     @Builder
-    public Member(String name, String email, String image, OAuthProvider provider){
+    public Member(String name, String email, String image, OAuthProvider provider, String role) {
         this.name = name;
         this.email = email;
         this.image = image;
         this.provider = provider;
+        this.role = role;
     }
 
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }
