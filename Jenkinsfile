@@ -86,6 +86,22 @@ pipeline {
             }
         }
 
+        stage("env download") {
+            steps {
+                withCredentials([file(credentialsId: 'secret-env-develop', variable: 'devConfigFile')]) {
+                    script {
+                        sh 'cp -rf $devConfigFile ./Frontend/.env.development'
+                    }
+                }
+
+                withCredentials([file(credentialsId: 'secret-env-prod', variable: 'prodConfigFile')]) {
+                    script {
+                        sh 'cp -rf $prodConfigFile ./Frontend/.env.production'
+                    }
+                }
+            }
+        }
+
         stage("Build FE file to Docker Image") {
             steps {
                 echo '프론트 도커 이미지 빌드 시작!'
