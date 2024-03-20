@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -31,6 +32,7 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final UserDetailsService userDetailsService;
 
     @Value("${WHITE_LIST}")
     private String[] whiteList;
@@ -50,7 +52,7 @@ public class SecurityConfig {
                 // HTTP Basic 인증 방식 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable)
                 // OAuth2LoginAuthenticationFilter 후에 JWTFilter로 검증
-                .addFilterAfter(new JWTFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class)
+                .addFilterAfter(new JWTFilter(jwtUtil, userDetailsService), OAuth2LoginAuthenticationFilter.class)
                 // OAuth
                 .oauth2Login((oauth2) -> oauth2
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig   // OAuth 2.0 인증 후 사용자 정보를 가져오는 엔드포인트
