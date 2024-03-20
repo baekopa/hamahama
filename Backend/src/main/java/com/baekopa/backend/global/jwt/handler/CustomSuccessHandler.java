@@ -8,7 +8,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JWTUtil jwtUtil;
@@ -46,9 +47,11 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         //응답 설정
         response.setHeader("access", access);
         response.addCookie(createCookie("refresh", refresh));
-        response.setStatus(HttpStatus.OK.value());
 
-        response.sendRedirect("http://localhost:5173/");
+        log.warn("access ==== {}", access);
+        log.warn("refresh === {}", refresh);
+
+        response.sendRedirect("http://localhost:8080/api/hello");
     }
 
     private void addRefreshEntity(String username, String refresh, Long expiredMs) {
