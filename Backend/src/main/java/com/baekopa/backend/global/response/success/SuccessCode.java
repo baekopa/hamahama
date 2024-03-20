@@ -39,6 +39,10 @@ public enum SuccessCode {
     MEMBER_DELETE_SUCCESS(200, "회원 탈퇴에 성공하였습니다."),
     CHECK_MEMBER_OF_JWT(200, "JWT토큰의 멤버 정보조회에 성공했습니다."),
 
+    // Study
+    STUDY_CREATE_SUCCESS(201, "새로운 스터디 생성에 성공했습니다."),
+    STUDY_GET_SUCCESS(200, "스터디 조회에 성공하였습니다."),
+
     ; // End
 
     /**
