@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from model.Meeting import Meeting
-from app.model.SummaryDTO import SummaryDTO
+from model.SummaryDTO import SummaryDTO
+from service.summaryPreService import chkOriginTextLen, splitOriginText, splitOriginTextList, doSummary
 
 router=APIRouter(
     prefix="/studies",
@@ -8,9 +9,15 @@ router=APIRouter(
 )
 
 @router.post("/meeting", response_model=SummaryDTO)
-async def read_minutes(ment:Meeting):
-    
-    response_dto=SummaryDTO(originalText=ment.meeting_id, summaryText="요약했지요..ㅋ")
+async def read_minutes(meeting:Meeting):
+    originTextSplitList=chkOriginTextLen(meeting.meetingText)
+    maxLen=len(originTextSplitList)
+    originFormattedStr=splitOriginText(originTextSplitList)
+    originTextList=splitOriginTextList(originFormattedStr, maxLen)
+    output=doSummary(originTextList)
+
+    response_dto=SummaryDTO(originalText=meeting.meetingText, summaryText=output)
+
     return response_dto
 
 
