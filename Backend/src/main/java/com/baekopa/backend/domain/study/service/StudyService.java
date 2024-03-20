@@ -57,11 +57,14 @@ public class StudyService {
 
         // 새 이미지 업로드
         String newImageUrl = uploadImage(requestDto.getBackgroundImage());
-        // 현재 이미지 변경 (이전 이미지 s3에서 삭제)
-        String backgroundImageUrl = updateImage(study.getBackgroundImage(), newImageUrl);
+
+        // 이전 이미지 s3에서 삭제
+        if (!study.getBackgroundImage().equals(DEFAULT_STUDY_IMAGE)) {
+            s3UploadService.deleteFile(study.getBackgroundImage());
+        }
 
         // 변경 사항 저장
-        study.updateStudyBasicInfo(requestDto.getTitle(), requestDto.getDescription(), backgroundImageUrl, requestDto.getCategory());
+        study.updateStudyBasicInfo(requestDto.getTitle(), requestDto.getDescription(), newImageUrl, requestDto.getCategory());
         study = studyRepository.save(study);
 
         return StudyInfoResponseDto.from(study);
@@ -77,23 +80,12 @@ public class StudyService {
             imgUrl = DEFAULT_STUDY_IMAGE;
         } else {
             try {
-                imgUrl = s3UploadService.saveFile(image);
+                imgUrl = s3UploadService.saveFile("images", image);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
 
         return imgUrl;
-    }
-
-    // 이미지 변경
-    public String updateImage(String curImage, String newImage) {
-
-        //  이미지 정보가 변경됐고, 이전 이미지가 기본이미지가 아닐 때
-        if (!curImage.equals(newImage) && !curImage.equals(DEFAULT_STUDY_IMAGE)) {
-            s3UploadService.deleteFile(curImage);
-        }
-
-        return newImage;
     }
 }
