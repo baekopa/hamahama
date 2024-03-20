@@ -82,4 +82,11 @@ public class Study extends BaseEntity {
                 .build();
     }
 
+    public void updateStudyBasicInfo(String title, String description, String backgroundImage, String category) {
+        this.title = title;
+        this.description = description;
+        this.backgroundImage = backgroundImage;
+        this.category = category;
+    }
+
 }
