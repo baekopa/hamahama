@@ -5,60 +5,79 @@
       <span class="text-h4 font-weight-black ml-4">스터디 만들기</span>
     </div>
     <v-form fast-fail @submit.prevent>
-      <v-sheet elevation="3" rounded="lg" class="basic-form mt-10 d-flex flex-column">
+      <v-sheet
+        elevation="3"
+        rounded="lg"
+        class="basic-form mt-10 d-flex flex-column"
+        style="height: 552px"
+      >
         <div class="pa-10">
           <span class="text-h5 font-weight-black">스터디 기본 정보</span>
         </div>
 
-        <v-col class="pa-10">
-          <v-file-input
-            id="backgroundImage"
-            :rules="rules"
-            accept="image/png, image/jpeg, image/bmp"
-            label="스터디 배경사진"
-            style="height: 344px"
-          ></v-file-input>
+        <v-col class="pa-10 d-flex">
+          <v-sheet class="mr-10">
+            <v-file-input
+              id="backgroundImage"
+              :rules="rules"
+              accept="image/png, image/jpeg, image/bmp"
+              style="height: 400px; width: 400px"
+            ></v-file-input>
+          </v-sheet>
 
-          <span>스터디 제목</span>
-          <v-text-field
-            v-model="studyName"
-            :rules="studyNameRules"
-            variant="outlined"
-            label="50자 내외로 스터디 이름을 지어주세요"
-          ></v-text-field>
+          <div class="ml-10" style="width: 500px">
+            <div class="">
+              <span class="text-h5">스터디 제목</span>
+              <v-text-field
+                class="mt-5"
+                v-model="studyName"
+                :rules="studyNameRules"
+                variant="outlined"
+                label="스터디 제목"
+              ></v-text-field>
+            </div>
+            <div class="">
+              <span class="text-h5">스터디 분류</span>
+              <v-text-field
+                class="mt-5"
+                variant="outlined"
+                v-model="studyCategory"
+                label="스터디 종류"
+              ></v-text-field>
+            </div>
+            <div>
+              <span>스터디 멤버 초대</span>
+            </div>
 
-          <span>스터디 멤버 초대</span>
-          <v-text-field
-            v-model="memberName"
-            :rules="lastNameRules"
-            variant="outlined"
-            label="Last name"
-          ></v-text-field>
-          <v-text-field
-            v-model="studyCategory"
-            :rules="studyCategoryRules"
-            label="Last name"
-          ></v-text-field>
+            <div v-if="selectedMembers.length > 0" class="mt-5">
+              <span>선택된 멤버:</span>
+              <ul>
+                <li v-for="(member, index) in selectedMembers" :key="index">
+                  {{ member.full_name }}
+                </li>
+              </ul>
+            </div>
+          </div>
         </v-col>
       </v-sheet>
 
-      <v-sheet elevation="3" rounded="lg" class="detail-schedule mt-10 pa-10 d-flex flex-column">
-        <div class="d-flex align-center pa-">
-          <img src="@/assets/image/study/calendar.svg" alt="" width="73px" height="73px" />
-          <span class="text-h5 font-weight-black">상세일정</span>
+      <v-sheet rounded="lg" class="detail-schedule mt-10 pa-10 d-flex flex-column">
+        <div class="d-flex align-center">
+          <img src="@/assets/image/study/calendar.svg" alt="" width="68px" height="68px" />
+          <span class="text-h4 ml-4 font-weight-black">상세일정</span>
         </div>
-        <div>
-          <span>스터디 요일</span>
-          <v-row justify="space-around">
-            <v-col cols="auto">
-              <v-sheet class="py-4 px-1" elevation="">
+        <div class="d-flex align-center ml-10">
+          <span class="ml-16 text-h6 font-weight-black">스터디 요일</span>
+          <v-row class="ml-16">
+            <v-col class="ml-12">
+              <v-sheet class="py-4 px-1">
                 <v-chip-group
                   @click="convertTagsToBinaryString"
                   v-model="selectedDay"
                   selected-class="text-primary"
                   multiple
                 >
-                  <v-chip v-for="tag in tags" :key="tag" :value="tag">
+                  <v-chip v-for="tag in tags" :key="tag" :value="tag" size="x-large" class="mx-10">
                     {{ tag }}
                   </v-chip>
                 </v-chip-group>
@@ -66,42 +85,45 @@
             </v-col>
           </v-row>
         </div>
-        <v-row justify="space-around">
-          <v-col cols="12" md="6">
-            <div class="mt-10">
-              <span>스터디 시작일</span>
-              <input type="date" />
-            </div>
-          </v-col>
-        </v-row>
 
-        <v-row class="">
-          <v-col cols="12" md="6">
-            <div class="mt-10">
-              <span class="">스터디 종료일</span>
-              <input type="date" />
-            </div>
-          </v-col>
-        </v-row>
+        <div class="d-flex align-center mt-10 ml-10">
+          <span class="ml-16 text-h6 font-weight-black">스터디 시작일</span>
+          <v-row class="ml-16">
+            <v-col class="ml-16" cols="auto">
+              <input id="date" type="date" v-model="startDay" />
+            </v-col>
+          </v-row>
+          <span class="text-h6 font-weight-black">스터디 종료일</span>
+          <v-row class="ml-16">
+            <v-col cols="auto">
+              <input id="date" type="date" v-model="endDay" />
+            </v-col>
+          </v-row>
+        </div>
 
-        <v-row justify="space-around">
-          <v-col cols="12" md="6">
-            <div class="mt-10">
-              <span>스터디 시간</span>
-
-              <input type="time" />
-              <input type="time" />
-            </div>
-          </v-col>
-        </v-row>
+        <div class="d-flex align-center mt-10 ml-10">
+          <span class="ml-16 text-h6 font-weight-black">스터디 시작시간</span>
+          <v-row class="ml-11">
+            <v-col class="ml-16" cols="auto">
+              <input id="time" type="time" v-model="startTime" />
+            </v-col>
+          </v-row>
+          <span class="text-h6 font-weight-black">스터디 종료시간</span>
+          <v-row class="ml-11">
+            <v-col cols="auto">
+              <input id="time" type="time" v-model="endTime" />
+            </v-col>
+          </v-row>
+        </div>
       </v-sheet>
 
-      <v-sheet elevation="3" rounded="lg" class="study-description mt-10 pa-5 d-flex flex-column">
+      <v-sheet class="study-description mt-10 pa-10 d-flex flex-column">
         <div class="d-flex align-center">
-          <img src="@/assets/image/study/pinIcon.svg" alt="" width="50px" />
-          <span class="text-h5 font-weight-black">스터디 설명</span>
+          <img src="@/assets/image/study/pinIcon.svg" alt="" width="68px" />
+          <span class="text-h4 ml-4 font-weight-black">스터디 설명</span>
         </div>
-        <v-sheet class="pa-10">
+        <div></div>
+        <div class="pa-10 d-flex align-center">
           <v-textarea
             rounded="lg"
             v-bind="studyDescription"
@@ -110,7 +132,7 @@
             variant="outlined"
             class="mt-5"
           ></v-textarea>
-        </v-sheet>
+        </div>
       </v-sheet>
 
       <v-sheet class="d-flex justify-end mt-5">
@@ -118,6 +140,7 @@
         <v-btn class="c-btn" rounded="lg">취소</v-btn>
       </v-sheet>
     </v-form>
+    <v-btn @click="test">테스트</v-btn>
   </v-container>
 </template>
 
@@ -129,57 +152,102 @@ import Swal from 'sweetalert2'
 
 const rules = ref([
   (value) => {
-    console.log(value)
     return (
       !value || !value.length || value[0].size < 2000000 || 'Avatar size should be less than 2 MB!'
     )
   }
 ])
-
+const studyName = ref('')
 const studyNameRules = ref([
   (value) => (!!value && value.length <= 50) || '스터디 이름을 입력해주세요. (최대 50자)'
 ])
+const studyCategory = ref('')
 
-const startTime = ref(new Date())
-const endTime = ref(new Date())
+const memberName = ref('')
+const members = ref([])
+const selectedMember = ref('')
+const selectedMembers = ref([])
+const searchMembers = async () => {
+  if (!memberName.value.trim()) {
+    members.value = []
+    return
+  }
+  const response = await fetch(`https://api.github.com/search/repositories?q=${memberName.value}`)
+  const data = await response.json()
+  members.value = data.items
+  console.log(members)
+}
 
-const studyName = ref('')
 const tags = ref(['월', '화', '수', '목', '금', '토', '일'])
-
 const selectedDay = ref([])
-
-const studyDescription = ref('')
-
+// 요일 보낼때 1010101 이런식으로 보내야 해서 만든 함수
 function convertTagsToBinaryString() {
   let binaryString = ''
   for (let tag of tags.value) {
     binaryString += selectedDay.value.includes(tag) ? '1' : '0'
   }
   console.log(binaryString)
-  console.log(selectedDate)
+
   return binaryString
 }
 
+const startDay = ref(new Date())
+const endDay = ref(new Date())
+const startTime = ref(new Date())
+const endTime = ref(new Date())
+
+const studyDescription = ref('')
+
+// 필수 입력 조건 확인 후 알림 표시 또는 생성 함수호출
 function checkForm() {
-  // 필수 입력 조건 확인(스터디 제목, 스터디 요일, 스터디시작, 종료일, 설명)
-  if (
-    !studyName.value ||
-    selectedDay.value.length === 0 ||
-    !selectedDate.value ||
-    !studyDescription.value
-  ) {
-    // 필수 입력 조건 중 하나라도 충족되지 않으면 알림 표시
+  if (!studyName.value) {
     Swal.fire({
       title: '입력 오류',
-      text: '스터디 제목, 스터디 요일, 스터디 시작일, 스터디 종료일, 스터디 설명은 필수 입력 항목입니다.',
+      text: '스터디 제목은 필수 입력 항목입니다.',
+      icon: 'error',
+      confirmButtonText: '확인'
+    })
+  } else if (selectedDay.value.length === 0) {
+    Swal.fire({
+      title: '입력 오류',
+      text: '스터디 요일은 필수 입력 항목입니다.',
+      icon: 'error',
+      confirmButtonText: '확인'
+    })
+  } else if (!startDay.value) {
+    Swal.fire({
+      title: '입력 오류',
+      text: '스터디 시작일은 필수 입력 항목입니다.',
+      icon: 'error',
+      confirmButtonText: '확인'
+    })
+  } else if (!endDay.value) {
+    Swal.fire({
+      title: '입력 오류',
+      text: '스터디 종료일은 필수 입력 항목입니다.',
+      icon: 'error',
+      confirmButtonText: '확인'
+    })
+  } else if (!startTime.value) {
+    Swal.fire({
+      title: '입력 오류',
+      text: '스터디 시작 시간은 필수 입력 항목입니다.',
+      icon: 'error',
+      confirmButtonText: '확인'
+    })
+  } else if (!endTime.value) {
+    Swal.fire({
+      title: '입력 오류',
+      text: '스터디 종료 시간은 필수 입력 항목입니다.',
       icon: 'error',
       confirmButtonText: '확인'
     })
   } else {
-    // 모든 필수 입력 조건이 충족되면 스터디 생성 로직 수행
     createStudy()
   }
 }
+
+// 아래는 스터디 생성 함수들임
 
 function createStudy() {
   // FormData 객체 생성
@@ -196,6 +264,7 @@ function createStudy() {
   const fileInput = document.querySelector('#backgroundImage')
   formData.append('backgroundImage', fileInput.files[0])
 
+  console.log(formData)
   // API 요청 보내기
   apiInstance
     .post('api/studies/new', formData)
@@ -218,11 +287,18 @@ function createStudy() {
       })
     })
 }
+
+const test = () => {
+  console.log(startTime)
+  console.log(endTime)
+  console.log(startDay)
+  console.log(endDay)
+}
 </script>
 
 <style scoped>
 .page {
-  width: 1500px;
+  width: 1441px;
 }
 .m-btn {
   background-color: #3fb1fa;
@@ -231,5 +307,14 @@ function createStudy() {
 .c-btn {
   background-color: rgba(255, 52, 64, 0.74);
   color: white;
+}
+
+#date,
+#time {
+  width: 300px;
+  height: 51px;
+  border: 1px solid #8d9299;
+  border-radius: 10px;
+  padding: 10px;
 }
 </style>
