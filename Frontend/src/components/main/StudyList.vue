@@ -35,7 +35,7 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 const goStudyPage = (study) => {
-  router.push({ name: 'note', params: { id: study.id } })
+  router.push({ name: 'study', params: { id: study.id } })
 }
 
 const StudyList = ref([

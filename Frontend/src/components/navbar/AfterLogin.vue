@@ -10,7 +10,11 @@
       />
 
       <div class="d-flex align-center">
-        <v-btn class="mr-10" rounded="l">스터디 생성</v-btn>
+        <v-btn @click="goMakeStudy" id="study-btn" class="mr-10" rounded="l">
+          <img class="mx-2" src="../icons/nav/homePlus.svg" alt="" /><span class="mr-2"
+            >스터디 생성</span
+          ></v-btn
+        >
         <button v-if="isAlarmExist" class="mr-5">
           <img width="32" height="32" src="../icons/nav/alarmExist.svg" alt="alarm" />
         </button>
@@ -56,6 +60,17 @@ const goToMyPage = () => {
 const goMain = () => {
   router.push({ name: 'main' })
 }
+
+const goMakeStudy = () => {
+  router.push({ name: 'makeStudy' })
+}
 </script>
 
-<style scoped></style>
+<style scoped>
+#study-btn {
+  width: 126px;
+  height: 40px;
+  color: white;
+  background: linear-gradient(to right, rgba(63, 177, 250, 1), rgba(5, 212, 192, 1));
+}
+</style>
