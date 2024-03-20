@@ -1,43 +1,64 @@
 <template>
   <div>
     <p>{{ studyStore.studyName }}</p>
-    <br>
-    <div>
-      <v-col cols="12" md="4" sm="6">
-        <v-btn rounded="xl" size="x-large" block @click="startRecording">녹음 시작</v-btn>
-      </v-col>
-    </div>
-    <div>
-      <v-col cols="12" md="4" sm="6">
-        <v-btn rounded="xl" size="x-large" block @click="stopRecording">녹음 중지</v-btn>
-      </v-col>
-    </div>
-    <!-- 녹음 시간 표시 -->
-    <div v-if="recording">
-      녹음 시간: {{ elapsedTime }}
-    </div>
+
     <br>
     <div>
       <h1>다음 스터디 일정</h1>
-      <p>스터디까지 남은 시간</p>
-      <v-col>
-        <v-img :width="300" aspect-ratio="16/9" :src="mainImage" cover></v-img>
-      </v-col>
-      
+      <p>스터디까지 남은 시간 </p>
+      <v-row>
+        <!-- 이미지 컴포넌트를 위한 컬럼 -->
+        <v-col cols="5">
+          <v-img :width="300" aspect-ratio="16/9" :src="mainImage" cover></v-img>
+        </v-col>
+
+        <v-col cols="7">
+          <p>다음 일정의 제목</p>
+        </v-col>
+
+        <v-col cols="11" v-if="!recording">
+          <v-btn class="gradient-btn" block rounded="xl" size="large" @click="startRecording">스터디 시작</v-btn>
+        </v-col>
+
+        <v-col cols="11" v-if="recording && !paused">
+          <v-btn class="gradient-btn" rounded="xl" size="large" block @click="pauseRecording">녹음 일시정지</v-btn>
+        </v-col>
+
+        <v-col cols="11" v-if="recording && paused">
+          <v-btn class="gradient-btn" rounded="xl" size="large" block @click="resumeRecording">녹음 재개</v-btn>
+        </v-col>
+        
+        <v-col cols="11" v-if="recording">
+          <v-btn class="gradient-btn" rounded="xl" size="large" block @click="stopRecording">녹음 중지</v-btn>
+        </v-col>
+      </v-row>
+      <!-- 녹음 시간 표시 -->
+      <div v-if="recording">
+        녹음 시간: {{ elapsedTime }}
+      </div>
       
     </div>
     <br>
     <div>
       <h1>오늘의 노트</h1>
-      <div>
+      <v-col>
         <h4>전체 요약</h4>
-      </div>
-      <div>
+        <p>요약입니하마</p>
+      </v-col>
+      <v-col>
         <h4>응용 문제</h4>
-      </div>
+        <p>문제입니하마</p>
+      </v-col>
     </div>
   </div>
 </template>
+
+<style>
+.gradient-btn {
+  background: linear-gradient(to right, rgb(19, 143, 214), rgb(3, 240, 229));
+  color: white; /* 텍스트 색상을 흰색으로 설정 */
+}
+</style>
 
 <script setup>
   import { ref } from 'vue'
@@ -48,6 +69,9 @@
 
   const studyStore = useStudyStore()
   const audioStore = useAudioStore();
+
+
+  // --------------- 녹음 관련 변수와 함수 ------------------ //
   const mediaRecorder = ref(null);
   const audioChunks = ref([]);
   const recordText = ref('');
@@ -55,11 +79,14 @@
   const recording = ref(false);
   const elapsedTime = ref('00:00');
   const timer = ref(null);
+  const paused = ref(false); // 일시정지 상태 관리를 위한 참조
+  const pausedTime = ref(0);
+  const totalPausedDuration = ref(0); 
   
-
+  
   const updateElapsedTime = () => {
     const now = Date.now()
-    const diff = now - startTime.value
+    const diff = now - startTime.value - totalPausedDuration.value; // 일시정지된 시간을 고려
     const minutes = Math.floor(diff / 60000)
     const seconds = Math.floor((diff % 60000) / 1000)
 
@@ -86,6 +113,28 @@
     }
   };
 
+  const pauseRecording = () => {
+    if (mediaRecorder.value && recording.value && !paused.value) {
+      mediaRecorder.value.pause();
+      clearInterval(timer.value);
+      paused.value = true;
+      pausedTime.value = Date.now(); // 일시정지 시작 시간 저장
+      console.log("녹음이 일시정지됨");
+    }
+  };
+
+  const resumeRecording = () => {
+    if (mediaRecorder.value && paused.value) {
+      mediaRecorder.value.resume();
+      const pausedDuration = Date.now() - pausedTime.value;
+      totalPausedDuration.value += pausedDuration; // 총 일시정지 시간 업데이트
+      timer.value = setInterval(updateElapsedTime, 1000);
+      paused.value = false;
+      console.log("녹음이 재개됨");
+    }
+  };
+
+
   const stopRecording = () => {
     console.log("레코딩 멈춰 명령 실행");
     if (mediaRecorder.value) {
@@ -93,6 +142,8 @@
       mediaRecorder.value.stop();
       mediaRecorder.value.stream.getTracks().forEach(track => track.stop()); // 스트림의 모든 트랙을 멈춤. 마이크 종료
       clearInterval(timer.value)
+      pausedTime.value = 0;
+      totalPausedDuration.value = 0; 
       recording.value = false
       mediaRecorder.value.onstop = async () => {
         const audioBlob = new Blob(audioChunks.value, { type: 'audio/wav' });
@@ -128,4 +179,8 @@
       console.error("오류가 발생했습니다:", error);
     }
   };
+// --------------------------- 녹음  ---------------------------------------- //
+
+
+
 </script>
