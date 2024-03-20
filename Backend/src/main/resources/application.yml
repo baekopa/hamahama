@@ -32,14 +32,12 @@ spring:
             authorization-grant-type: authorization_code
             scope: profile, email    # 인가 후 받아올 사용자 정보 범위
 
-
-#          kakao:
-#            client-id: ${KAKAO_CLIENT_ID}
-#            redirect-uri: ${BASE_URL}/login/oauth2/code/kakao
-#            client-authentication-method: POST
-#            authorization-grant-type: authorization_code
-#            scope: profile_nickname, profile_image
-#            client-name: kakao
+          kakao:
+            client-name: kakao
+            client-id: ${KAKAO_CLIENT_ID}
+            redirect-uri: ${BASE_URL}/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+            scope: profile_nickname, profile_image, account_email
 
           naver:
             client-name: naver
@@ -51,11 +49,11 @@ spring:
 
 
         provider:
-#          kakao:
-#            authorization_uri: https://kauth.kakao.com/oauth/authorize
-#            token_uri: https://kauth.kakao.com/oauth/token
-#            user-info-uri: https://kapi.kakao.com/v2/user/me
-#            user_name_attribute: id
+          kakao:
+            authorization_uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user_name_attribute: kakao_account
 
           naver:
             authorization_uri: https://nid.naver.com/oauth2.0/authorize
