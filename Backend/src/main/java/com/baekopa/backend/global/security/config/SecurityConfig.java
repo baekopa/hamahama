@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -31,6 +32,7 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final UserDetailsService userDetailsService;
 
     @Value("${WHITE_LIST}")
     private String[] whiteList;
@@ -58,7 +60,7 @@ public class SecurityConfig {
                         .requestMatchers(whiteList).permitAll()
                         .anyRequest().authenticated())
                 // 로그인 후에 JWTFilter로 검증
-                .addFilterAfter(new JWTFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class)
+                .addFilterAfter(new JWTFilter(jwtUtil, userDetailsService), OAuth2LoginAuthenticationFilter.class)
                 // 로그아웃
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class)
                 // RESTful API
