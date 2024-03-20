@@ -1,9 +1,9 @@
 package com.baekopa.backend.global.jwt.handler;
 
-import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.global.jwt.entity.RefreshToken;
 import com.baekopa.backend.global.jwt.repository.RefreshRepository;
 import com.baekopa.backend.global.jwt.util.JWTUtil;
+import com.baekopa.backend.global.oauth2.dto.CustomOAuth2User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,16 +33,17 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         //유저 정보
         String username = authentication.getName();
 
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        String memberId = Long.toString(oAuth2User.getId());
+
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-//        log.warn("***************** : {}", providerCode);
-
         //토큰 생성
-        String access = jwtUtil.createJwt("access", username, role, 600000L);
-        String refresh = jwtUtil.createJwt("refresh", username, role,86400000L);
+        String access = jwtUtil.createJwt("access", username, role, memberId, 600000L);
+        String refresh = jwtUtil.createJwt("refresh", username, role, memberId, 86400000L);
 
         //Refresh 토큰 저장
         addRefreshEntity(username, refresh, 86400000L);
@@ -54,7 +55,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.warn("access ==== {}", access);
         log.warn("refresh === {}", refresh);
 
-        response.sendRedirect("http://localhost:8080/api/hello");
+        response.sendRedirect("http://localhost:5173");
     }
 
     private void addRefreshEntity(String username, String refresh, Long expiredMs) {
