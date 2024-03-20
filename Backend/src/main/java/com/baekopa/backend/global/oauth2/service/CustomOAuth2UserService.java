@@ -44,6 +44,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return null;
         }
 
+        // 유저 DB 저장
         String providerCode = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
         Member existMember = memberRepository.findByProviderCode(providerCode).orElse(null);
         MemberDTO memberDTO = new MemberDTO();
@@ -52,6 +53,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             existMember = newMember(oAuth2Response, providerCode);
 
             memberDTO.setProviderCode(providerCode);
+            memberDTO.setId(existMember.getId());
             memberDTO.setName(oAuth2Response.getName());
             memberDTO.setRole("ROLE_USER");
 
@@ -63,6 +65,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             memberRepository.save(existMember);
 
             memberDTO.setProviderCode(existMember.getProviderCode());
+            memberDTO.setId(existMember.getId());
             memberDTO.setName(oAuth2Response.getName());
             memberDTO.setRole(existMember.getRole());
         }

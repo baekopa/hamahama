@@ -11,7 +11,7 @@ public class CustomOAuth2User implements OAuth2User {
 
     private final MemberDTO memberDTO;
 
-    public CustomOAuth2User(MemberDTO memberDTO){
+    public CustomOAuth2User(MemberDTO memberDTO) {
         this.memberDTO = memberDTO;
     }
 
@@ -26,9 +26,9 @@ public class CustomOAuth2User implements OAuth2User {
         Collection<GrantedAuthority> collection = new ArrayList<>();
 
         collection.add(new GrantedAuthority() {
-           @Override
-           public String getAuthority() {
-               return memberDTO.getRole();
+            @Override
+            public String getAuthority() {
+                return memberDTO.getRole();
             }
         });
 
@@ -42,5 +42,9 @@ public class CustomOAuth2User implements OAuth2User {
 
     public String getProviderCode() {
         return memberDTO.getProviderCode();
+    }
+
+    public Long getId() {
+        return memberDTO.getId();
     }
 }
