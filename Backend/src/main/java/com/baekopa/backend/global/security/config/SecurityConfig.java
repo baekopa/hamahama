@@ -51,8 +51,6 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 // HTTP Basic 인증 방식 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable)
-                // OAuth2LoginAuthenticationFilter 후에 JWTFilter로 검증
-                .addFilterAfter(new JWTFilter(jwtUtil, userDetailsService), OAuth2LoginAuthenticationFilter.class)
                 // OAuth
                 .oauth2Login((oauth2) -> oauth2
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig   // OAuth 2.0 인증 후 사용자 정보를 가져오는 엔드포인트
@@ -61,6 +59,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(whiteList).permitAll()
                         .anyRequest().authenticated())
+                // 로그인 후에 JWTFilter로 검증
+                .addFilterAfter(new JWTFilter(jwtUtil, userDetailsService), OAuth2LoginAuthenticationFilter.class)
+                // 로그아웃
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class)
                 // RESTful API
                 .sessionManagement((session) -> session

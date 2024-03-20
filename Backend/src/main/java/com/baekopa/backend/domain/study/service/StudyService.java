@@ -56,11 +56,11 @@ public class StudyService {
             // 배경 선택하지 않았을 때, 기본 이미지 지정
             imgUrl = "https://p22d105s3.s3.ap-northeast-2.amazonaws.com/study_default_img.jpg";
         } else {
-            try {
-                imgUrl = s3UploadService.saveFile(image);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+//            try {
+//                imgUrl = s3UploadService.saveFile(image);
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
         }
 
         return imgUrl;
