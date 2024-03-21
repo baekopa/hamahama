@@ -50,13 +50,14 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         addRefreshEntity(username, refresh, 86400000L);
 
         //응답 설정
-        response.setHeader(HttpHeaders.AUTHORIZATION, access);
+        //response.setHeader(HttpHeaders.AUTHORIZATION, access);
+        response.addCookie(createCookie(HttpHeaders.AUTHORIZATION, access));
         response.addCookie(createCookie("RefreshToken", refresh));
 
         log.warn("access ==== {}", access);
         log.warn("refresh === {}", refresh);
 
-        response.sendRedirect("http://localhost:5173");
+        response.sendRedirect("http://localhost:5173/main");
     }
 
     private void addRefreshEntity(String username, String refresh, Long expiredMs) {
@@ -75,8 +76,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24 * 60 * 60);
-        //cookie.setSecure(true);
-        //cookie.setPath("/");
+        cookie.setSecure(true);
+        cookie.setPath("/");
         cookie.setHttpOnly(true);
 
         return cookie;
