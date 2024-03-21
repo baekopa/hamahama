@@ -1,18 +1,29 @@
 <template>
   <v-container style="width: 1200px">
-    <Carousel :itemsToShow="1.5" :wrapAround="true" :transition="500" :button-visibility="true">
+    <Carousel
+      :items-to-show="2"
+      :wrapAround="true"
+      :transition="500"
+      :autoplay="2000"
+      :touchDrag
+      :buttonVisibility="true"
+      :Pagination
+    >
       <Slide v-for="feat in MainFeat" :key="feat.id">
         <div class="carousel__item">
-          <img :src="feat.imgUrl" :alt="feat.id" class="carousel__image" />
+          <img :src="feat.imgUrl" :alt="feat.id" class="carousel__image rounded-xl" />
         </div>
       </Slide>
+      <template #addons>
+        <Navigation />
+      </template>
     </Carousel>
   </v-container>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { Carousel, Slide, Pagination } from 'vue3-carousel'
+import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 
 import Main_1 from '../../assets/image/main/karina.jpg'
@@ -28,13 +39,15 @@ const MainFeat = ref([
 
 <style scoped>
 .carousel__slide {
-  padding: 5px;
-
+}
+.carousel__item {
+  width: 100%;
   height: 300px;
+  object-fit: cover; /* 이미지 비율 유지 및 잘림 방지 */
 }
 
 .carousel__viewport {
-  perspective: 100px;
+  perspective: 2000px;
 }
 
 .carousel__track {
@@ -46,22 +59,22 @@ const MainFeat = ref([
 }
 
 .carousel__slide {
-  opacity: 0.9;
-  transform: rotateY(-20deg) scale(1);
+  opacity: 1;
+  transform: rotateY(0);
 }
 
 .carousel__slide--active ~ .carousel__slide {
-  transform: rotateY(20deg) scale(0.9);
+  transform: rotateY(0) scale(0.9);
 }
 
 .carousel__slide--prev {
-  opacity: 1;
-  transform: rotateY(-10deg) scale(0.9);
+  opacity: 0.3;
+  transform: rotateY(0) scale(0.9);
 }
 
 .carousel__slide--next {
-  opacity: 1;
-  transform: rotateY(10deg) scale(0.9);
+  opacity: 0.3;
+  transform: rotateY(0);
 }
 
 .carousel__slide--active {
@@ -70,8 +83,14 @@ const MainFeat = ref([
 }
 
 .carousel__image {
-  width: 100%;
+  width: 700px;
   height: 100%;
   object-fit: cover; /* 이미지 비율 유지 및 잘림 방지 */
+}
+
+.carousel__icon,
+.carousel__next {
+  width: 100px;
+  height: 100px;
 }
 </style>
