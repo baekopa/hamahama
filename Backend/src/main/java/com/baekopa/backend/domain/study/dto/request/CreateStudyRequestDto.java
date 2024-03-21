@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,4 +35,6 @@ public class CreateStudyRequestDto {
 
     @JsonFormat(pattern = "HH:mm")
     private LocalTime endTime;
+
+    private List<Long> members;
 }
