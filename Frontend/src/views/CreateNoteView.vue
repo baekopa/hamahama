@@ -22,7 +22,6 @@ import { ref } from 'vue'
 import { apiInstance } from '@/api/index'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
-import NoteDetailView from './NoteDetailView.vue'
 
 const api = apiInstance()
 const router = useRouter()

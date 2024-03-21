@@ -1,5 +1,6 @@
 package com.baekopa.backend.global.response.error;
 
+import com.baekopa.backend.global.response.error.exception.BusinessException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
@@ -163,8 +164,20 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HTTP_STATUS_OK);
     }
 
-
     // ==================================================================================================================
+
+    /**
+     * BusinessException에서 발생한 에러
+     *
+     * @param ex BusinessException
+     * @return ResponseEntity
+     */
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex) {
+        log.error("Exception", ex);
+        final ErrorResponse response = ErrorResponse.of(ex.getErrorCode(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 
     /**
      * [Exception] 모든 Exception 경우 발생
