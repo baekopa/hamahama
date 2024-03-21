@@ -7,7 +7,7 @@ const auth = useAuthStore()
 </script>
 
 <template>
-  <v-app class="">
+  <v-app>
     <!-- 로그인 상태에 따라 AfterLogin 또는 BeforeLogin 컴포넌트 렌더링 -->
     <AfterLogin v-if="auth.isLogin" />
     <BeforeLogin v-else />
@@ -19,10 +19,10 @@ const auth = useAuthStore()
   </v-app>
 </template>
 
-<style scoped>
+<style>
 ::-webkit-scrollbar {
   border-radius: 30px;
-  width: 8px;
+  width: 1px;
 }
 
 ::-webkit-scrollbar-track {
