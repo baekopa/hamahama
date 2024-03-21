@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByProviderCode(String providerCode);
+
+    Optional<Member> findByIdAndDeletedAtIsNull(Long id);
 }
