@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -45,13 +46,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         addRefreshEntity(username, refresh, 86400000L);
 
         //응답 설정
-        response.setHeader("access", access);
-        response.addCookie(createCookie("refresh", refresh));
+        response.setHeader(HttpHeaders.AUTHORIZATION, access);
+        response.addCookie(createCookie("RefreshToken", refresh));
 
         log.warn("access ==== {}", access);
         log.warn("refresh === {}", refresh);
 
-        response.sendRedirect("http://localhost:8080/api/hello");
+        response.sendRedirect("http://localhost:8080/");
     }
 
     private void addRefreshEntity(String username, String refresh, Long expiredMs) {
