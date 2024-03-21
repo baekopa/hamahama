@@ -1,30 +1,59 @@
 <template>
-  <div>
-    <span class="title text-h6">내 스터디</span>
-    <v-chip class="chip" variant="flat"> 전체 </v-chip>
-    <v-chip class="chip" variant="flat"> 내가 만든 스터디 </v-chip>
-    <div class="study-list">
-      <v-container>
-        <v-row>
-          <v-col cols="12" sm="6" md="4" lg="3" v-for="study in StudyList" :key="study.id">
-            <v-card
-              class="mx-auto"
-              max-width="300"
-              height="300"
-              :text="study.studyName"
-              variant="outlined"
-              color="indigo"
-            ></v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </div>
-  </div>
+  <v-container>
+    <span class="title text-h6">참여중인 스터디 목록</span>
+    <!-- <v-chip class="chip" variant="flat"> 전체 </v-chip>
+    <v-chip class="chip" variant="flat"> 내가 만든 스터디 </v-chip> -->
+
+    <v-row class="study-list">
+      <v-col cols="12" sm="6" md="4" lg="3">
+        <v-card
+          @click="goMyStudy"
+          width="300"
+          height="300"
+          text="개인 스터디 룸"
+          variant="outlined"
+          color="indigo"
+        ></v-card>
+      </v-col>
+      <v-col cols="12" sm="6" md="4" lg="3">
+        <v-card
+          @click="addStudy"
+          width="300"
+          height="300"
+          text="스터디 추가"
+          variant="outlined"
+          color="black"
+        ></v-card>
+      </v-col>
+
+      <v-col cols="12" sm="6" md="4" lg="3" v-for="study in StudyList" :key="study.id">
+        <v-card
+          @click="goStudyHome(study.id)"
+          width="300"
+          height="300"
+          :text="study.studyName"
+          variant="outlined"
+          color="indigo"
+        ></v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { getStudyList } from '@/api/mypage'
+const router = useRouter()
 
+const defaultList = ref([
+  {
+    id: -1,
+    time: '',
+    studyName: '개인 스터디 룸',
+    imgUrl: 'https://vuejs.org/images/logo.png'
+  }
+])
 const StudyList = ref([
   {
     id: 1,
@@ -87,6 +116,21 @@ const StudyList = ref([
     imgUrl: 'https://vuejs.org/images/logo.png'
   }
 ])
+
+const goStudyHome = (id) => {
+  router.push({ name: 'study', params: { id } })
+}
+const goMyStudy = () => {
+  router.push({ name: 'myStudy' })
+}
+
+const addStudy = () => {
+  router.push({ name: 'makeStudy' })
+}
+
+onMounted(() => {
+  getStudyList()
+})
 </script>
 
 <style scoped>
@@ -95,7 +139,7 @@ const StudyList = ref([
   padding: 4px;
   margin: 20px;
   overflow-y: auto;
-  max-height: 700px;
+  max-height: 650px;
 }
 .chip {
   background-color: #3fb1fa;
