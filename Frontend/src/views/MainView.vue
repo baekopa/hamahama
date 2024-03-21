@@ -2,8 +2,8 @@
 <template>
   <v-container>
     <Slider class="my-10" />
-    <StudyList class="my-10" />
-    <MyNote class="my-10" />
+    <StudyList class="pa-10 my-10" />
+    <MyNote class="pa-10 my-10" />
   </v-container>
 </template>
 
