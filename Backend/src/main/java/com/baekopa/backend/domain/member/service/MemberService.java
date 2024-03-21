@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -37,31 +39,39 @@ public class MemberService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
-    public MyInfoResponseDto updateMyInfo(Member currentMember, MyInfoReqeustDto myInfoRequestDto) throws IOException {
+    @Transactional
+    public Map<String, String> updateMyInfo(Member currentMember, MyInfoReqeustDto myInfoRequestDto) throws IOException {
 
         Member member = memberRepository.findById(currentMember.getId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, ErrorCode.MEMBER_ID_NOT_EXIST.getMessage()));
 
+        Map<String, String> result = new HashMap<>();
+
         if (myInfoRequestDto.getName() != null) {
+
             member.updateName(myInfoRequestDto.getName());
-            memberRepository.save(member);
-            return null;
+            result.put("name", myInfoRequestDto.getName());
+
+            return result;
         }
 
         if (myInfoRequestDto.getImage() != null) {
 
             MultipartFile image = myInfoRequestDto.getImage();
-
-
             String imgUrl = s3UploadService.saveFile("images", image);
 
+            // 이전 이미지 삭제
+            if (member.getImage().equals(imgUrl)) {
+                s3UploadService.deleteFile(member.getImage());
+            }
+
             member.updateImage(imgUrl);
-            memberRepository.save(member);
-            return null;
+            result.put("imageUrl", imgUrl);
+
+            return result;
         }
 
-        return null;
+        throw new BusinessException(ErrorCode.NOT_VALID_ERROR, ErrorCode.NOT_VALID_ERROR.getMessage());
 
     }
 }

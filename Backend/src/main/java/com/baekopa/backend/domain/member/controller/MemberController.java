@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 @Slf4j
 @RestController
@@ -33,7 +34,7 @@ public class MemberController {
 
     @Operation(summary = "내 정보 수정", description = "사용자의 프로필 사진, 이름을 수정합니다.")
     @PutMapping()
-    public ApiResponse updateMyInfo(@AuthenticationPrincipal Member member, @RequestBody MyInfoReqeustDto myInfoReqeustDto) throws IOException{
+    public ApiResponse updateMyInfo(@AuthenticationPrincipal Member member, @ModelAttribute MyInfoReqeustDto myInfoReqeustDto) throws IOException{
 
         log.info(" 내 정보 수정 : {}", member.getEmail());
         return ApiResponse.of(SuccessCode.UPDATE_SUCCESS, memberService.updateMyInfo(member, myInfoReqeustDto));
