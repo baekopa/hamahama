@@ -22,6 +22,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String memberId) throws UsernameNotFoundException {
 
-        return memberRepository.findById(Long.parseLong(memberId)).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, ErrorCode.MEMBER_ID_NOT_EXIST.getMessage()));
+        return memberRepository.findByIdAndDeletedAtIsNull(Long.parseLong(memberId)).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, ErrorCode.MEMBER_ID_NOT_EXIST.getMessage()));
     }
 }
