@@ -5,6 +5,11 @@ export default [
     component: () => import('@/views/StudyView.vue')
   },
   {
+    path: '/makestudy',
+    name: 'makeStudy',
+    component: () => import('@/views/MakeStudyView.vue')
+  },
+  {
     path: '/study/schedule/:id',
     name: 'studySchedule',
     component: () => import('@/components/study/StudySchedule.vue')
