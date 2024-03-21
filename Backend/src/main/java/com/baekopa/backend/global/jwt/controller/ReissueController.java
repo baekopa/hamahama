@@ -8,6 +8,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,7 @@ public class ReissueController {
         String refresh = null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh")) {
+            if (cookie.getName().equals("RefreshToken")) {
                 refresh = cookie.getValue();
             }
         }
@@ -66,10 +67,11 @@ public class ReissueController {
 
         String username = jwtUtil.getUsername(refresh);
         String role = jwtUtil.getRole(refresh);
+        String id = jwtUtil.getId(refresh);
 
         //make new JWT
-        String newAccess = jwtUtil.createJwt("access", username, role, 600000L);
-        String newRefresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+        String newAccess = jwtUtil.createJwt("access", username, role, id, 600000L);
+        String newRefresh = jwtUtil.createJwt("refresh", username, role, id, 86400000L);
 
         //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
         //todo access token들을 기억한 뒤 블랙리스트 처리를 진행하는 로직 작성해야 함
@@ -77,8 +79,8 @@ public class ReissueController {
         addRefreshEntity(username, newRefresh, 86400000L);
 
         //response
-        response.setHeader("access", newAccess);
-        response.addCookie(createCookie("refresh", newRefresh));
+        response.setHeader(HttpHeaders.AUTHORIZATION, newAccess);
+        response.addCookie(createCookie("RefreshToken", newRefresh));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

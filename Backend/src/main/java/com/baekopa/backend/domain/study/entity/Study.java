@@ -1,6 +1,6 @@
 package com.baekopa.backend.domain.study.entity;
 
-import com.baekopa.backend.global.entity.BaseEntity;
+import com.baekopa.backend.global.entity.BaseBy;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -14,12 +14,8 @@ import java.time.LocalTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE study SET deleted_at = CONVERT_TZ(NOW(), 'UTC', 'Asia/Seoul') WHERE id = ?")
-public class Study extends BaseEntity {
-
-    public enum StudyType {
-        GROUP, PERSONAL
-    }
+@SQLDelete(sql = "UPDATE study SET deleted_at = CONVERT_TZ(NOW(), 'UTC', 'Asia/Seoul') WHERE study_id = ?")
+public class Study extends BaseBy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -84,6 +80,13 @@ public class Study extends BaseEntity {
                 .startTime(startTime)
                 .endTime(endTime)
                 .build();
+    }
+
+    public void updateStudyBasicInfo(String title, String description, String backgroundImage, String category) {
+        this.title = title;
+        this.description = description;
+        this.backgroundImage = backgroundImage;
+        this.category = category;
     }
 
 }
