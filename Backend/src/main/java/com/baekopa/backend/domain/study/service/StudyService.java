@@ -1,9 +1,13 @@
 package com.baekopa.backend.domain.study.service;
 
+import com.baekopa.backend.domain.member.entity.Member;
+import com.baekopa.backend.domain.member.repository.MemberRepository;
 import com.baekopa.backend.domain.study.dto.request.CreateStudyRequestDto;
 import com.baekopa.backend.domain.study.dto.request.UpdateStudyInfoRequestDto;
 import com.baekopa.backend.domain.study.dto.response.StudyInfoResponseDto;
 import com.baekopa.backend.domain.study.entity.Study;
+import com.baekopa.backend.domain.study.entity.StudyMember;
+import com.baekopa.backend.domain.study.repository.StudyMemberRepository;
 import com.baekopa.backend.domain.study.repository.StudyRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
 import com.baekopa.backend.global.response.error.exception.BusinessException;
@@ -13,41 +17,58 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class StudyService {
 
     private final StudyRepository studyRepository;
+    private final StudyMemberRepository studyMemberRepository;
+    private final MemberRepository memberRepository;
+
     private final S3UploadService s3UploadService;
+    private final StudyMemberService studyMemberService;
 
     private static final String DEFAULT_STUDY_IMAGE = "https://p22d105s3.s3.ap-northeast-2.amazonaws.com/study_default_img.jpg";
 
     // 새로운 스터디 생성
-    public Long createNewStudy(CreateStudyRequestDto requestDto) {
+    public Long createNewStudy(CreateStudyRequestDto requestDto, Member leader) {
 
         // 이미지 업로드
         String backgroundImageUrl = uploadImage(requestDto.getBackgroundImage());
 
         // 새로운 스터디 생성
         Study study = Study.of(requestDto.getTitle(), requestDto.getDescription(), backgroundImageUrl, requestDto.getCategory(), requestDto.getStartDate(), requestDto.getEndDate(), requestDto.getDay(), requestDto.getStartTime(), requestDto.getEndTime());
-
-        // 스터디장 지정
-
-
-        // 스터디원 추가
-
-
-        // DB에 스터디 저장
         study = studyRepository.save(study);
+
+        // 스터디장 지정 및 스터디원 추가
+        studyMemberRepository.save(StudyMember.createStudyMember(study, leader, StudyMember.StudyMemberType.STUDY_LEADER));
+        addStudyMembers(study, requestDto.getMembers());
+
         return study.getId();
     }
+
+    // 스터디원 추가
+    public void addStudyMembers(Study study, List<Long> memberIds) {
+
+        List<Member> members = memberIds.stream()
+                .map((id) -> memberRepository.findByIdAndDeletedAtIsNull(id)
+                        .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, "스터디원 ID가 올바르지 않습니다."))
+                ).toList();
+
+        members.forEach(member -> {
+            studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));
+        });
+    }
+
 
     public StudyInfoResponseDto getStudyInfo(Long studyId) {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "올바르지 않은 studyId."));
 
-        return StudyInfoResponseDto.from(study);
+
+        return StudyInfoResponseDto.of(study, studyMemberService.getStudyMembers(study));
     }
 
     // 스터디 기본정보 수정
