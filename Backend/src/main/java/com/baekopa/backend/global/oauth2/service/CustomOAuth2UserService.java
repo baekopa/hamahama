@@ -29,27 +29,35 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (registrationId.equals("naver")) {
 
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
+
         } else if (registrationId.equals("google")) {
 
             oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
-        } else {
+
+        } else if (registrationId.equals("kakao")) {
+
+            oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
+
+        }
+        else {
             oAuth2Response = null;
             return null;
         }
 
+        // 유저 DB 저장
         String providerCode = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
         Member existMember = memberRepository.findByProviderCode(providerCode).orElse(null);
         MemberDTO memberDTO = new MemberDTO();
 
-        if(existMember == null) {
+        if (existMember == null) {
             existMember = newMember(oAuth2Response, providerCode);
 
             memberDTO.setProviderCode(providerCode);
+            memberDTO.setId(existMember.getId());
             memberDTO.setName(oAuth2Response.getName());
             memberDTO.setRole("ROLE_USER");
 
-        }
-        else {
+        } else {
             existMember.updateEmail(oAuth2Response.getEmail());
             existMember.updateName(oAuth2Response.getName());
             existMember.updateImage(oAuth2Response.getProfileImage());
@@ -57,6 +65,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             memberRepository.save(existMember);
 
             memberDTO.setProviderCode(existMember.getProviderCode());
+            memberDTO.setId(existMember.getId());
             memberDTO.setName(oAuth2Response.getName());
             memberDTO.setRole(existMember.getRole());
         }
@@ -71,6 +80,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .name(oAuth2Response.getName())
                 .image(oAuth2Response.getProfileImage())
                 .provider(oAuth2Response.getProvider())
+                .providerCode(providerCode)
                 .role("ROLE_USER")
                 .build();
 

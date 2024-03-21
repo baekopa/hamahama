@@ -1,6 +1,7 @@
 package com.baekopa.backend.domain.study.controller;
 
 import com.baekopa.backend.domain.study.dto.request.CreateStudyRequestDto;
+import com.baekopa.backend.domain.study.dto.request.UpdateStudyInfoRequestDto;
 import com.baekopa.backend.domain.study.dto.response.StudyInfoResponseDto;
 import com.baekopa.backend.domain.study.service.StudyService;
 import com.baekopa.backend.global.response.success.ApiResponse;
@@ -36,6 +37,13 @@ public class StudyController {
     public ApiResponse<StudyInfoResponseDto> getStudyInfo(@PathVariable(value = "study-id") Long studyId) {
 
         return ApiResponse.of(SuccessCode.STUDY_GET_SUCCESS, studyService.getStudyInfo(studyId));
+    }
+
+    // 스터디 기본 정보 수정
+    @PutMapping("/studies/{study-id}/settings")
+    public ApiResponse<StudyInfoResponseDto> updateStudyBasicInfo(@PathVariable(value = "study-id") Long studyId, @ModelAttribute UpdateStudyInfoRequestDto requestDto) {
+
+        return ApiResponse.of(SuccessCode.STUDY_UPDATE_BASIC_SUCCESS, studyService.updateStudyBasicInfo(studyId, requestDto));
     }
 
 }
