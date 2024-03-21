@@ -1,6 +1,6 @@
 package com.baekopa.backend.domain.member.entity;
 
-import com.baekopa.backend.global.entity.BaseEntity;
+import com.baekopa.backend.global.entity.BaseTime;
 import com.baekopa.backend.global.oauth2.dto.OAuthProvider;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -17,7 +17,7 @@ import java.util.Collection;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE member SET deleted_at = CONVERT_TZ(NOW(), 'UTC', 'Asia/Seoul') WHERE member_id = ?")
-public class Member extends BaseEntity implements UserDetails {
+public class Member extends BaseTime implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

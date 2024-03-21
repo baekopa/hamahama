@@ -1,6 +1,6 @@
 package com.baekopa.backend.domain.study.entity;
 
-import com.baekopa.backend.global.entity.BaseEntity;
+import com.baekopa.backend.global.entity.BaseBy;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,7 +15,7 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE study SET deleted_at = CONVERT_TZ(NOW(), 'UTC', 'Asia/Seoul') WHERE id = ?")
-public class Study extends BaseEntity {
+public class Study extends BaseBy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
