@@ -6,10 +6,10 @@
         src="@/assets/image/logo.png"
         alt="LOGO"
         width="50px"
-        class="align-center cursor-pointer"
+        class="logo align-center cursor-pointer"
       />
 
-      <div class="d-flex align-center">
+      <div class="start d-flex align-center">
         <v-btn @click="goMakeStudy" id="study-btn" class="mr-10" rounded="l">
           <img class="mx-2" src="../icons/nav/homePlus.svg" alt="" /><span class="mr-2"
             >스터디 생성</span
@@ -72,5 +72,12 @@ const goMakeStudy = () => {
   height: 40px;
   color: white;
   background: linear-gradient(to right, rgba(63, 177, 250, 1), rgba(5, 212, 192, 1));
+}
+
+.logo {
+  margin-left: 220px;
+}
+.start {
+  margin-right: 220px;
 }
 </style>

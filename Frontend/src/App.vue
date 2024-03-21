@@ -22,7 +22,7 @@ const auth = useAuthStore()
 <style>
 ::-webkit-scrollbar {
   border-radius: 30px;
-  width: 8px;
+  width: 1px;
 }
 
 ::-webkit-scrollbar-track {
