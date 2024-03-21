@@ -7,10 +7,12 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
-const REDIRECT_URI = 'http://localhost:5173/auth/kakao'
+
+const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URL
+
 const KakaoLogin = () => {
   Kakao.Auth.authorize({
-    redirectUri : `${REDIRECT_URI}`
+    redirectUri : `${REDIRECT_URI}/auth/kakao`
 
   })
   // const REDIRECT_URI = 'http://localhost:8080/auth/kakao'

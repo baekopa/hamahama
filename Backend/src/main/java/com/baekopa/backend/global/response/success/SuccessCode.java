@@ -40,7 +40,9 @@ public enum SuccessCode {
     CHECK_MEMBER_OF_JWT(200, "JWT토큰의 멤버 정보조회에 성공했습니다."),
 
     // Study
-    CREATE_NEW_STUDY(201, "새로운 스터디 생성에 성공했습니다."),
+    STUDY_CREATE_SUCCESS(201, "새로운 스터디 생성에 성공했습니다."),
+    STUDY_GET_SUCCESS(200, "스터디 조회에 성공하였습니다."),
+    STUDY_UPDATE_BASIC_SUCCESS(204, "스터디 기본정보 수정에 성공했습니다"),
 
     ; // End
 

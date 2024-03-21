@@ -1,13 +1,12 @@
 <template>
-  <v-container>
+  <v-container class="mypage">
     <v-card>
       <v-layout>
         <v-navigation-drawer floating permanent>
-          <p class="text-h5 text-center mt-4">마이페이지</p>
+          <p class="text-h5 text-center mt-10">마이페이지</p>
           <v-list density="compact" nav>
             <v-list-item three-line>
               <v-list-item-avatar class="d-flex justify-center align-center">
-                <!-- 아바타 크기를 100으로 설정 -->
                 <img
                   src="https://randomuser.me/api/portraits/men/85.jpg"
                   alt="Profile"
@@ -52,7 +51,11 @@
             ></v-list-item>
           </v-list>
         </v-navigation-drawer>
-        <v-main style="min-height: 800px"> <component :is="selectedComponent"></component></v-main>
+        <!-- 세로줄 -->
+        <v-divider vertical></v-divider>
+        <v-main class="mt-10" style="min-height: 800px">
+          <component :is="selectedComponent"></component
+        ></v-main>
       </v-layout>
     </v-card>
   </v-container>
@@ -87,4 +90,30 @@ export default {
 // 여기서 모든 정보(스케쥴,요약) 요청을 할까?? 어떻게 할까 모르겠다
 </script>
 
-<style scoped></style>
+<style>
+.mypage {
+  height: 800px;
+}
+.study-select {
+  margin-top: 50px;
+}
+
+::-webkit-scrollbar {
+  border-radius: 30px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: white;
+  border-radius: 30px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #a5b4fc;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #818cf8;
+}
+</style>
