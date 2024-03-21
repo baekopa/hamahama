@@ -6,11 +6,10 @@
         src="@/assets/image/logo.png"
         alt="LOGO"
         width="50px"
-        class="align-center"
+        class="logo align-center"
       />
 
-      <div class="d-flex align-center">
-        <div style="width: 40px" class="mr-10"></div>
+      <div class="start d-flex align-center">
         <p @click="goLogin">시작하기</p>
       </div>
     </v-row>
@@ -33,4 +32,11 @@ const goHome = () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.logo {
+  margin-left: 220px;
+}
+.start {
+  margin-right: 220px;
+}
+</style>
