@@ -1,4 +1,4 @@
-package com.baekopa.backend.domain.member.entity.dto.response;
+package com.baekopa.backend.domain.member.dto.response;
 
 import com.baekopa.backend.domain.member.entity.Member;
 import lombok.Builder;
