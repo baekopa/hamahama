@@ -31,12 +31,7 @@ public class MemberService {
         Member member = memberRepository.findById(currentMember.getId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, ErrorCode.MEMBER_ID_NOT_EXIST.getMessage()));
 
-        return MyInfoResponseDto.builder()
-                .name(member.getName())
-                .email(member.getEmail())
-                .image_url(member.getImage())
-                .provider(member.getProvider())
-                .build();
+        return MyInfoResponseDto.of(member.getName(), member.getEmail(), member.getImage(), member.getProvider());
     }
 
     @Transactional
