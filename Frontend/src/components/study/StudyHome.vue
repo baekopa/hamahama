@@ -7,7 +7,6 @@
       <h1>다음 스터디 일정</h1>
       <p>스터디까지 남은 시간 </p>
       <v-row>
-        <!-- 이미지 컴포넌트를 위한 컬럼 -->
         <v-col cols="5">
           <v-img :width="300" aspect-ratio="16/9" :src="mainImage" cover></v-img>
         </v-col>
@@ -56,7 +55,7 @@
 <style>
 .gradient-btn {
   background: linear-gradient(to right, rgb(19, 143, 214), rgb(3, 240, 229));
-  color: white; /* 텍스트 색상을 흰색으로 설정 */
+  color: white;
 }
 </style>
 
@@ -161,7 +160,7 @@
     formData.append("file", audioBlob, "recording.wav");
     console.log("트라이 직전")
     console.log(formData)
-    // FastAPI 서버로 오디오 파일 전송
+    // FastAPI 서버로 오디오 파일 전송 
     try {
       console.log("post 간다!");
       const response = await axios.post("http://localhost:8000/", formData, {
