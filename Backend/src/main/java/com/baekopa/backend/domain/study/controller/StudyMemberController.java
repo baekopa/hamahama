@@ -1,7 +1,7 @@
 package com.baekopa.backend.domain.study.controller;
 
 import com.baekopa.backend.domain.member.entity.Member;
-import com.baekopa.backend.domain.member.entity.dto.response.MemberResponseDto;
+import com.baekopa.backend.domain.member.dto.response.MemberResponseDto;
 import com.baekopa.backend.domain.study.service.StudyMemberService;
 import com.baekopa.backend.global.response.success.ApiResponse;
 import com.baekopa.backend.global.response.success.SuccessCode;
