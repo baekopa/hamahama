@@ -1,19 +1,24 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
+import torch
 import whisper
-from concurrent.futures import ThreadPoolExecutor
-import asyncio
-import shutil
-import os
+from whisper import load_model
+from pyannote.audio import Pipeline
+# import soundfile as sf
 from tempfile import NamedTemporaryFile
+from fastapi.middleware.cors import CORSMiddleware
 import logging
-import requests
+import ffmpeg
+import re
+from pydub import AudioSegment
+import subprocess
+
+token = "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"
+
+app = FastAPI()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-app = FastAPI()
 
 # CORS 미들웨어 추가
 app.add_middleware(
@@ -24,62 +29,118 @@ app.add_middleware(
     allow_headers=["*"],  # 모든 HTTP 헤더 허용
 )
 
-# 모델 로드는 애플리케이션 시작 시 한 번만 수행
-model = whisper.load_model("medium")
+# 설정: 장치, 모델 및 파이프라인 초기화
+print(torch.cuda.is_available())
+device = "cuda" if torch.cuda.is_available() else "cpu"
+whisper_model = load_model("large", device=device)
 
-# ThreadPoolExecutor 인스턴스 생성
-executor = ThreadPoolExecutor(max_workers=1)
+try:
+    logger.error("파이프리인 생선 전")
+    diarization_pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token=token)
+    logger.error("파이프리인 생선 후")
+except Exception as e:
+    logger.error(f"파이프라인 초기화 중 오류 발생: {e}")
+
+def convert_audio_ffmpeg(input_path, output_path, sample_rate=16000):
+    ffmpeg.input(input_path).output(output_path, ar=sample_rate, ac=1).run()
+
+def millisec(timeStr):
+  spl = timeStr.split(":")
+  s = (int)((int(spl[0]) * 60 * 60 + int(spl[1]) * 60 + float(spl[2]) )* 1000)
+  return s
 
 
-@app.post("/transcribe/")
+@app.post("/transcribe")
 async def transcribe_audio(file: UploadFile = File(...)):
-    logger.info("Transcription request received")
-    try:
-        # 임시 파일 생성 및 저장
-        with NamedTemporaryFile(delete=False) as tmp_file:
-            shutil.copyfileobj(file.file, tmp_file)
-            tmp_file_path = tmp_file.name
-        logger.info(f"Temporary file saved at {tmp_file_path}")
+    if not file.filename.endswith('.wav'):
+        raise HTTPException(status_code=400, detail="Only WAV files are supported.")
+    
+    # 임시 파일에 오디오 저장
+    with NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
+        content = await file.read()
+        tmp.write(content)
+        tmp_filename = tmp.name
 
-        # 오디오 파일 로드 및 처리를 위한 비동기 함수 호출
-        result = await asyncio.get_event_loop().run_in_executor(executor, process_audio, tmp_file_path)
+    # ffmpeg로 wav 변환
+    converted_filename = tmp_filename.replace(".wav", "_converted.wav")
+    convert_audio_ffmpeg(tmp_filename, converted_filename)
+    
+    # 화자 분할
+    diarization = diarization_pipeline(converted_filename)
+    
+    with open("diarization.txt", "w") as text_file:
+        text_file.write(str(diarization))
+
+    print(*list(diarization.itertracks(yield_label = True))[:10], sep="\n")
+
+    dzs = open('diarization.txt').read().splitlines()
+
+    groups = []
+    g = []
+    lastend = 0
+
+    for d in dzs:   
+        if g and (g[0].split()[-1] != d.split()[-1]):      #same speaker
+            groups.append(g)
+            g = []
+    
+        g.append(d)
+    
+        end = re.findall('[0-9]+:[0-9]+:[0-9]+\.[0-9]+', string=d)[1]
+        end = millisec(end)
+        if (lastend > end):       #segment engulfed by a previous segment
+            groups.append(g)
+            g = [] 
+        else:
+            lastend = end
+
+    if g:
+        groups.append(g)
+
+    print(*groups, sep='\n')
+    
+    audio = AudioSegment.from_wav(converted_filename)
+
+    speaker = []
+    gidx = -1
+    for g in groups:
+        print("g 값 : ", g)
+        print("발화자 번호", g[-1][-1])
+        speaker.append(g[-1][-1])
+        start = re.findall('[0-9]+:[0-9]+:[0-9]+\.[0-9]+', string=g[0])[0]
+        end = re.findall('[0-9]+:[0-9]+:[0-9]+\.[0-9]+', string=g[-1])[1]
+        start = millisec(start) #- spacermilli
+        end = millisec(end)  #- spacermilli
+        print("start, end :", start, end)
+        gidx += 1
+        audio[start:end].export(str(gidx) + '.wav', format='wav')
+    
+    print(speaker)
+    for i in range(gidx+1):
+        # 오디오 파일 이름 구성
+        audio_file = f"{i}.wav"
+        
+        # Whisper 명령 구성
+        whisper_command = [
+            "whisper", 
+            audio_file, 
+            "--language", "ko", 
+            "--model", "large"
+        ]
+        
+        # Whisper 명령 실행
+        result = subprocess.run(whisper_command, capture_output=True, text=True, encoding='utf-8')
+        
         print(result)
-        logger.info("Transcription completed successfully")
+        # 결과 출력
+        print(speaker[i]," : ", result.stdout)
 
-        send_to_spring_boot(result)
-        # 결과 반환
-        return JSONResponse(content={"detected_language": result['language'], "text": result['text']})
+        # 에러 메시지가 있는 경우 출력
+        if result.stderr:
+            print(result.stderr)
 
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        raise HTTPException(status_code=500, detail="An error occurred during transcription.")
+    return 
 
-    finally:
-        # 임시 파일이 생성되었다면 삭제
-        if tmp_file_path and os.path.exists(tmp_file_path):
-            os.remove(tmp_file_path)
-
-
-def process_audio(tmp_file_path):
-    # 오디오 파일 로드
-    audio = whisper.load_audio(tmp_file_path)
-    audio = whisper.pad_or_trim(audio)  # 오디오를 패딩하거나 잘라서 모델에 맞는 길이로 조정
-
-    # log-Mel 스펙트로그램 생성 및 모델이 있는 같은 디바이스로 이동
-    mel = whisper.log_mel_spectrogram(audio).to(model.device)
-
-    # 말하는 언어 감지 및 텍스트 디코드
-    _, probs = model.detect_language(mel)
-    detected_language = max(probs, key=probs.get)
-    options = whisper.DecodingOptions(temperature=0.2)
-    result = whisper.decode(model, mel, options)
-
-    return {"language": detected_language, "text": result.text}
-
-def send_to_spring_boot(result):
-    url = 'http://localhost:8080/audio'  # Spring Boot 애플리케이션 URL
-    response = requests.post(url, json=result)
-    if response.status_code == 200:
-        print("데이터가 성공적으로 Spring Boot 서버에 저장되었습니다.")
-    else:
-        print("오류가 발생했습니다:", response.status_code)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
