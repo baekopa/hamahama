@@ -13,7 +13,7 @@ import re
 from pydub import AudioSegment
 import subprocess
 
-token = "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"
+token = "[My_token]"
 
 app = FastAPI()
 
