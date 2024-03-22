@@ -28,7 +28,7 @@ public class NoteController {
 
     @Operation(summary = "새 노트 생성", description = "공부하마 페이지를 통해 노트 생성")
     @PostMapping("new")
-    public ApiResponse<?> createNewNote(@AuthenticationPrincipal Member member, @RequestBody CreateNoteRequestDto requestDto) {
+    public ApiResponse<Map<String, Long>> createNewNote(@AuthenticationPrincipal Member member, @RequestBody CreateNoteRequestDto requestDto) {
 
         log.info("새 노트 생성 : {}", requestDto.getTitle());
         Map<String, Long> result = new HashMap<>();
