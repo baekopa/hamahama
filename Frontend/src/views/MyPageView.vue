@@ -1,63 +1,75 @@
 <template>
   <v-container class="mypage">
-    <v-card>
-      <v-layout>
-        <v-navigation-drawer floating permanent>
-          <p class="text-h5 text-center mt-10">마이페이지</p>
-          <v-list density="compact" nav>
-            <v-list-item three-line>
-              <v-list-item-avatar class="d-flex justify-center align-center">
-                <img
-                  src="https://randomuser.me/api/portraits/men/85.jpg"
-                  alt="Profile"
-                  class="rounded-circle"
-                  style="height: 200px; width: 200px"
-                />
-                <!-- 이미지 스타일 직접 조정 -->
-              </v-list-item-avatar>
-              <v-list-item-content class="align-self-center">
-                <v-list-item-title class="text-center text-h6 mt-5">백오파</v-list-item-title>
-                <v-list-item-subtitle class="text-center mt-1"
-                  >backopa@example.com</v-list-item-subtitle
-                >
-              </v-list-item-content>
-            </v-list-item>
+    <v-layout>
+      <v-navigation-drawer style="width: 323px; height: 960px">
+        <p class="text-h5 text-center mt-10">마이페이지</p>
+        <v-list lines="two" density="compact" nav>
+          <v-list-item three-line>
+            <v-list-item-avatar class="d-flex justify-center align-center">
+              <img
+                src="https://randomuser.me/api/portraits/men/85.jpg"
+                alt="Profile"
+                class="rounded-circle"
+                style="height: 212px; width: 212px"
+              />
+            </v-list-item-avatar>
+            <v-list-item-content class="align-self-center">
+              <v-list-item-title class="text-center text-h6 mt-5">백오파</v-list-item-title>
+              <v-list-item-subtitle class="text-center mt-1"
+                >backopa@example.com</v-list-item-subtitle
+              >
+            </v-list-item-content>
+          </v-list-item>
 
+          <div class="">
             <v-list-item
               @click="selectedComponent = 'DashBoard'"
               prepend-icon="mdi-view-dashboard"
               title="대시보드"
               value="dashboard"
+              color="primary"
+              rounded="xl"
             ></v-list-item>
             <v-list-item
               @click="selectedComponent = 'Study'"
-              prepend-icon="mdi-view-dashboard"
+              prepend-icon="mdi-account-group"
               title="같이하마"
+              value="study"
+              color="primary"
+              rounded="xl"
             ></v-list-item>
             <v-list-item
               @click="selectedComponent = 'MyStudy'"
-              prepend-icon="mdi-view-dashboard"
+              prepend-icon="mdi-square-edit-outline"
               title="공부하마"
+              value="mystudy"
+              color="primary"
+              rounded="xl"
             ></v-list-item>
             <v-list-item
               @click="selectedComponent = 'RemindQuiz'"
-              prepend-icon="mdi-forum"
+              prepend-icon="mdi-help-box"
               title="리마인드 퀴즈"
+              value="quiz"
+              color="primary"
             ></v-list-item>
             <v-list-item
               @click="selectedComponent = 'MyInfo'"
-              prepend-icon="mdi-forum"
+              prepend-icon="mdi-account-key"
               title="내 정보"
+              value="myinfo"
+              color="primary"
+              rounded="xl"
             ></v-list-item>
-          </v-list>
-        </v-navigation-drawer>
-        <!-- 세로줄 -->
-        <v-divider vertical></v-divider>
-        <v-main class="mt-10" style="min-height: 800px">
-          <component :is="selectedComponent"></component
-        ></v-main>
-      </v-layout>
-    </v-card>
+          </div>
+        </v-list>
+      </v-navigation-drawer>
+      <!-- 세로줄 -->
+      <v-divider style="height: 900px" class="mr-10" vertical></v-divider>
+      <v-main class="ml-10 mt-5" style="min-height: 800px; max-height: 900px">
+        <component :is="selectedComponent"></component
+      ></v-main>
+    </v-layout>
   </v-container>
 </template>
 
@@ -91,9 +103,6 @@ export default {
 </script>
 
 <style>
-.mypage {
-  height: 800px;
-}
 .study-select {
   margin-top: 50px;
 }
