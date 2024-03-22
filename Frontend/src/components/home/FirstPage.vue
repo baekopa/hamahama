@@ -45,10 +45,10 @@ const goLogin = function () {
   transform: translate(-50%, -50%) rotate(-60deg);
   width: 60%; /* 타원의 너비 조정 */
   height: 70%; /* 타원의 높이 조정 */
-  background-color: #3fb1fa; /* 배경색과 투명도 조정 */
+  background-color: rgba(63, 177, 250, 0.6); /* 배경색과 투명도 조정 */
   opacity: 24%;
   border-radius: 60%;
-  z-index: -1;
+  z-index: 1;
 }
 
 .v-col {
