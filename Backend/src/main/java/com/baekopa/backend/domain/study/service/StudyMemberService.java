@@ -1,6 +1,6 @@
 package com.baekopa.backend.domain.study.service;
 
-import com.baekopa.backend.domain.member.entity.dto.response.MemberResponseDto;
+import com.baekopa.backend.domain.member.dto.response.MemberResponseDto;
 import com.baekopa.backend.domain.member.repository.MemberRepository;
 import com.baekopa.backend.domain.study.dto.StudyMemberDto;
 import com.baekopa.backend.domain.study.entity.Study;
