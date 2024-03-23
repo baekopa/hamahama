@@ -1,10 +1,15 @@
 package com.baekopa.backend.domain.study.service;
 
 import com.baekopa.backend.domain.member.dto.response.MemberResponseDto;
+import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.member.repository.MemberRepository;
 import com.baekopa.backend.domain.study.dto.StudyMemberDto;
 import com.baekopa.backend.domain.study.entity.Study;
+import com.baekopa.backend.domain.study.entity.StudyMember;
 import com.baekopa.backend.domain.study.repository.StudyMemberRepository;
+import com.baekopa.backend.domain.study.repository.StudyRepository;
+import com.baekopa.backend.global.response.error.ErrorCode;
+import com.baekopa.backend.global.response.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +23,7 @@ public class StudyMemberService {
 
     private final StudyMemberRepository studyMemberRepository;
     private final MemberRepository memberRepository;
+    private final StudyRepository studyRepository;
 
     // 전체 멤버(사용자) 리스트 조회
     @Transactional(readOnly = true)
@@ -36,4 +42,27 @@ public class StudyMemberService {
 
         return memberRepository.findAllByEmailContainsAndDeletedAtIsNull(query).stream().map(MemberResponseDto::from).toList();
     }
+
+    // 스터디 멤버 초대 - 한 명
+    public void inviteStudyMember(Long studyId, Long memberId) {
+
+        Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, "초대 대상 ID가 올바르지 않습니다."));
+        Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "올바르지 않은 studyId."));
+
+        studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));
+    }
+
+    // 스터디 멤버 초대 - 여러 명
+    public void inviteStudyMembers(Study study, List<Long> memberIds) {
+
+        List<Member> members = memberIds.stream()
+                .map((id) -> memberRepository.findByIdAndDeletedAtIsNull(id)
+                        .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, "스터디원 ID가 올바르지 않습니다."))
+                ).toList();
+
+        members.forEach(member -> {
+            studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));
+        });
+    }
+
 }

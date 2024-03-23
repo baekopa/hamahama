@@ -43,6 +43,7 @@ public enum SuccessCode {
     STUDY_GET_SUCCESS(200, "스터디 조회에 성공하였습니다."),
     STUDY_MEMBER_GET_SUCCESS(200, "스터디원 조회에 성공하였습니다."),
     STUDY_CREATE_SUCCESS(201, "새로운 스터디 생성에 성공했습니다."),
+    STUDY_MEMBER_INVITE_SUCCESS(201, "스터디원 초대에 성공했습니다"),
     STUDY_UPDATE_BASIC_SUCCESS(204, "스터디 기본정보 수정에 성공했습니다"),
 
     ; // End
