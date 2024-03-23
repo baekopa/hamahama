@@ -32,12 +32,21 @@ public class StudyMemberController {
         return ApiResponse.of(SuccessCode.STUDY_MEMBER_GET_SUCCESS, studyMemberService.getStudyMembers(studyId));
     }
 
-    @Operation(summary = "스터디원 초대", description = "새로운 스터디원을 초대 요청을 보냅니다.")
+    @Operation(summary = "스터디원 초대", description = "새로운 스터디원을 초대 요청을 보냅니다. (memberId만 필수)")
     @PostMapping("/studies/{study-id}/members")
     public ApiResponse<Void> inviteStudyMember(@PathVariable(value = "study-id") Long studyId, @RequestBody StudyMemberDto studyMember, @AuthenticationPrincipal Member member) {
         studyMemberService.inviteStudyMember(studyId, studyMember.getMemberId());
 
         return ApiResponse.of(SuccessCode.STUDY_MEMBER_INVITE_SUCCESS);
+    }
+
+    @Operation(summary = "스터디 초대 승낙", description = "초대 승낙으로 새로운 스터디에 참여합니다.")
+    @PutMapping("/members/me/invitations/{invitation-id}")
+    public ApiResponse<Void> joinStudy(@PathVariable(value = "invitation-id") Long invitationId, @AuthenticationPrincipal Member member) {
+
+        studyMemberService.joinStudy(invitationId, member);
+
+        return ApiResponse.of(SuccessCode.STUDY_MEMBER_JOIN_UPDATE_SUCCESS);
     }
 
 }
