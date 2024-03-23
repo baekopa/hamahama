@@ -28,8 +28,16 @@ public class StudyMemberController {
 
     @Operation(summary = "스터디원 조회", description = "스터디에 속한 멤버를 조회합니다.")
     @GetMapping("/studies/{study-id}/members")
-    public ApiResponse<List<StudyMemberDto>> getStudyMembers(@PathVariable(value = "study-id") Long studyId) {
+    public ApiResponse<List<StudyMemberDto>> getStudyMembers(@PathVariable(value = "study-id") Long studyId, @AuthenticationPrincipal Member member) {
         return ApiResponse.of(SuccessCode.STUDY_MEMBER_GET_SUCCESS, studyMemberService.getStudyMembers(studyId));
+    }
+
+    @Operation(summary = "스터디원 초대", description = "새로운 스터디원을 초대 요청을 보냅니다.")
+    @PostMapping("/studies/{study-id}/members")
+    public ApiResponse<Void> inviteStudyMember(@PathVariable(value = "study-id") Long studyId, @RequestBody StudyMemberDto studyMember, @AuthenticationPrincipal Member member) {
+        studyMemberService.inviteStudyMember(studyId, studyMember.getMemberId());
+
+        return ApiResponse.of(SuccessCode.STUDY_MEMBER_INVITE_SUCCESS);
     }
 
 }
