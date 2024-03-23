@@ -22,8 +22,12 @@ public class StudyMemberService {
     // 전체 멤버(사용자) 리스트 조회
     @Transactional(readOnly = true)
     public List<StudyMemberDto> getStudyMembers(Study study) {
-
         return studyMemberRepository.findAllByStudyAndDeletedAtIsNull(study).stream().map((sm) -> StudyMemberDto.of(sm.getMember(), sm.getType())).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<StudyMemberDto> getStudyMembers(Long studyId) {
+        return studyMemberRepository.findMemberAndTypeAllByStudyIdAndDeletedAtIsNull(studyId).stream().map((sm) -> StudyMemberDto.of(sm.getMember(), sm.getType())).toList();
     }
 
     // 스터디 소속 멤버 조회

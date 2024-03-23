@@ -9,4 +9,6 @@ import java.util.List;
 public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> {
 
     List<StudyMember> findAllByStudyAndDeletedAtIsNull(Study study);
+
+    List<StudyMember> findMemberAndTypeAllByStudyIdAndDeletedAtIsNull(Long studyId);
 }
