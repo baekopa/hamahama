@@ -75,14 +75,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private Member newMember(OAuth2Response oAuth2Response, String providerCode) {
 
-        Member member = Member.builder()
-                .email(oAuth2Response.getEmail())
-                .name(oAuth2Response.getName())
-                .image(oAuth2Response.getProfileImage())
-                .provider(oAuth2Response.getProvider())
-                .providerCode(providerCode)
-                .role("ROLE_USER")
-                .build();
+        Member member = Member.of(oAuth2Response.getName(), providerCode, oAuth2Response.getEmail(), oAuth2Response.getProfileImage(), "ROLE_USER", oAuth2Response.getProvider());
 
         return memberRepository.save(member);
     }

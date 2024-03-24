@@ -12,6 +12,7 @@ import com.baekopa.backend.domain.study.repository.StudyRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
 import com.baekopa.backend.global.response.error.exception.BusinessException;
 import com.baekopa.backend.global.service.S3UploadService;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class StudyService {
 
@@ -63,10 +65,10 @@ public class StudyService {
     }
 
 
+    @Transactional(readOnly = true)
     public StudyInfoResponseDto getStudyInfo(Long studyId) {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "올바르지 않은 studyId."));
-
 
         return StudyInfoResponseDto.of(study, studyMemberService.getStudyMembers(study));
     }
@@ -86,7 +88,6 @@ public class StudyService {
 
         // 변경 사항 저장
         study.updateStudyBasicInfo(requestDto.getTitle(), requestDto.getDescription(), newImageUrl, requestDto.getCategory());
-        study = studyRepository.save(study);
 
         return StudyInfoResponseDto.from(study);
     }
