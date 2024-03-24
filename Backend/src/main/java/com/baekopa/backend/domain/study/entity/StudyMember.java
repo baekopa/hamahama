@@ -12,7 +12,7 @@ import org.hibernate.annotations.SQLDelete;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE study_member SET deleted_at = CONVERT_TZ(NOW(), 'UTC', 'Asia/Seoul') WHERE study_member_id = ?")
+@SQLDelete(sql = "UPDATE study_member SET deleted_at = NOW() WHERE study_member_id = ?")
 public class StudyMember extends BaseBy {
 
     public enum StudyMemberType {
