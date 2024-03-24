@@ -67,7 +67,7 @@ public class StudyMemberService {
 
     // 스터디 초대 승낙
     public void joinStudy(Long invitationId, Member member) {
-        
+
         StudyMember studyMember = studyMemberRepository.findByIdAndDeletedAtIsNull(invitationId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_NOT_EXIST, "올바르지 않은 스터디 초대 요청입니다."));
 
         // 본인만 승낙 가능
@@ -77,5 +77,29 @@ public class StudyMemberService {
 
         studyMember.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_MEMBER);
     }
-    
+
+    // 스터디 초대 거절
+    public void rejectStudyInvitation(Long invitationId, Member member) {
+
+        StudyMember studyMember = studyMemberRepository.findByIdAndDeletedAtIsNull(invitationId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_NOT_EXIST, "올바르지 않은 스터디 초대 요청입니다."));
+
+        // 본인만 거절 가능
+        if (!studyMember.getMember().getId().equals(member.getId())) {
+            throw new BusinessException(ErrorCode.STUDY_MEMBER_NOT_EXIST, "스터디 초대 대상이 아닌 유저입니다.");
+        }
+
+        studyMemberRepository.delete(studyMember);
+    }
+
+    // 스터디 초대 취소
+    public void deleteStudyInvitation(Long studyId, Long invitationId, Member member) {
+
+        StudyMember studyMember = studyMemberRepository.findByIdAndDeletedAtIsNull(invitationId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_NOT_EXIST, "올바르지 않은 스터디 초대 요청입니다."));
+
+        // member가 스터디장인지 확인
+        studyMemberRepository.findByStudyAndMemberAndTypeAndDeletedAtIsNull(studyMember.getStudy(), member, StudyMember.StudyMemberType.STUDY_LEADER)
+                                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_fORBIDDEN_ERROR, "스터디장만 보낼 수 있는 요청입니다"));
+
+        studyMemberRepository.delete(studyMember);
+    }
 }

@@ -1,5 +1,6 @@
 package com.baekopa.backend.domain.study.repository;
 
+import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.domain.study.entity.StudyMember;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,6 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
     List<StudyMember> findMemberAndTypeAllByStudyIdAndDeletedAtIsNull(Long studyId);
 
     Optional<StudyMember> findByIdAndDeletedAtIsNull(Long id);
+
+    Optional<StudyMember> findByStudyAndMemberAndTypeAndDeletedAtIsNull(Study study, Member member, StudyMember.StudyMemberType type);
 }
