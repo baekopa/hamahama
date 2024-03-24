@@ -17,4 +17,6 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
     Optional<StudyMember> findByIdAndDeletedAtIsNull(Long id);
 
     Optional<StudyMember> findByStudyAndMemberAndTypeAndDeletedAtIsNull(Study study, Member member, StudyMember.StudyMemberType type);
+
+    Optional<StudyMember> findByStudyIdAndMemberIdAndDeletedAtIsNull(Long studyId, Long memberId);
 }

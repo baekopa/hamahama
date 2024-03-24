@@ -48,6 +48,7 @@ public enum SuccessCode {
     STUDY_MEMBER_JOIN_UPDATE_SUCCESS(204, "스터디 초대 승낙에 성공했습니다."),
     STUDY_MEMBER_JOIN_DELETE_SUCCESS(204, "스터디 초대 거절에 성공했습니다"),
     STUDY_MEMBER_INVITATION_DELETE_SUCCESS(204, "스터디 초대 취소에 성공했습니다"),
+    STUDY_LEADER_UPDATE_SUCCESS(204, "스터디장 변경에 성공했습니다"),
 
     ; // End
 
