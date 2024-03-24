@@ -116,4 +116,29 @@ public class StudyMemberService {
         curLeader.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_MEMBER);
 
     }
+
+    // 스터디 나가기
+    public void deleteStudyMember(Long studyId, Member member) {
+
+        StudyMember studyMember = studyMemberRepository.findByStudyIdAndMemberIdAndDeletedAtIsNull(studyId, member.getId()).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_NOT_EXIST, "올바르지 않은 스터디원 정보입니다."));
+
+        // 스터디장은 권한 위임 후 나가기 가능
+        if (studyMember.getType().equals(StudyMember.StudyMemberType.STUDY_LEADER)) {
+            throw new BusinessException(ErrorCode.STUDY_MEMBER_NOT_EXIST, "스터디장 권한 위임 후 스터디를 나갈 수 있습니다.");
+        }
+
+        studyMemberRepository.delete(studyMember);
+    }
+
+    // 스터디에서 강퇴
+    public void deleteStudyMember(Long studyId, Long memberId, Member leader) {
+
+        StudyMember studyMember = studyMemberRepository.findByStudyIdAndMemberIdAndDeletedAtIsNull(studyId, memberId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_NOT_EXIST, "올바르지 않은 스터디원 정보입니다."));
+
+        // member가 스터디장인지 확인
+        studyMemberRepository.findByStudyAndMemberAndTypeAndDeletedAtIsNull(studyMember.getStudy(), leader, StudyMember.StudyMemberType.STUDY_LEADER)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_fORBIDDEN_ERROR, "스터디장만 보낼 수 있는 요청입니다"));
+
+        studyMemberRepository.delete(studyMember);
+    }
 }

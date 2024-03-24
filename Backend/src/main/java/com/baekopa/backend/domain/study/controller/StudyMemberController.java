@@ -76,5 +76,22 @@ public class StudyMemberController {
         return ApiResponse.of(SuccessCode.STUDY_LEADER_UPDATE_SUCCESS);
     }
 
+    @Operation(summary = "스터디 나가기", description = "스터디에서 나가기")
+    @DeleteMapping("/studies/{study-id}/members/me")
+    public ApiResponse<Void> deleteStudyMember(@PathVariable(value = "study-id") Long studyId, @AuthenticationPrincipal Member member) {
+
+        studyMemberService.deleteStudyMember(studyId, member);
+
+        return ApiResponse.of(SuccessCode.STUDY_MEMBER_DELETE_SELF_SUCCESS);
+    }
+
+    @Operation(summary = "스터디에서 강퇴하기", description = "스터디에서 강퇴하기")
+    @DeleteMapping("/studies/{study-id}/members/{member-id}")
+    public ApiResponse<Void> deleteStudyMember(@PathVariable(value = "study-id") Long studyId, @PathVariable(value = "member-id") Long memberId, @AuthenticationPrincipal Member member) {
+
+        studyMemberService.deleteStudyMember(studyId, memberId, member);
+
+        return ApiResponse.of(SuccessCode.STUDY_MEMBER_DELETE_SUCCESS);
+    }
 
 }
