@@ -102,4 +102,18 @@ public class StudyMemberService {
 
         studyMemberRepository.delete(studyMember);
     }
+
+    // 스터디장 위임
+    public void updateStudyLeader(Long studyId, StudyMemberDto requestDto, Member member) {
+
+        StudyMember newLeader = studyMemberRepository.findByStudyIdAndMemberIdAndDeletedAtIsNull(studyId, requestDto.getMemberId()).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_NOT_EXIST, "올바르지 않은 스터디원 정보입니다."));
+
+        // member가 스터디장인지 확인
+        StudyMember curLeader = studyMemberRepository.findByStudyAndMemberAndTypeAndDeletedAtIsNull(newLeader.getStudy(), member, StudyMember.StudyMemberType.STUDY_LEADER)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_fORBIDDEN_ERROR, "스터디장만 보낼 수 있는 요청입니다"));
+
+        newLeader.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_LEADER);
+        curLeader.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_MEMBER);
+
+    }
 }

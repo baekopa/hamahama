@@ -67,5 +67,14 @@ public class StudyMemberController {
         return ApiResponse.of(SuccessCode.STUDY_MEMBER_INVITATION_DELETE_SUCCESS);
     }
 
+    @Operation(summary = "스터디장 변경", description = "스터디장의 권한을 위임합니다. (memberId만 필수)")
+    @PutMapping("/studies/{study-id}/leader")
+    public ApiResponse<Void> updateStudyLeader(@PathVariable(value = "study-id") Long studyId, @RequestBody StudyMemberDto studyMember, @AuthenticationPrincipal Member member) {
+
+        studyMemberService.updateStudyLeader(studyId, studyMember, member);
+
+        return ApiResponse.of(SuccessCode.STUDY_LEADER_UPDATE_SUCCESS);
+    }
+
 
 }
