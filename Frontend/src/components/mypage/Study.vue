@@ -1,27 +1,44 @@
 <template>
-  <v-container class="">
+  <v-container>
     <span class="title text-h6">참여중인 스터디</span>
     <!-- <v-chip class="chip" variant="flat"> 전체 </v-chip>
     <v-chip class="chip" variant="flat"> 내가 만든 스터디 </v-chip> -->
 
-    <v-card class="study-list">
-      <v-row class="pa-10">
-        <v-col cols="12" sm="6" md="4" lg="3">
-          <v-card @click="goMyStudy" width="240" height="350" text="개인 스터디 룸"></v-card>
-        </v-col>
-        <v-col cols="12" sm="6" md="4" lg="3">
-          <v-card @click="addStudy" width="240" height="350" text="스터디 추가"></v-card>
-        </v-col>
+    <v-card rounded="0" elevation="3" class="study-list">
+      <div class="list-section">
+        <v-row class="pa-10">
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-card
+              @click="goMyStudy"
+              elevation="4"
+              width="240"
+              height="350"
+              text="개인 스터디 룸"
+            ></v-card>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-card
+              @click="addStudy"
+              elevation="4"
+              hover
+              width="240"
+              height="350"
+              text="스터디 추가"
+            ></v-card>
+          </v-col>
 
-        <v-col cols="12" sm="6" md="4" lg="3" v-for="study in StudyList" :key="study.id">
-          <v-card
-            @click="goStudyHome(study.id)"
-            width="240"
-            height="350"
-            :text="study.studyName"
-          ></v-card>
-        </v-col>
-      </v-row>
+          <v-col cols="12" sm="6" md="4" lg="3" v-for="study in StudyList" :key="study.id">
+            <v-card
+              @click="goStudyHome(study.id)"
+              hover
+              elevation="4"
+              width="240"
+              height="350"
+              :text="study.studyName"
+            ></v-card>
+          </v-col>
+        </v-row>
+      </div>
     </v-card>
   </v-container>
 </template>
@@ -131,14 +148,17 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.study-list {
+.v-card {
   border-radius: 30px;
+}
+.study-list {
+  width: 1130px;
+  height: 700px;
   padding: 4px;
   margin: 20px;
   overflow-y: auto;
-  width: 1130px;
-  height: 820px;
 }
+
 .chip {
   background-color: #3fb1fa;
 }

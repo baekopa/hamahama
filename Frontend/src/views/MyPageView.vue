@@ -1,7 +1,7 @@
 <template>
-  <v-container class="mypage">
-    <v-layout>
-      <v-navigation-drawer style="width: 323px; height: 960px">
+  <v-container class="mypage" style="max-height: 800px">
+    <v-layout style="max-height: 800px">
+      <v-navigation-drawer style="width: 323px; height: 800px">
         <p class="text-h5 text-center mt-10">마이페이지</p>
         <v-list lines="two" density="compact" nav>
           <v-list-item three-line>
@@ -66,7 +66,7 @@
       </v-navigation-drawer>
       <!-- 세로줄 -->
       <v-divider style="height: 900px" class="mr-10" vertical></v-divider>
-      <v-main class="ml-10 mt-5" style="min-height: 800px; max-height: 900px">
+      <v-main class="ml-10 mt-5" style="min-height: 800px">
         <component :is="selectedComponent"></component
       ></v-main>
     </v-layout>
