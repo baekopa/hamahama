@@ -59,6 +59,7 @@ public enum ErrorCode {
     // Study
     STUDY_NOT_EXIST(400, "스터디가 존재하지 않습니다."),
     STUDY_MEMBER_NOT_EXIST(400, "스터디원에 대한 정보가 올바르지 않습니다."),
+    STUDY_MEMBER_fORBIDDEN_ERROR(403, "권한이 없습니다"),
 
     ; // End
 

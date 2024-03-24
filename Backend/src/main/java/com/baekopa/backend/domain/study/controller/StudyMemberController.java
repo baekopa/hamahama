@@ -49,4 +49,23 @@ public class StudyMemberController {
         return ApiResponse.of(SuccessCode.STUDY_MEMBER_JOIN_UPDATE_SUCCESS);
     }
 
+    @Operation(summary = "스터디 초대 거절", description = "현재 스터디에 대한 초대를 거절합니다.")
+    @DeleteMapping("/members/me/invitations/{invitation-id}")
+    public ApiResponse<Void> rejectStudyInvitation(@PathVariable(value = "invitation-id") Long invitationId, @AuthenticationPrincipal Member member) {
+
+        studyMemberService.rejectStudyInvitation(invitationId, member);
+
+        return ApiResponse.of(SuccessCode.STUDY_MEMBER_JOIN_DELETE_SUCCESS);
+    }
+
+    @Operation(summary = "스터디 초대하기 취소", description = "초대 요청을 취소합니다.")
+    @DeleteMapping("/studies/{study-id}/invitations/{invitation-id}")
+    public ApiResponse<Void> deleteStudyInvitation(@PathVariable(value="study-id") Long studyId, @PathVariable(value = "invitation-id") Long invitationId, @AuthenticationPrincipal Member member) {
+
+        studyMemberService.deleteStudyInvitation(studyId, invitationId, member);
+
+        return ApiResponse.of(SuccessCode.STUDY_MEMBER_INVITATION_DELETE_SUCCESS);
+    }
+
+
 }
