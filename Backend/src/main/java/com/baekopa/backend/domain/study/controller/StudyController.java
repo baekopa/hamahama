@@ -7,6 +7,7 @@ import com.baekopa.backend.domain.study.dto.response.StudyInfoResponseDto;
 import com.baekopa.backend.domain.study.service.StudyService;
 import com.baekopa.backend.global.response.success.ApiResponse;
 import com.baekopa.backend.global.response.success.SuccessCode;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,7 @@ public class StudyController {
 
     private final StudyService studyService;
 
-    // 새로운 스터디 생성
-    // JWT 토큰으로 인증하는 내용 필요.
+    @Operation(summary = "스터디 생성", description = "새로운 스터디를 생성합니다.")
     @PostMapping("/studies/new")
     public ApiResponse<Map<String, Long>> createNewStudy(@ModelAttribute CreateStudyRequestDto requestDto, @AuthenticationPrincipal Member member) {
 
@@ -34,14 +34,14 @@ public class StudyController {
         return ApiResponse.of(SuccessCode.STUDY_CREATE_SUCCESS, result);
     }
 
-    // 스터디 정보 조회 (스터디 관리 페이지)
+    @Operation(summary = "스터디 조회", description = "스터디 정보를 조회합니다.")
     @GetMapping("/studies/{study-id}/settings")
     public ApiResponse<StudyInfoResponseDto> getStudyInfo(@PathVariable(value = "study-id") Long studyId) {
 
         return ApiResponse.of(SuccessCode.STUDY_GET_SUCCESS, studyService.getStudyInfo(studyId));
     }
 
-    // 스터디 기본 정보 수정
+    @Operation(summary = "스터디 기본 정보 수정", description = "스터디 제목, 내용, 배경사진, 카테고리를 수정합니다.")
     @PutMapping("/studies/{study-id}/settings")
     public ApiResponse<StudyInfoResponseDto> updateStudyBasicInfo(@PathVariable(value = "study-id") Long studyId, @ModelAttribute UpdateStudyInfoRequestDto requestDto) {
 
