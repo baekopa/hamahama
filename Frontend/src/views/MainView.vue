@@ -3,9 +3,9 @@
   <v-container>
     <Slider class="my-10" />
     <div class="note-list pa-10">
-      <v-row align="center" class="mb-2">
+      <v-row align="center" class="mb-2 ml-16 text-2xl">
         <span class="text-light-blue-accent-2"> {{ authStore.userName }} </span> 님의 노트
-        <v-chip class="create-note ml-2" prepend-icon="mdi-plus" @click="CreateNote"
+        <v-chip class="create-note ml-5" prepend-icon="mdi-plus" @click="CreateNote"
           >노트 생성</v-chip
         >
       </v-row>
@@ -25,7 +25,7 @@
     <div class="study-list pa-10">
       <v-row justify="center">
         <v-col cols="12">
-          <v-row justify="center" align="center" class="mb-2">
+          <v-row justify="center" align="center" class="mb-2 ml-16 text-2xl">
             <v-col>
               <span class="text-light-blue-accent-2">{{ authStore.userName }}</span> 님이 참여중인
               스터디
