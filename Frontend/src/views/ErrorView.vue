@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row !align="center">
+    <v-row align:center>
       <v-col cols="12" md="8">
         <h1 class="" style="font-size: 500px">404</h1>
         <h2>요청하신 내용을 찾을 수 없어요!</h2>
