@@ -1,28 +1,36 @@
 <template>
-  <v-container style="width: 1200px">
-    <Carousel
-      :items-to-show="2"
-      :wrapAround="true"
-      :transition="500"
-      :autoplay="2000"
-      :touchDrag
-      :buttonVisibility="true"
-      :Pagination
-    >
-      <Slide v-for="feat in MainFeat" :key="feat.id">
-        <div class="carousel__item">
-          <img :src="feat.imgUrl" :alt="feat.id" class="carousel__image rounded-xl" />
+  <v-container class="d-flex justify-center">
+    <div class="carousel-container">
+      <div class="welcome mb-5 ml-10">
+        <div class="">
+          <span class="name-font text-3xl text-cyan-500">{{ useAuthStore().userName }}</span>
+          <span class="text-2xl"> 님은</span>
         </div>
-      </Slide>
-      <template #addons>
-        <Navigation />
-      </template>
-    </Carousel>
+        <span class="text-2xl mt-3 "> 오늘도 열공중!</span>
+      </div>
+      <Carousel
+        :items-to-show="2"
+        :wrapAround="true"
+        :transition="500"
+        :autoplay="2000"
+        :buttonVisibility="true"
+      >
+        <Slide v-for="feat in MainFeat" :key="feat.id">
+          <div class="carousel__item">
+            <img :src="feat.imgUrl" :alt="feat.id" class="carousel__image" />
+          </div>
+        </Slide>
+        <template #addons>
+          <Navigation />
+        </template>
+      </Carousel>
+    </div>
   </v-container>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 
@@ -38,16 +46,38 @@ const MainFeat = ref([
 </script>
 
 <style scoped>
-.carousel__slide {
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: start;
+  align-self: start;
+}
+.carousel {
+  width: 1300px;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 중앙 정렬을 위한 추가 */
+  align-items: center;
+}
+.carousel-container {
+  width: 1300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 중앙 정렬을 위한 추가 */
+  align-items: center;
 }
 .carousel__item {
-  width: 100%;
-  height: 300px;
+  width: 900px;
+  height: 400px;
+
   object-fit: cover; /* 이미지 비율 유지 및 잘림 방지 */
 }
 
 .carousel__viewport {
-  perspective: 2000px;
+  perspective: 1000px;
 }
 
 .carousel__track {
@@ -69,7 +99,7 @@ const MainFeat = ref([
 
 .carousel__slide--prev {
   opacity: 0.3;
-  transform: rotateY(0) scale(0.9);
+  transform: rotateY(30deg) scale(0.9);
 }
 
 .carousel__slide--next {
@@ -80,17 +110,17 @@ const MainFeat = ref([
 .carousel__slide--active {
   opacity: 1;
   transform: rotateY(0) scale(1);
+  z-index: 100;
 }
 
 .carousel__image {
-  width: 700px;
+  width: 800px;
   height: 100%;
+  border-radius: 20px;
   object-fit: cover; /* 이미지 비율 유지 및 잘림 방지 */
 }
 
-.carousel__icon,
-.carousel__next {
-  width: 100px;
-  height: 100px;
+.name-font {
+  font-family: "UhBeeSe_hyun";
 }
 </style>
