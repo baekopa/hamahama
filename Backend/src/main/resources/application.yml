@@ -35,7 +35,7 @@ spring:
           kakao:
             client-name: kakao
             client-id: ${KAKAO_CLIENT_ID}
-            redirect-uri: ${BASE_URL}/login/oauth2/code/kakao
+            redirect-uri: ${BASE_URL}/api/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             scope: profile_nickname, profile_image, account_email
 
