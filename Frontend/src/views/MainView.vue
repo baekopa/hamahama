@@ -151,7 +151,7 @@ function SetAccessToken() {
 function GetPersonalData() {
   const accessToken = localStorage.getItem('accessToken')
   instance
-    .get('http://localhost:8080/members/main', {
+    .get('/members/main', {
       withCredentials: true,
       headers: {
         Authorization: `Bearer ${accessToken}`
