@@ -146,7 +146,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { instance } from '@/api/index'
+import instance from '@/api/index'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 
