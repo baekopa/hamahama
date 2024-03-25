@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,6 +28,9 @@ import java.util.Iterator;
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
+
+    @Value("${BASE_URL}")
+    private String baseUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -50,13 +54,14 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         addRefreshEntity(username, refresh, 86400000L);
 
         //응답 설정
-        response.setHeader(HttpHeaders.AUTHORIZATION, access);
-        response.addCookie(createCookie("RefreshToken", refresh));
+        //response.setHeader(HttpHeaders.AUTHORIZATION, access);
+        response.addCookie(createAccessTokenCookie(HttpHeaders.AUTHORIZATION, access));
+        response.addCookie(createRefreshTokenCookie("RefreshToken", refresh));
 
         log.warn("access ==== {}", access);
         log.warn("refresh === {}", refresh);
 
-        response.sendRedirect("http://localhost:5173");
+        response.sendRedirect(baseUrl + "/main");
     }
 
     private void addRefreshEntity(String username, String refresh, Long expiredMs) {
@@ -71,12 +76,23 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         refreshRepository.save(refreshToken);
     }
 
-    private Cookie createCookie(String key, String value) {
+    private Cookie createAccessTokenCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24 * 60 * 60);
         //cookie.setSecure(true);
-        //cookie.setPath("/");
+        cookie.setPath("/");
+        //cookie.setHttpOnly(true);
+
+        return cookie;
+    }
+
+    private Cookie createRefreshTokenCookie(String key, String value) {
+
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24 * 60 * 60);
+        cookie.setSecure(true);
+        cookie.setPath("/");
         cookie.setHttpOnly(true);
 
         return cookie;

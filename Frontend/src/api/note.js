@@ -1,5 +1,5 @@
-import { apiInstance } from './index.js'
-const api = apiInstance()
+import instance from './index.js'
+const api = instance()
 
 function shareNote(param) {
   return new Promise((resolve, reject) => {

@@ -30,7 +30,6 @@
               width="40px"
               class="mr-5"
               v-bind="activatorProps"
-              v-on="on"
             />
           </template>
 

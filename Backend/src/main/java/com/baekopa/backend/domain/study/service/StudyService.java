@@ -1,7 +1,6 @@
 package com.baekopa.backend.domain.study.service;
 
 import com.baekopa.backend.domain.member.entity.Member;
-import com.baekopa.backend.domain.member.repository.MemberRepository;
 import com.baekopa.backend.domain.study.dto.request.CreateStudyRequestDto;
 import com.baekopa.backend.domain.study.dto.request.UpdateStudyInfoRequestDto;
 import com.baekopa.backend.domain.study.dto.response.StudyInfoResponseDto;
@@ -14,18 +13,18 @@ import com.baekopa.backend.global.response.error.exception.BusinessException;
 import com.baekopa.backend.global.service.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class StudyService {
 
     private final StudyRepository studyRepository;
     private final StudyMemberRepository studyMemberRepository;
-    private final MemberRepository memberRepository;
 
     private final S3UploadService s3UploadService;
     private final StudyMemberService studyMemberService;
@@ -44,29 +43,15 @@ public class StudyService {
 
         // 스터디장 지정 및 스터디원 추가
         studyMemberRepository.save(StudyMember.createStudyMember(study, leader, StudyMember.StudyMemberType.STUDY_LEADER));
-        addStudyMembers(study, requestDto.getMembers());
+        studyMemberService.inviteStudyMembers(study, requestDto.getMembers());
 
         return study.getId();
     }
 
-    // 스터디원 추가
-    public void addStudyMembers(Study study, List<Long> memberIds) {
-
-        List<Member> members = memberIds.stream()
-                .map((id) -> memberRepository.findByIdAndDeletedAtIsNull(id)
-                        .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, "스터디원 ID가 올바르지 않습니다."))
-                ).toList();
-
-        members.forEach(member -> {
-            studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));
-        });
-    }
-
-
+    @Transactional(readOnly = true)
     public StudyInfoResponseDto getStudyInfo(Long studyId) {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "올바르지 않은 studyId."));
-
 
         return StudyInfoResponseDto.of(study, studyMemberService.getStudyMembers(study));
     }
@@ -86,7 +71,6 @@ public class StudyService {
 
         // 변경 사항 저장
         study.updateStudyBasicInfo(requestDto.getTitle(), requestDto.getDescription(), newImageUrl, requestDto.getCategory());
-        study = studyRepository.save(study);
 
         return StudyInfoResponseDto.from(study);
     }

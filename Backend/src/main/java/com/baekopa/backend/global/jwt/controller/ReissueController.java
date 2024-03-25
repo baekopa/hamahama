@@ -79,8 +79,9 @@ public class ReissueController {
         addRefreshEntity(username, newRefresh, 86400000L);
 
         //response
-        response.setHeader(HttpHeaders.AUTHORIZATION, newAccess);
-        response.addCookie(createCookie("RefreshToken", newRefresh));
+        //response.setHeader(HttpHeaders.AUTHORIZATION, newAccess);
+        response.addCookie(createAccessTokenCookie(HttpHeaders.AUTHORIZATION, newAccess));
+        response.addCookie(createRefreshTokenCookie("RefreshToken", newRefresh));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -97,12 +98,23 @@ public class ReissueController {
         refreshRepository.save(refreshToken);
     }
 
-    private Cookie createCookie(String key, String value) {
+    private Cookie createAccessTokenCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
+        cookie.setMaxAge(24 * 60 * 60);
         //cookie.setSecure(true);
-        //cookie.setPath("/");
+        cookie.setPath("/");
+        //cookie.setHttpOnly(true);
+
+        return cookie;
+    }
+
+    private Cookie createRefreshTokenCookie(String key, String value) {
+
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24 * 60 * 60);
+        cookie.setSecure(true);
+        cookie.setPath("/");
         cookie.setHttpOnly(true);
 
         return cookie;
