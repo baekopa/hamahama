@@ -7,15 +7,17 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Getter
+@SQLDelete(sql = "UPDATE submittednote SET deleted_at = NOW() WHERE submitted_note_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SubmittedNote extends BaseBy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "submitted_id")
+    @Column(name = "submitted_note_id")
     private Long id;
 
     @Column(name = "content")
