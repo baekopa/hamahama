@@ -12,7 +12,7 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
-@SQLDelete(sql = "UPDATE member SET deleted_at = NOW() WHERE meeting_id = ?")
+@SQLDelete(sql = "UPDATE meeting SET deleted_at = NOW() WHERE meeting_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Meeting {
 
