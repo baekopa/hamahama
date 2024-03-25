@@ -1,16 +1,13 @@
 package com.baekopa.backend.global.oauth2.dto;
 
+import lombok.RequiredArgsConstructor;
+
 import java.util.Map;
 
+@RequiredArgsConstructor
 public class GoogleResponse implements OAuth2Response {
 
     private final Map<String, Object> attribute;
-
-    public GoogleResponse(Map<String, Object> attribute) {
-
-        this.attribute = attribute;
-    }
-
 
     @Override
     public OAuthProvider getProvider() {

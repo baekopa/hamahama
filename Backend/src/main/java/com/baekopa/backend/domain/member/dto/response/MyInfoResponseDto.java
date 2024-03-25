@@ -15,11 +15,20 @@ public class MyInfoResponseDto {
     private OAuthProvider provider;
 
     @Builder
-    public MyInfoResponseDto(String name, String email, String image_url, OAuthProvider provider) {
+    private MyInfoResponseDto(String name, String email, String image_url, OAuthProvider provider) {
         this.name = name;
         this.email = email;
         this.image_url = image_url;
         this.provider = provider;
+    }
+
+    public static MyInfoResponseDto of(String name, String email, String image_url, OAuthProvider provider) {
+        return builder()
+                .name(name)
+                .email(email)
+                .image_url(image_url)
+                .provider(provider)
+                .build();
     }
 
 }

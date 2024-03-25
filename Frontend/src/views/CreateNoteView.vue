@@ -19,11 +19,11 @@
 
 <script setup>
 import { ref } from 'vue'
-import { apiInstance } from '@/api/index'
+import instance from '@/api/index'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 
-const api = apiInstance()
+const api = instance()
 const router = useRouter()
 const title = ref('')
 const content = ref('')

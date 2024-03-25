@@ -1,35 +1,42 @@
 <template>
   <v-container>
     <span class="title text-h6">내 노트</span>
-    <v-row class="study-list">
-      <v-col cols="12" sm="6" md="4" lg="3">
-        <v-card
-          @click="addStudy"
-          width="300"
-          height="300"
-          text="내 노트 추가"
-          variant="outlined"
-          color="black"
-        ></v-card>
-      </v-col>
 
-      <v-col cols="12" sm="6" md="4" lg="3" v-for="note in noteList" :key="note.id">
-        <v-card
-          @click="goNoteDetail(note.id)"
-          width="300"
-          height="300"
-          variant="outlined"
-          color="indigo"
-        >
-          <v-card-title>
-            {{ note.title }}
-          </v-card-title>
-          <v-card-text class="truncate-text">
-            {{ note.content }}
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <v-card rounded="0" elevation="3" class="note-list">
+      <div class="list-section">
+        <v-row class="pa-10">
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-card
+              @click="addStudy"
+              elevation="4"
+              width="240"
+              height="350"
+              text="내 노트 추가"
+              variant="outlined"
+              color="black"
+            ></v-card>
+          </v-col>
+
+          <v-col cols="12" sm="6" md="4" lg="3" v-for="note in noteList" :key="note.id">
+            <v-card
+              @click="goNoteDetail(note.id)"
+              elevation="4"
+              width="240"
+              height="350"
+              variant="outlined"
+              color="indigo"
+            >
+              <v-card-title>
+                {{ note.title }}
+              </v-card-title>
+              <v-card-text class="truncate-text">
+                {{ note.content }}
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </div>
+    </v-card>
   </v-container>
 </template>
 
@@ -115,12 +122,17 @@ onMounted(() => {
   max-height: 200px;
   /* Adjust max-width if needed */
 }
-.study-list {
-  border-radius: 10px;
+
+.v-card {
+  border-radius: 30px;
+}
+
+.note-list {
+  width: 1130px;
+  height: 700px;
   padding: 4px;
   margin: 20px;
   overflow-y: auto;
-  max-height: 650px;
 }
 .chip {
   background-color: #3fb1fa;
