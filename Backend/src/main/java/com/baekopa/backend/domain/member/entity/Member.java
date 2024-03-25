@@ -16,7 +16,7 @@ import java.util.Collection;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE member SET deleted_at = CONVERT_TZ(NOW(), 'UTC', 'Asia/Seoul') WHERE member_id = ?")
+@SQLDelete(sql = "UPDATE member SET deleted_at = NOW() WHERE member_id = ?")
 public class Member extends BaseTime implements UserDetails {
 
     @Id
