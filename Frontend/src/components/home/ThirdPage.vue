@@ -1,22 +1,20 @@
 <template>
   <div class="page d-flex justify-center align-center flex-column">
-    <v-container>
-      <v-row>
-        <v-col cols="6">
-          <img src="@/assets/image/home/main3.png" alt="하마3" width="510px" height="480px" />
-        </v-col>
-        <v-col cols="6" class="oval-background d-flex flex-column align-center justify-center">
+    <v-container class="d-flex justify-center align-center">
+      <v-row class="content">
+        <div>
+          <img src="@/assets/image/home/main3.png" alt="하마3" width="500px" height="500px" />
+        </div>
+        <div class="oval-background ml-16 d-flex flex-column align-center justify-center">
           <div data-aos="zoom-in-down">
             <div class="text-h3 mb-10">
-              <p class="my-2">개인 요약도 가능</p>
               <p class="my-2">
-                <span class="font-weight-bold text-teal-accent-2">하마하마</span>
+                개인 요약도 가능<span class="font-weight-bold text-teal-accent-2">하마하마</span>
               </p>
             </div>
-            <p class="my-2 text-h6">하마하마....</p>
-            <v-btn>시작하기</v-btn>
+            <p class="my-2 text-h5">하마하마....</p>
           </div>
-        </v-col>
+        </div>
       </v-row>
     </v-container>
   </div>
@@ -26,6 +24,7 @@
 
 <style scoped>
 .page {
+  width: 1500px;
   height: 900px;
 }
 
