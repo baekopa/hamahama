@@ -54,7 +54,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         addRefreshEntity(username, refresh, 86400000L);
 
         //응답 설정
-        response.setHeader(HttpHeaders.AUTHORIZATION, access);
+        // response.setHeader(HttpHeaders.AUTHORIZATION, access);
         response.addCookie(createAccessTokenCookie(HttpHeaders.AUTHORIZATION, access));
         response.addCookie(createRefreshTokenCookie("RefreshToken", refresh));
 
