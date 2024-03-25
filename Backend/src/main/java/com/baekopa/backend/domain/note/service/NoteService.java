@@ -27,7 +27,7 @@ public class NoteService {
                         .build());
 
         // 새로운 노트 생성
-        Note note = Note.of(requestDto.getTitle(), requestDto.getTitle(), writer);
+        Note note = Note.of(requestDto.getTitle(), requestDto.getTitle(), null, writer);
 
         return noteRepository.save(note).getId();
 

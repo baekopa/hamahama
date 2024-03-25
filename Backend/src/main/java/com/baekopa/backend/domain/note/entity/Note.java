@@ -24,23 +24,32 @@ public class Note extends BaseBy {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "summary")
+    private String summary;
+
     @OneToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
     @Builder
-    private Note(String title, String content, Member member) {
+    private Note(String title, String content, String summary, Member member) {
         this.title = title;
         this.content = content;
+        this.summary = summary;
         this.member = member;
     }
 
-    public static Note of(String title, String content, Member member) {
+    public static Note of(String title, String content, String summary, Member member) {
         return Note.builder()
                 .title(title)
                 .content(content)
+                .summary(summary)
                 .member(member)
                 .build();
+    }
+
+    public void updateSummary(String summary) {
+        this.summary = summary;
     }
 
 }
