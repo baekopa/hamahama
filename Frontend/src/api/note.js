@@ -1,4 +1,4 @@
-import { instance } from './index.js'
+import instance from './index.js'
 const api = instance()
 
 function shareNote(param) {
