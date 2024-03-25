@@ -55,8 +55,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         //응답 설정
         //response.setHeader(HttpHeaders.AUTHORIZATION, access);
-        response.addCookie(createCookie(HttpHeaders.AUTHORIZATION, access));
-        response.addCookie(createCookie("RefreshToken", refresh));
+        response.addCookie(createAccessTokenCookie(HttpHeaders.AUTHORIZATION, access));
+        response.addCookie(createRefreshTokenCookie("RefreshToken", refresh));
 
         log.warn("access ==== {}", access);
         log.warn("refresh === {}", refresh);
@@ -76,7 +76,18 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         refreshRepository.save(refreshToken);
     }
 
-    private Cookie createCookie(String key, String value) {
+    private Cookie createAccessTokenCookie(String key, String value) {
+
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24 * 60 * 60);
+        //cookie.setSecure(true);
+        cookie.setPath("/");
+        //cookie.setHttpOnly(true);
+
+        return cookie;
+    }
+
+    private Cookie createRefreshTokenCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24 * 60 * 60);
