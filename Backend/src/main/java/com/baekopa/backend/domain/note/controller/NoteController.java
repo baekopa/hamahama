@@ -1,10 +1,9 @@
 package com.baekopa.backend.domain.note.controller;
 
-import com.baekopa.backend.domain.member.service.MemberService;
+import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.note.dto.request.CreateNoteRequestDto;
 import com.baekopa.backend.domain.note.service.NoteService;
 import com.baekopa.backend.global.response.success.ApiResponse;
-import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.global.response.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class NoteController {
     private final NoteService noteService;
 
     @Operation(summary = "새 노트 생성", description = "공부하마 페이지를 통해 노트 생성")
-    @PostMapping("new")
+    @PostMapping
     public ApiResponse<Map<String, Long>> createNewNote(@AuthenticationPrincipal Member member, @RequestBody CreateNoteRequestDto requestDto) {
 
         log.info("새 노트 생성 : {}", requestDto.getTitle());
