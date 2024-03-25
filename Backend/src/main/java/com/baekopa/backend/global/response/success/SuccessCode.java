@@ -40,9 +40,17 @@ public enum SuccessCode {
     CHECK_MEMBER_OF_JWT(200, "JWT토큰의 멤버 정보조회에 성공했습니다."),
 
     // Study
-    STUDY_CREATE_SUCCESS(201, "새로운 스터디 생성에 성공했습니다."),
     STUDY_GET_SUCCESS(200, "스터디 조회에 성공하였습니다."),
+    STUDY_MEMBER_GET_SUCCESS(200, "스터디원 조회에 성공하였습니다."),
+    STUDY_CREATE_SUCCESS(201, "새로운 스터디 생성에 성공했습니다."),
+    STUDY_MEMBER_INVITE_SUCCESS(201, "스터디원 초대에 성공했습니다"),
     STUDY_UPDATE_BASIC_SUCCESS(204, "스터디 기본정보 수정에 성공했습니다"),
+    STUDY_MEMBER_JOIN_UPDATE_SUCCESS(204, "스터디 초대 승낙에 성공했습니다."),
+    STUDY_MEMBER_JOIN_DELETE_SUCCESS(204, "스터디 초대 거절에 성공했습니다"),
+    STUDY_MEMBER_INVITATION_DELETE_SUCCESS(204, "스터디 초대 취소에 성공했습니다"),
+    STUDY_LEADER_UPDATE_SUCCESS(204, "스터디장 변경에 성공했습니다"),
+    STUDY_MEMBER_DELETE_SELF_SUCCESS(204, "스터디 나가기에 성공했습니다"),
+    STUDY_MEMBER_DELETE_SUCCESS(204, "스터디원 강퇴에 성공했습니다"),
 
     // Note
     NOTE_CREATE_SUCCESS(201, "새로운 노트 생성에 성공했습니다."),

@@ -104,9 +104,9 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
-import { apiInstance } from '@/api/index'
+import instance from '@/api/index'
 
-const api = apiInstance()
+const api = instance()
 const route = useRoute()
 const noteId = ref(route.params.id)
 

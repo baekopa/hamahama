@@ -1,49 +1,52 @@
 <template>
   <v-container>
-    <span class="title text-h6">참여중인 스터디 목록</span>
+    <span class="title text-h6">참여중인 스터디</span>
     <!-- <v-chip class="chip" variant="flat"> 전체 </v-chip>
     <v-chip class="chip" variant="flat"> 내가 만든 스터디 </v-chip> -->
 
-    <v-row class="study-list">
-      <v-col cols="12" sm="6" md="4" lg="3">
-        <v-card
-          @click="goMyStudy"
-          width="300"
-          height="300"
-          text="개인 스터디 룸"
-          variant="outlined"
-          color="indigo"
-        ></v-card>
-      </v-col>
-      <v-col cols="12" sm="6" md="4" lg="3">
-        <v-card
-          @click="addStudy"
-          width="300"
-          height="300"
-          text="스터디 추가"
-          variant="outlined"
-          color="black"
-        ></v-card>
-      </v-col>
+    <v-card rounded="0" elevation="3" class="study-list">
+      <div class="list-section">
+        <v-row class="pa-10">
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-card
+              @click="goMyStudy"
+              elevation="4"
+              width="240"
+              height="350"
+              text="개인 스터디 룸"
+            ></v-card>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-card
+              @click="addStudy"
+              elevation="4"
+              hover
+              width="240"
+              height="350"
+              text="스터디 추가"
+            ></v-card>
+          </v-col>
 
-      <v-col cols="12" sm="6" md="4" lg="3" v-for="study in StudyList" :key="study.id">
-        <v-card
-          @click="goStudyHome(study.id)"
-          width="300"
-          height="300"
-          :text="study.studyName"
-          variant="outlined"
-          color="indigo"
-        ></v-card>
-      </v-col>
-    </v-row>
+          <v-col cols="12" sm="6" md="4" lg="3" v-for="study in StudyList" :key="study.id">
+            <v-card
+              @click="goStudyHome(study.id)"
+              hover
+              elevation="4"
+              width="240"
+              height="350"
+              :text="study.studyName"
+            ></v-card>
+          </v-col>
+        </v-row>
+      </div>
+    </v-card>
   </v-container>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getStudyList } from '@/api/mypage'
+import * as myPageApi from '@/api/mypage'
 const router = useRouter()
 
 const defaultList = ref([
@@ -128,19 +131,34 @@ const addStudy = () => {
   router.push({ name: 'makeStudy' })
 }
 
+const getStudyList = () => {
+  myPageApi
+    .getStudyList()
+    .then((response) => {
+      console.log(response)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
 onMounted(() => {
-  getStudyList()
+  // getStudyList()
 })
 </script>
 
 <style scoped>
+.v-card {
+  border-radius: 30px;
+}
 .study-list {
-  border-radius: 10px;
+  width: 1130px;
+  height: 700px;
   padding: 4px;
   margin: 20px;
   overflow-y: auto;
-  max-height: 650px;
 }
+
 .chip {
   background-color: #3fb1fa;
 }

@@ -146,7 +146,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { apiInstance } from '@/api/index'
+import instance from '@/api/index'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 
@@ -266,7 +266,7 @@ function createStudy() {
 
   console.log(formData)
   // API 요청 보내기
-  apiInstance
+  instance
     .post('api/studies/new', formData)
     .then((response) => {
       // 스터디 생성이 성공하면 알림 표시

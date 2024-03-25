@@ -1,21 +1,20 @@
 from service.summaryService import KoSummary
 
 def chkOriginTextLen(originText):
-    splitted_str = list(originText.split('.'))
+    originText.replace("  "," ")
+    originText.replace(". ",".\n")
+    splitted_str = list(originText.split('\n'))
     return splitted_str
 
 def splitOriginText(originTextSplitList):
-    # 각 문자열에 줄바꿈 적용
     originFormattedStr = ""
     for i, s in enumerate(originTextSplitList):
-        if i == len(originTextSplitList) - 1:  # 마지막 문자열일 때는 '.'를 붙임
-            originFormattedStr += s.strip() + ''
-        else:
-            originFormattedStr += s.strip() + '.\n'
-    return originFormattedStr
+        if i != len(originTextSplitList) -1:
+            continue
+        s.replace("\n","")
+    return originTextSplitList
 
-def splitOriginTextList(originFormattedStr, maxLen):
-    listText=list(originFormattedStr.split('\n'))
+def splitOriginTextList(listText, maxLen):
     cnt=0
     temp_str=""
     outputList=[]
