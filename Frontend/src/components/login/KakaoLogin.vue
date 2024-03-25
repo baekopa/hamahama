@@ -7,7 +7,7 @@
 <script setup>
 const URL = import.meta.env.VITE_BASE_URL
 const KakaoLogin = () => {
-  window.location.href = `${URL}/api/oauth2/authorization/kakao`
+  window.location.href = `${URL}/oauth2/authorization/kakao`
 }
 </script>
 
