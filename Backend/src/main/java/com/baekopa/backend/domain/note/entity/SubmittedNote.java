@@ -11,7 +11,7 @@ import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Getter
-@SQLDelete(sql = "UPDATE submittednote SET deleted_at = NOW() WHERE submitted_note_id = ?")
+@SQLDelete(sql = "UPDATE submitted_note SET deleted_at = NOW() WHERE submitted_note_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SubmittedNote extends BaseBy {
 
