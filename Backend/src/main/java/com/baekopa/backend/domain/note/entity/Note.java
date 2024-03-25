@@ -7,9 +7,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Getter
+@SQLDelete(sql = "UPDATE member SET deleted_at = NOW() WHERE note_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Note extends BaseBy {
 
@@ -21,13 +23,13 @@ public class Note extends BaseBy {
     @Column(name = "title", nullable = false, length = 50)
     private String title;
 
-    @Column(name = "content")
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "summary")
     private String summary;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 

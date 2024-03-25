@@ -9,9 +9,11 @@ import com.baekopa.backend.global.response.error.ErrorCode;
 import com.baekopa.backend.global.response.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class NoteService {
 
     private final NoteRepository noteRepository;
@@ -27,7 +29,7 @@ public class NoteService {
                         .build());
 
         // 새로운 노트 생성
-        Note note = Note.of(requestDto.getTitle(), requestDto.getTitle(), null, writer);
+        Note note = Note.of(requestDto.getTitle(), requestDto.getContent(), null, writer);
 
         return noteRepository.save(note).getId();
 
