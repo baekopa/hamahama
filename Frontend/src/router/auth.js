@@ -5,8 +5,8 @@ export default [
     component: () => import('@/views/LoginView.vue')
   },
   {
-    path: '/auth/kakao',
-    name: 'kakao',
-    component: () => import('@/components/login/KakaoJoin.vue')
+    path: '/auth',
+    name: 'auth',
+    component: () => import('@/views/AuthView.vue')
   }
 ]
