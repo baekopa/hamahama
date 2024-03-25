@@ -23,12 +23,10 @@ function editMyInfo(params) {
     api
       .put(`api/members/me`)
       .then((response) => {
-        // 여기서 필요한 처리를 수행합니다.
-        resolve(response.data) // 예시: 성공 시 데이터를 resolve합니다.
+        resolve(response.data)
       })
       .catch((error) => {
-        // 에러 처리
-        reject(error) // 에러를 reject합니다.
+        reject(error)
       })
   })
 }
@@ -38,12 +36,10 @@ function withdrawal(params) {
     api
       .delete(`api/members/me`)
       .then((response) => {
-        // 여기서 필요한 처리를 수행합니다.
-        resolve(response.data) // 예시: 성공 시 데이터를 resolve합니다.
+        resolve(response.data)
       })
       .catch((error) => {
-        // 에러 처리
-        reject(error) // 에러를 reject합니다.
+        reject(error)
       })
   })
 }
@@ -53,12 +49,10 @@ function getDashBoardInfo(params) {
     api
       .get(`api/members/me/dashboard`)
       .then((response) => {
-        // 여기서 필요한 처리를 수행합니다.
-        resolve(response.data) // 예시: 성공 시 데이터를 resolve합니다.
+        resolve(response.data)
       })
       .catch((error) => {
-        // 에러 처리
-        reject(error) // 에러를 reject합니다.
+        reject(error)
       })
   })
 }
@@ -69,12 +63,10 @@ function getWeeklySchedule(params) {
     api
       .get(`members/me/study-timeline`)
       .then((response) => {
-        // 여기서 필요한 처리를 수행합니다.
-        resolve(response.data) // 예시: 성공 시 데이터를 resolve합니다.
+        resolve(response.data)
       })
       .catch((error) => {
-        // 에러 처리
-        reject(error) // 에러를 reject합니다.
+        reject(error)
       })
   })
 }
@@ -85,14 +77,63 @@ function getStudyList(params) {
     api
       .get(`/members/me/studies`)
       .then((response) => {
-        // 여기서 필요한 처리를 수행합니다.
-        resolve(response.data) // 예시: 성공 시 데이터를 resolve합니다.
+        resolve(response.data)
       })
       .catch((error) => {
-        // 에러 처리
-        reject(error) // 에러를 reject합니다.
+        reject(error)
       })
   })
 }
 
-export { getDashBoardInfo, getWeeklySchedule, withdrawal, editMyInfo, getMyInfo, getStudyList }
+// 내 노트 목록 조회
+function getNoteList(params) {
+  return new Promise((resolve, reject) => {
+    api
+      .get(`/members/me/notes`)
+      .then((response) => {
+        resolve(response.data)
+      })
+      .catch((error) => {
+        reject(error)
+      })
+  })
+}
+
+// 리마인드퀴즈 조회
+function getQuizList(params) {
+  return new Promise((resolve, reject) => {
+    api
+      .get(`/members/me/remind-quiz`)
+      .then((response) => {
+        resolve(response.data)
+      })
+      .catch((error) => {
+        reject(error)
+      })
+  })
+}
+
+// 내 스터디 미팅 일정
+function getMeetingSchedule(params) {
+  return new Promise((resolve, reject) => {
+    api
+      .get(`/members/me/meetings`)
+      .then((response) => {
+        resolve(response.data)
+      })
+      .catch((error) => {
+        reject(error)
+      })
+  })
+}
+
+export {
+  getDashBoardInfo,
+  getWeeklySchedule,
+  withdrawal,
+  editMyInfo,
+  getMyInfo,
+  getStudyList,
+  getNoteList,
+  getQuizList
+}

@@ -1,6 +1,6 @@
 package com.baekopa.backend.domain.member.entity;
 
-import com.baekopa.backend.global.entity.BaseEntity;
+import com.baekopa.backend.global.entity.BaseTime;
 import com.baekopa.backend.global.oauth2.dto.OAuthProvider;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -16,8 +16,8 @@ import java.util.Collection;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE member SET deleted_at = CONVERT_TZ(NOW(), 'UTC', 'Asia/Seoul') WHERE member_id = ?")
-public class Member extends BaseEntity implements UserDetails {
+@SQLDelete(sql = "UPDATE member SET deleted_at = NOW() WHERE member_id = ?")
+public class Member extends BaseTime implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,13 +44,24 @@ public class Member extends BaseEntity implements UserDetails {
     private OAuthProvider provider;
 
     @Builder
-    public Member(String name, String providerCode, String email, String image, String role, OAuthProvider provider) {
+    private Member(String name, String providerCode, String email, String image, String role, OAuthProvider provider) {
         this.name = name;
         this.email = email;
         this.image = image;
         this.provider = provider;
         this.providerCode = providerCode;
         this.role = role;
+    }
+
+    public static Member of(String name, String providerCode, String email, String image, String role, OAuthProvider provider) {
+        return builder()
+                .name(name)
+                .providerCode(providerCode)
+                .email(email)
+                .image(image)
+                .role(role)
+                .provider(provider)
+                .build();
     }
 
     public void updateEmail(String email) {
