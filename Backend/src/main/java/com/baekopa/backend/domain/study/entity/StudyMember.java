@@ -52,5 +52,10 @@ public class StudyMember extends BaseBy {
                 .build();
     }
 
+    // 스터디원 타입 수정
+    public void updateStudyMemberType(StudyMemberType type) {
+
+        this.type = type;
+    }
 
 }
