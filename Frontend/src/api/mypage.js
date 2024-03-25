@@ -1,5 +1,5 @@
-import { apiInstance } from './index.js'
-const api = apiInstance()
+import { instance } from './index.js'
+const api = instance()
 
 // 내 정보 가져오는 함수
 function getMyInfo(params) {
