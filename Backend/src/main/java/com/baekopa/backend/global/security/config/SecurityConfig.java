@@ -34,6 +34,9 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final UserDetailsService userDetailsService;
 
+    @Value("${BASE_URL}")
+    private String baseUrl;
+
     @Value("${WHITE_LIST}")
     private String[] whiteList;
 
@@ -76,7 +79,7 @@ public class SecurityConfig {
             CorsConfiguration config = new CorsConfiguration();
 
             // FRONT 주소 허용
-            config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+            config.setAllowedOrigins(Collections.singletonList(baseUrl));
             // 모든 REST Method 허용
             config.setAllowedMethods(Collections.singletonList("*"));
             // credential 값 허용
