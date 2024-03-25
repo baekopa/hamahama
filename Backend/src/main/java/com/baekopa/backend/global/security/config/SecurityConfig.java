@@ -56,6 +56,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 // OAuth
                 .oauth2Login((oauth2) -> oauth2
+                        .loginPage("https://j10d105.p.ssafy.io/login")
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig   // OAuth 2.0 인증 후 사용자 정보를 가져오는 엔드포인트
                                 .userService(customOAuth2UserService))
                         .successHandler(customSuccessHandler))  // OAuth 2.0 로그인 성공 후에 수행될 커스텀 핸들러
