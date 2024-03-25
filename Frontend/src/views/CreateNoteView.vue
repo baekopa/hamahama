@@ -1,15 +1,15 @@
 <template>
-  <div class="bg-gray d-flex flex-column align-center justify-center">
-    <div class="d-flex flex-column align-center justify-center bg-white">
-      <div class="justify">
-        <img width="50" src="@/components/icons/note/pencil.svg" alt="연필 이미지" />
-        <span class="text-h6 ml-4">공부하마 노트 작성</span>
+  <div class="bg-gray">
+    <div class="d-flex">
+      <img width="50" src="@/components/icons/note/pencil.svg" alt="연필" />
+      <span class="text-h6 ml-4">공부하마 노트 작성</span>
+    </div>
+    <div class="bg-white d-flex flex-column">
+      <div class="d-flex flex-column" style="width: 1300px">
+        <v-text-field v-model="title" label="제목" variant="outlined"></v-text-field>
+        <v-textarea v-model="content" label="내용" variant="outlined" rows="20"></v-textarea>
       </div>
-      <div style="width: 1000px">
-        <v-text-field v-model="title" label="제목"></v-text-field>
-        <v-textarea v-model="content" label="내용" outlined rows="20"></v-textarea>
-      </div>
-      <div class="justify-end">
+      <div class="">
         <v-chip @click="share" class="export" flat>내보내기</v-chip>
         <v-chip @click="CreateNote" class="save" flat>저장</v-chip>
       </div>
@@ -29,7 +29,7 @@ const content = ref('')
 
 const studyList = ref([])
 
-function share() {
+async function share() {
   if (title.value === '') {
     Swal.fire({
       title: '작성한 내용이 없어요',
@@ -37,63 +37,33 @@ function share() {
       icon: 'question'
     })
   } else {
-    instance
-      .get('api/members/meetings')
+    await instance
+      .post(`api/notes`, {
+        title,
+        content
+      })
       .then((res) => {
-        studyList.value = res.data
-        ShareNote()
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }
-}
-
-function CreateNote() {
-  if (title.value === '') {
-    Swal.fire({
-      title: '작성한 내용이 없어요',
-      text: '제목은 필수 내용은 선택!',
-      icon: 'question'
-    })
-  } else {
-    Swal.fire({
-      title: '노트를 저장하시겠습니까?',
-      showCancelButton: true,
-      confirmButtonText: '저장하기'
-    }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
-      if (result.isConfirmed) {
+        console.log(res)
+        console.log('저장성공')
         instance
-          .post(
-            `api/notes`,
-            {
-              title,
-              content
-            },
-            {
-              headers: {
-                AUTHORIZATION: 'a'
-              }
-            }
-          )
+          .get('api/hello')
           .then((res) => {
-            Swal.fire('Saved!', '', 'success')
-            console.log('저장성공')
-            noteId = 1
-            // noteId = res.data.noteId
-            router.push({ name: 'note', params: { id: noteId } })
+            console.log(res)
+            studyList.value = res.data
+            ShareNote()
           })
           .catch((err) => {
-            const noteId = 1
-            router.push({ name: 'note', params: { id: noteId } })
-            Swal.fire('저장에 실패했어요<br>잠시 후 다시 시도해주세요', '', 'info')
-            // alert('저장에 실패했어요 잠시 후 다시 시도해주세요')
-            console.log('저장실패', err)
-            router.push({ name: 'note', params: { id: noteId } })
+            console.log(err)
           })
-      }
-    })
+        // noteId = res.data.noteId
+      })
+      .catch((err) => {
+        Swal.fire('저장에 실패했어요<br>잠시 후 다시 시도해주세요', '', 'info')
+
+        console.log('저장실패', err)
+        const noteId = 1
+        router.push({ name: 'note', params: { id: noteId } })
+      })
   }
 }
 
@@ -129,6 +99,55 @@ async function ShareNote() {
   })
   if (study) {
     Swal.fire(`You selected: ${study}`)
+    instance
+      .post(`api/notes/${noteId}/meetings`)
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+
+    // router.push({ name: 'note', params: { id: noteId } })
+  }
+}
+
+function CreateNote() {
+  if (title.value === '') {
+    Swal.fire({
+      title: '작성한 내용이 없어요',
+      text: '제목은 필수 내용은 선택!',
+      icon: 'question'
+    })
+  } else {
+    Swal.fire({
+      title: '노트를 저장하시겠습니까?',
+      showCancelButton: true,
+      confirmButtonText: '저장하기'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        instance
+          .post(`api/notes`, {
+            title,
+            content
+          })
+          .then((res) => {
+            Swal.fire('저장되었습니다!', '', 'success')
+            console.log(res)
+            const noteId = 1
+            // noteId = res.data.noteId
+            router.push({ name: 'note', params: { id: noteId } })
+          })
+          .catch((err) => {
+            const noteId = 1
+            router.push({ name: 'note', params: { id: noteId } })
+            Swal.fire('저장에 실패했어요<br>잠시 후 다시 시도해주세요', '', 'info')
+            // alert('저장에 실패했어요 잠시 후 다시 시도해주세요')
+            console.log('저장실패', err)
+            router.push({ name: 'note', params: { id: noteId } })
+          })
+      }
+    })
   }
 }
 </script>
@@ -139,8 +158,5 @@ async function ShareNote() {
 }
 .save {
   background-color: #3fb1fa;
-}
-.v-container {
-  width: 1000px;
 }
 </style>
