@@ -16,9 +16,10 @@
         src="@/assets/image/note/edit.svg"
         alt="pencil"
       />
-      <v-btn @click="edit" v-else prepend-icon="$vuetify">수정완료</v-btn>
+      <v-btn @click="EditNote" v-else prepend-icon="$vuetify">수정완료</v-btn>
     </div>
 
+    <!-- 작성한노트 -->
     <v-sheet
       v-if="isEdit === false"
       class="d-flex justify-center flex-wrap mx-auto px-4"
@@ -31,8 +32,8 @@
         <p>{{ content }}</p>
       </div>
     </v-sheet>
-    <!-- 수정하는 화면 -->
 
+    <!--노트수정-->
     <v-textarea
       v-else
       class="justify-center flex-wrap mx-auto px-4"
@@ -44,6 +45,17 @@
       row-height="2"
       rows="20"
     ></v-textarea>
+
+    <div class="summary d-flex flex-column justify-center">
+      <div class="d-flex">
+        <p>요약</p>
+        <v-btn @click="MakeSummary">요약생성</v-btn>
+      </div>
+
+      <div class="summary-content">
+        <p>{{ '요약자리' }}</p>
+      </div>
+    </div>
 
     <!-- 노트 스터디에 공유 -->
     <v-sheet
@@ -65,7 +77,7 @@
           :items="studyList"
           variant="outlined"
         ></v-select>
-        <v-btn @click="shareNote">내보내기</v-btn>
+        <v-btn @click="ShareNote">내보내기</v-btn>
       </div>
 
       <v-row style="overflow-y: auto; max-height: 380px">
@@ -98,7 +110,7 @@ import { useRouter, useRoute } from 'vue-router'
 import instance from '@/api/index'
 
 const route = useRoute()
-const noteId = ref(route.params.id)
+const noteId = route.params.id
 
 // 원본 제목, 내용
 const title = ref('제목입니다용가리')
@@ -117,9 +129,9 @@ const isEdit = ref(false)
 const sharedStudy = ref(['a', 'b', 'c', 'd', 'e', 'f', 'e'])
 
 // 노트 내용 조회
-const loadNoteData = () => {
+const LoadNoteData = () => {
   instance
-    .get(`api/note/${noteId.value}`)
+    .get(`api/note/${noteId}`)
     .then((response) => {
       console.log(response)
       title.value = response.data.message
@@ -130,23 +142,15 @@ const loadNoteData = () => {
     })
 }
 
-onMounted(loadNoteData)
+onMounted(LoadNoteData)
 
 // 노트 수정하기
-function edit() {
+function EditNote() {
   instance
-    .put(
-      `api/notes/${noteId.value}`,
-      {
-        title,
-        editContent
-      },
-      {
-        headers: {
-          AUTHORIZATION: 'a'
-        }
-      }
-    )
+    .put(`api/notes/${noteId}`, {
+      title,
+      editContent
+    })
     .then((res) => {
       console.log('수정성공')
       content.value = editContent.value
@@ -160,20 +164,12 @@ function edit() {
 }
 
 // 노트 내보내기
-const shareNote = () => {
+const ShareNote = () => {
   instance
-    .post(
-      `api/notes/${noteId}/meetings`,
-      {
-        title,
-        editContent
-      },
-      {
-        headers: {
-          AUTHORIZATION: 'a'
-        }
-      }
-    )
+    .post(`api/notes/${noteId}/meetings`, {
+      title,
+      editContent
+    })
     .then((res) => {
       console.log('수정성공')
       content.value = editContent.value
@@ -183,6 +179,17 @@ const shareNote = () => {
       isEdit.value = false
       alert('저장실패')
       console.log('저장실패', err)
+    })
+}
+
+const MakeSummary = () => {
+  instance
+    .get(`api/notes/${noteId}/summary`)
+    .then((res) => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
     })
 }
 </script>
@@ -197,6 +204,12 @@ const shareNote = () => {
 }
 .study-select {
   margin-top: 50px;
+}
+
+.summary-content {
+  width: 1300px;
+  height: 400px;
+  border: solid 1px black;
 }
 
 ::-webkit-scrollbar {

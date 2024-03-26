@@ -1,15 +1,15 @@
 <template>
+  <!-- 같이하마 -->
   <v-container>
     <span class="title text-h6">참여중인 스터디</span>
     <!-- <v-chip class="chip" variant="flat"> 전체 </v-chip>
     <v-chip class="chip" variant="flat"> 내가 만든 스터디 </v-chip> -->
-
     <v-card rounded="0" elevation="3" class="study-list">
       <div class="list-section">
         <v-row class="pa-10">
           <v-col cols="12" sm="6" md="4" lg="3">
             <v-card
-              @click="goMyStudy"
+              @click="GoMyStudy"
               elevation="4"
               width="240"
               height="350"
@@ -18,7 +18,7 @@
           </v-col>
           <v-col cols="12" sm="6" md="4" lg="3">
             <v-card
-              @click="addStudy"
+              @click="AddStudy"
               elevation="4"
               hover
               width="240"
@@ -29,7 +29,7 @@
 
           <v-col cols="12" sm="6" md="4" lg="3" v-for="study in StudyList" :key="study.id">
             <v-card
-              @click="goStudyHome(study.id)"
+              @click="GoStudyHome(study.id)"
               hover
               elevation="4"
               width="240"
@@ -46,7 +46,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import * as myPageApi from '@/api/mypage'
+import instance from '@/api'
 const router = useRouter()
 
 const defaultList = ref([
@@ -120,21 +120,22 @@ const StudyList = ref([
   }
 ])
 
-const goStudyHome = (id) => {
+const GoStudyHome = (id) => {
   router.push({ name: 'study', params: { id } })
 }
-const goMyStudy = () => {
+const GoMyStudy = () => {
   router.push({ name: 'myStudy' })
 }
 
-const addStudy = () => {
+const AddStudy = () => {
   router.push({ name: 'makeStudy' })
 }
 
-const getStudyList = () => {
-  myPageApi
-    .getStudyList()
+const GetStudyList = () => {
+  instance
+    .get(`/members/me/studies`)
     .then((response) => {
+      // StudyList 채우기
       console.log(response)
     })
     .catch((err) => {
@@ -143,7 +144,7 @@ const getStudyList = () => {
 }
 
 onMounted(() => {
-  // getStudyList()
+  GetStudyList()
 })
 </script>
 
