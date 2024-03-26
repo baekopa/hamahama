@@ -23,7 +23,7 @@ public class StudyController {
     private final StudyService studyService;
 
     @Operation(summary = "스터디 생성", description = "새로운 스터디를 생성합니다.")
-    @PostMapping("/studies/new")
+    @PostMapping("/studies")
     public ApiResponse<Map<String, Long>> createNewStudy(@ModelAttribute CreateStudyRequestDto requestDto, @AuthenticationPrincipal Member member) {
 
         Map<String, Long> result = new HashMap<>();
