@@ -26,7 +26,7 @@ public class Note extends BaseBy {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "summary")
+    @Column(name = "summary", columnDefinition = "TEXT")
     private String summary;
 
     @ManyToOne

@@ -1,7 +1,7 @@
 package com.baekopa.backend.domain.note.service;
 
 
-import com.baekopa.backend.domain.meeting.dto.MeetingDto;
+import com.baekopa.backend.domain.meeting.dto.response.SharedMeetingDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
 import com.baekopa.backend.domain.note.dto.request.CreateNoteSummaryRequestDto;
@@ -11,10 +11,13 @@ import com.baekopa.backend.domain.note.entity.Note;
 import com.baekopa.backend.domain.note.entity.SubmittedNote;
 import com.baekopa.backend.domain.note.repository.NoteRepository;
 import com.baekopa.backend.domain.note.repository.SubmittedNoteRepository;
+import com.baekopa.backend.global.response.error.ErrorCode;
+import com.baekopa.backend.global.response.error.exception.BusinessException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,10 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -38,23 +38,29 @@ public class SubmittedNoteService {
     private final MeetingRepository meetingRepository;
     private final RestTemplate restTemplate;
 
+    @Value("${BASE_URL_AI}")
+    private String aiUrl;
+
     @Transactional
-    public List<MeetingDto> createSubmittedNote(Long noteId, CreateSubmittedNoteRequestDto requestDto) throws JsonProcessingException {
+    public List<SharedMeetingDto> createSubmittedNote(Long noteId, CreateSubmittedNoteRequestDto requestDto) throws JsonProcessingException {
 
-        Note note = noteRepository.findById(noteId).orElseThrow();
-        Meeting meeting = meetingRepository.findById(requestDto.getMeetingId()).orElseThrow();
+        Note note = noteRepository.findById(noteId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_FOUND, ErrorCode.NOTE_NOT_FOUND.getMessage()));
+        Meeting meeting = meetingRepository.findById(requestDto.getMeetingId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
 
-        if(note.getSummary() == null) { // 요약 생성
+        // 이미 내보내기 된 노트와 스터디인지 확인한다.
+        if(submittedNoteRepository.existsByNoteAndMeeting(note, meeting)) {
+            throw new BusinessException(ErrorCode.NOTE_DUPLICATE_MEETING, ErrorCode.NOTE_DUPLICATE_MEETING.getMessage());
+        }
 
-            String summaryUrl = "http://localhost:8000/studies/meeting";
+        // 요약이 없다면 요약 생성
+        if(note.getSummary() == null) {
 
-            // data 전처리
-            log.info(note.getContent());
-            String content = note.getContent().replaceAll("\\n", "");
-            log.info(content);
+            String summaryUrl = aiUrl + "/studies/summary";
 
             // Json 변환
-            CreateNoteSummaryRequestDto summaryRequestDto = CreateNoteSummaryRequestDto.from(content);
+            CreateNoteSummaryRequestDto summaryRequestDto = CreateNoteSummaryRequestDto.from(note.getContent());
             ObjectMapper objectMapper = new ObjectMapper();
             Object data = objectMapper.writeValueAsString(summaryRequestDto);
 
@@ -68,16 +74,21 @@ public class SubmittedNoteService {
             CreateNoteSummaryResponseDto responseDto = restTemplate.postForObject(summaryUrl, requestEntity, CreateNoteSummaryResponseDto.class);
             note.updateSummary(responseDto.getSummaryText());
 
-            log.info(responseDto.getSummaryText());
+            log.info("요약 결과물 : {}", responseDto.getSummaryText());
 
         }
 
         // DB 저장
-        SubmittedNote submittedNote = SubmittedNote.createSubmittedNote(note.getContent(), null, note, meeting);
+        SubmittedNote submittedNote = SubmittedNote.createSubmittedNote( null, note, meeting);
         submittedNoteRepository.save(submittedNote);
 
         return submittedNoteRepository.findMeetingByNote(note).stream()
-                .map((m) -> MeetingDto.of(m.getId(), m.getTopic(), m.getStudyAt(), m.getStudy().getId(), m.getStudy().getTitle())).toList();
+                .map((m) -> SharedMeetingDto.of(m.getMeeting().getId(),
+                        m.getMeeting().getTopic(),
+                        m.getMeeting().getStudyAt(),
+                        m.getMeeting().getStudy().getId(),
+                        m.getMeeting().getStudy().getTitle(),
+                        m.getMeeting().getStudy().getBackgroundImage())).toList();
 
     }
 

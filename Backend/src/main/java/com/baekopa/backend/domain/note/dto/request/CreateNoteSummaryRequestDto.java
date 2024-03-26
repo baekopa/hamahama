@@ -8,15 +8,15 @@ import lombok.Setter;
 @Setter
 public class CreateNoteSummaryRequestDto {
 
-    private String meetingText;
+    private String originalText;
 
     @Builder
-    private CreateNoteSummaryRequestDto(String meetingText) {
-        this.meetingText = meetingText;
+    private CreateNoteSummaryRequestDto(String originalText) {
+        this.originalText = originalText;
     }
 
     public static CreateNoteSummaryRequestDto from(String originalText) {
-        return builder().meetingText(originalText).build();
+        return builder().originalText(originalText).build();
     }
 
 }
