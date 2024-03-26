@@ -1,6 +1,9 @@
 import uvicorn
 from fastapi import FastAPI
 from routers import study
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app=FastAPI()
 app.include_router(study.router)
