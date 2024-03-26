@@ -92,8 +92,8 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
-import * as myPageApi from '@/api/mypage'
+// import * as myPageApi from '@/api/mypage'
+import instance from '@/api'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -149,9 +149,9 @@ const scheduleItems = ref([
   }
 ])
 
-const getDashBoardInfo = () => {
-  myPageApi
-    .getDashBoardInfo()
+const GetDashBoardInfo = () => {
+  instance
+    .get('api/members/me/dashboard')
     .then((response) => {
       console.log(response)
     })
@@ -160,9 +160,9 @@ const getDashBoardInfo = () => {
     })
 }
 
-const getWeeklySchedule = () => {
-  myPageApi
-    .getWeeklySchedule()
+const GetWeeklySchedule = () => {
+  instance
+    .get('members/me/study-timeline')
     .then((res) => {
       console.log(res)
     })
@@ -171,9 +171,9 @@ const getWeeklySchedule = () => {
     })
 }
 
-const editMyInfo = () => {
-  myPageApi
-    .editMyInfo()
+const EditMyInfo = () => {
+  instance
+    .put('api/members/me')
     .then((response) => {
       // 여기서 필요한 처리를 수행합니다.
     })
@@ -201,8 +201,8 @@ const goUserGuide = () => {
 }
 
 onMounted(() => {
-  getDashBoardInfo()
-  getWeeklySchedule()
+  GetDashBoardInfo()
+  GetWeeklySchedule()
 })
 </script>
 
