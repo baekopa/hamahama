@@ -16,13 +16,21 @@
         </div>
 
         <v-col class="pa-10 d-flex">
-          <v-sheet class="mr-10">
-            <v-file-input
-              id="backgroundImage"
-              :rules="rules"
+          <v-sheet @click="openFileInput" border width="300" height="300" class="mr-10">
+            <input
+              type="file"
+              @change="previewImage"
               accept="image/png, image/jpeg, image/bmp"
-              style="height: 400px; width: 400px"
-            ></v-file-input>
+              style="display: none"
+              ref="fileInput"
+            />
+            <img
+              v-if="imageUrl"
+              :src="imageUrl"
+              alt="이미지 미리보기"
+              style="width: 400px; height: 300px"
+            />
+            <button>이미지 선택</button>
           </v-sheet>
 
           <div class="ml-10" style="width: 500px">
@@ -46,16 +54,38 @@
               ></v-text-field>
             </div>
             <div>
-              <span>스터디 멤버 초대</span>
-            </div>
+              <div>
+                <label for="memberName">멤버 이름:</label>
+                <input
+                  class="border"
+                  type="text"
+                  id="memberName"
+                  v-model="memberName"
+                  @input="searchMembers"
+                />
+              </div>
 
-            <div v-if="selectedMembers.length > 0" class="mt-5">
-              <span>선택된 멤버:</span>
-              <ul>
-                <li v-for="(member, index) in selectedMembers" :key="index">
-                  {{ member.full_name }}
-                </li>
-              </ul>
+              <div v-if="members.length > 0" class="mt-5">
+                <span>검색 결과:</span>
+                <ul>
+                  <li v-for="(member, index) in members" :key="index" @click="selectMember(member)">
+                    {{ member.name }}
+                  </li>
+                </ul>
+              </div>
+
+              <div class="mt-5">
+                <span>선택된 멤버:</span>
+                <ul>
+                  <li
+                    v-for="(member, index) in selectedMembersName"
+                    :key="index"
+                    @click="toggleMemberSelection(member)"
+                  >
+                    {{ member.name }}
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </v-col>
@@ -90,13 +120,13 @@
           <span class="ml-16 text-h6 font-weight-black">스터디 시작일</span>
           <v-row class="ml-16">
             <v-col class="ml-16" cols="auto">
-              <input id="date" type="date" v-model="startDay" />
+              <input id="date" type="date" v-model="startDate" />
             </v-col>
           </v-row>
           <span class="text-h6 font-weight-black">스터디 종료일</span>
           <v-row class="ml-16">
             <v-col cols="auto">
-              <input id="date" type="date" v-model="endDay" />
+              <input id="date" type="date" v-model="endDate" />
             </v-col>
           </v-row>
         </div>
@@ -126,7 +156,7 @@
         <div class="pa-10 d-flex align-center">
           <v-textarea
             rounded="lg"
-            v-bind="studyDescription"
+            v-model="studyDescription"
             no-resize
             label="스터디에 대한 정보를 적어주세요"
             variant="outlined"
@@ -140,7 +170,6 @@
         <v-btn class="c-btn" rounded="lg">취소</v-btn>
       </v-sheet>
     </v-form>
-    <v-btn @click="test">테스트</v-btn>
   </v-container>
 </template>
 
@@ -150,13 +179,33 @@ import instance from '@/api/index'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 
-const rules = ref([
-  (value) => {
-    return (
-      !value || !value.length || value[0].size < 2000000 || 'Avatar size should be less than 2 MB!'
-    )
+const router = useRouter()
+
+const imageUrl = ref(null)
+const fileInput = ref(null) // fileInput을 ref로 정의
+
+const previewImage = (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  // FileReader 객체 생성
+  const reader = new FileReader()
+
+  // 파일을 읽어들이면 호출되는 콜백 함수 정의
+  reader.onload = (e) => {
+    // 읽어들인 이미지 데이터를 imageUrl에 할당하여 미리보기
+    imageUrl.value = e.target.result
   }
-])
+
+  // 파일을 읽어들임
+  reader.readAsDataURL(file)
+}
+
+const openFileInput = () => {
+  // 파일 선택 input 열기
+  fileInput.value.click()
+}
+
 const studyName = ref('')
 const studyNameRules = ref([
   (value) => (!!value && value.length <= 50) || '스터디 이름을 입력해주세요. (최대 50자)'
@@ -165,17 +214,43 @@ const studyCategory = ref('')
 
 const memberName = ref('')
 const members = ref([])
-const selectedMember = ref('')
 const selectedMembers = ref([])
+const selectedMembersName = ref([])
 const searchMembers = async () => {
   if (!memberName.value.trim()) {
     members.value = []
     return
   }
-  const response = await fetch(`https://api.github.com/search/repositories?q=${memberName.value}`)
-  const data = await response.json()
-  members.value = data.items
-  console.log(members)
+
+  try {
+    const response = await instance.get(`api/members?q=${memberName.value}`)
+    console.log(response)
+    members.value = response.data.data
+  } catch (error) {
+    console.error('멤버 검색 오류:', error)
+    // 오류 처리
+  }
+}
+
+const selectMember = (member) => {
+  // 이미 선택된 멤버인지 확인
+  if (!selectedMembers.value.find((m) => m.id === member.id)) {
+    selectedMembers.value.push(member.memberId)
+    selectedMembersName.value.push(member)
+  }
+  console.log(selectedMembers.value)
+}
+const toggleMemberSelection = (member) => {
+  const index = selectedMembers.value.findIndex((m) => m.id === member.id)
+  if (index !== -1) {
+    // 이미 선택된 멤버인 경우 선택 해제
+    selectedMembers.value.splice(index, 1)
+    selectedMembersName.value.splice(index, 1)
+    console.log(selectedMembers)
+  } else {
+    // 선택되지 않은 멤버인 경우 선택
+    selectedMembers.value.push(member.memberId)
+  }
 }
 
 const tags = ref(['월', '화', '수', '목', '금', '토', '일'])
@@ -191,10 +266,10 @@ function convertTagsToBinaryString() {
   return binaryString
 }
 
-const startDay = ref(new Date())
-const endDay = ref(new Date())
-const startTime = ref(new Date())
-const endTime = ref(new Date())
+const startDate = ref(new Date().toISOString().substr(0, 10)) // 오늘의 날짜를 YYYY-MM-DD 형식으로 설정
+const endDate = ref(new Date().toISOString().substr(0, 10)) // 오늘의 날짜를 YYYY-MM-DD 형식으로 설정
+const startTime = ref('00:00') // 기본 시작 시간 설정
+const endTime = ref('23:59') // 기본 종료 시간 설정
 
 const studyDescription = ref('')
 
@@ -214,14 +289,14 @@ function checkForm() {
       icon: 'error',
       confirmButtonText: '확인'
     })
-  } else if (!startDay.value) {
+  } else if (!startDate.value) {
     Swal.fire({
       title: '입력 오류',
       text: '스터디 시작일은 필수 입력 항목입니다.',
       icon: 'error',
       confirmButtonText: '확인'
     })
-  } else if (!endDay.value) {
+  } else if (!endDate.value) {
     Swal.fire({
       title: '입력 오류',
       text: '스터디 종료일은 필수 입력 항목입니다.',
@@ -246,53 +321,63 @@ function checkForm() {
     createStudy()
   }
 }
-
-// 아래는 스터디 생성 함수들임
-
+// 스터디 생성 함수
 function createStudy() {
   // FormData 객체 생성
   const formData = new FormData()
-
-  // FormData 객체에 데이터 추가
   formData.append('title', studyName.value)
   formData.append('description', studyDescription.value)
+  formData.append('category', studyCategory.value)
+  formData.append('startDate', startDate.value)
+  formData.append('endDate', endDate.value)
   formData.append('day', convertTagsToBinaryString())
   formData.append('startTime', startTime.value)
   formData.append('endTime', endTime.value)
+  formData.append('members', selectedMembers.value)
 
-  // 파일 업로드를 위한 FormData 추가
-  const fileInput = document.querySelector('#backgroundImage')
-  formData.append('backgroundImage', fileInput.files[0])
+  const image = fileInput.value
+  // 파일이 선택되었는지 확인 후 FormData에 추가
+  if (image.files.length > 0) {
+    formData.append('backgroundImage', image.files[0])
+  }
 
-  console.log(formData)
-  // API 요청 보내기
   instance
-    .post('api/studies/new', formData)
+    .post('api/studies/new', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     .then((response) => {
-      // 스터디 생성이 성공하면 알림 표시
-      Swal.fire({
-        title: '스터디 생성됨!',
-        text: '스터디가 성공적으로 생성되었습니다.',
-        icon: 'success',
-        confirmButtonText: '확인'
-      })
+      if (response.data.status === 201) {
+        Swal.fire({
+          title: '스터디 생성됨!',
+          text: '스터디가 성공적으로 생성되었습니다.',
+          icon: 'success',
+          confirmButtonText: '확인'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // 스터디 페이지로 이동
+            router.push({ name: 'study', params: { id: response.data.data.studyId } })
+          }
+        })
+      } else {
+        Swal.fire({
+          title: '오류',
+          text: '스터디 생성 중 문제가 발생했습니다.',
+          icon: 'error',
+          confirmButtonText: '확인'
+        })
+      }
     })
     .catch((error) => {
-      // 스터디 생성에 실패하면 알림 표시
+      console.error('스터디 생성 오류:', error)
       Swal.fire({
         title: '오류',
-        text: '스터디 생성 중 오류가 발생했습니다.',
+        text: '스터디 생성 중 문제가 발생했습니다.',
         icon: 'error',
         confirmButtonText: '확인'
       })
     })
-}
-
-const test = () => {
-  console.log(startTime)
-  console.log(endTime)
-  console.log(startDay)
-  console.log(endDay)
 }
 </script>
 
