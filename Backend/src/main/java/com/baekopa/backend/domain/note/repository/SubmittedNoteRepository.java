@@ -8,5 +8,7 @@ import com.baekopa.backend.domain.note.entity.SubmittedNote;
 import java.util.List;
 
 public interface SubmittedNoteRepository extends JpaRepository<SubmittedNote, Long> {
-    List<Meeting> findMeetingByNote(Note note);
+    List<SubmittedNote> findMeetingByNote(Note note);
+
+    boolean existsByNoteAndMeeting(Note existNote, Meeting existMeeting);
 }

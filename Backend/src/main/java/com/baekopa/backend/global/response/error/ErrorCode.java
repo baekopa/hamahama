@@ -61,7 +61,12 @@ public enum ErrorCode {
     STUDY_MEMBER_NOT_EXIST(400, "스터디원에 대한 정보가 올바르지 않습니다."),
     STUDY_MEMBER_fORBIDDEN_ERROR(403, "권한이 없습니다"),
 
-    ; // End
+    // Note
+    NOTE_NOT_FOUND(400, "노트가 존재하지 않습니다."),
+    NOTE_DUPLICATE_MEETING(400, "이미 내보내기 된 미팅입니다."),
+
+    // Meeting
+    MEETING_NOT_FOUND(400, "미팅이 존재하지 않습니다."); // End
 
     /**
      * ******************************* Error Code Field ***************************************

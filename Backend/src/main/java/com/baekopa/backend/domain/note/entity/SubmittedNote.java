@@ -20,10 +20,7 @@ public class SubmittedNote extends BaseBy {
     @Column(name = "submitted_note_id")
     private Long id;
 
-    @Column(name = "content")
-    private String content;
-
-    @Column(name = "difference_content")
+    @Column(name = "difference_content", columnDefinition = "TEXT")
     private String differenceContent;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,16 +32,15 @@ public class SubmittedNote extends BaseBy {
     private Meeting meeting;
 
     @Builder
-    private SubmittedNote(String content, String differenceContent, Note note, Meeting meeting) {
-        this.content = content;
+    private SubmittedNote(String differenceContent, Note note, Meeting meeting) {
         this.differenceContent = differenceContent;
         this.note = note;
         this.meeting = meeting;
     }
 
     // 연관관계 편의 메서드
-    public static SubmittedNote createSubmittedNote(String content, String differenceContent, Note note, Meeting meeting) {
-        return builder().content(content)
+    public static SubmittedNote createSubmittedNote(String differenceContent, Note note, Meeting meeting) {
+        return builder()
                 .differenceContent(differenceContent)
                 .note(note)
                 .meeting(meeting)
