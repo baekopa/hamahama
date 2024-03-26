@@ -3,7 +3,7 @@
     <v-btn icon="mdi-arrow-left"></v-btn>
     <div class="title">{{ title }}</div>
     <div class="d-flex">
-      <img src="" alt="userImg" />
+      <img :src="userImgUrl" alt="userImg" />
       <div class="d-flex flex-column ml-4">
         <span>{{ userName }}</span>
         <span>{{ date }}</span>
@@ -14,37 +14,29 @@
         class="cursor-pointer"
         @click="isEdit = !isEdit"
         src="@/assets/image/note/edit.svg"
-        alt="User Image"
+        alt="pencil"
       />
-      <v-btn @click="edit" v-else prepend-icon="$vuetify"> 수정완료 </v-btn>
+      <v-btn @click="edit" v-else prepend-icon="$vuetify">수정완료</v-btn>
     </div>
 
     <v-sheet
       v-if="isEdit === false"
-      class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4"
+      class="d-flex justify-center flex-wrap mx-auto px-4"
       elevation="4"
-      height="700"
-      width="1000"
+      height="1000"
+      width="1300"
       rounded
     >
-      <div>
-        <div class="text-area text-h5 font-weight-medium mb-2">
-          {{ content }}
-        </div>
-        <v-btn color="orange" variant="text">Go to Login</v-btn>
+      <div class="text-area text-h5 font-weight-medium mb-2">
+        <p>{{ content }}</p>
       </div>
     </v-sheet>
-    <!-- 수정하는 페이지 -->
+    <!-- 수정하는 화면 -->
+
     <v-textarea
       v-else
       class="justify-center flex-wrap mx-auto px-4"
-      style="
-        width: 1000px;
-        height: 700px;
-        font-family: 'Arial', sans-serif;
-        line-height: 2;
-        background-color: #f7f7f7;
-      "
+      style="font-family: 'Arial', sans-serif; line-height: 2; background-color: #f7f7f7"
       v-model="editContent"
       label="수정"
       outlined
@@ -56,8 +48,8 @@
     <!-- 노트 스터디에 공유 -->
     <v-sheet
       v-if="!isEdit"
-      height="600"
-      width="650"
+      height="550"
+      width="950"
       border
       class="share-study align-center justify-center flex-wrap text-center mx-auto px-4 my-10"
     >
@@ -103,10 +95,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import axios from 'axios'
 import instance from '@/api/index'
 
-const api = instance()
 const route = useRoute()
 const noteId = ref(route.params.id)
 
@@ -128,12 +118,12 @@ const sharedStudy = ref(['a', 'b', 'c', 'd', 'e', 'f', 'e'])
 
 // 노트 내용 조회
 const loadNoteData = () => {
-  api
+  instance
     .get(`api/note/${noteId.value}`)
     .then((response) => {
       console.log(response)
-      title.value = response.data.title
-      content.value = response.data.content
+      title.value = response.data.message
+      content.value = response.data.reason
     })
     .catch((error) => {
       console.error('Error fetching note:', error)
@@ -144,10 +134,9 @@ onMounted(loadNoteData)
 
 // 노트 수정하기
 function edit() {
-  console.log(selectedStudy.value)
-  api
+  instance
     .put(
-      `api/notes/${noteId}`,
+      `api/notes/${noteId.value}`,
       {
         title,
         editContent
@@ -172,7 +161,7 @@ function edit() {
 
 // 노트 내보내기
 const shareNote = () => {
-  api
+  instance
     .post(
       `api/notes/${noteId}/meetings`,
       {
