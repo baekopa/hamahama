@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import base_model
 
-class Note(BaseModel):
+class Note(base_model):
     note:list=[]
