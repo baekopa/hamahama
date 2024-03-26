@@ -6,11 +6,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDate;
 
 @Entity
 @Getter
+@SQLDelete(sql = "UPDATE meeting SET deleted_at = NOW() WHERE meeting_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Meeting {
 
@@ -33,17 +35,19 @@ public class Meeting {
     private Study study;
 
     @Builder
-    private Meeting(String topic, LocalDate studyAt, String recordFile) {
+    private Meeting(String topic, LocalDate studyAt, String recordFile, Study study) {
         this.topic = topic;
         this.studyAt = studyAt;
         this.recordFile = recordFile;
+        this.study = study;
     }
 
-    public static Meeting of(String topic, LocalDate studyAt, String recordFile) {
+    public static Meeting of(String topic, LocalDate studyAt, String recordFile, Study study) {
         return builder()
                 .topic(topic)
                 .studyAt(studyAt)
                 .recordFile(recordFile)
+                .study(study)
                 .build();
     }
 
