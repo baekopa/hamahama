@@ -3,14 +3,9 @@
     <div class="bg-white">
       <div class="mx-20 flex justify-between">
         <div class="">
-          <img
-            @click="goMain"
-            src="@/assets/image/logo.png"
-            alt="LOGO"
-            class="logo h-16"
-          />
+          <img @click="goMain" src="@/assets/image/logo.png" alt="LOGO" class="logo h-16" />
         </div>
-        
+
         <div class="start flex justify-center">
           <v-btn @click="goMakeStudy" id="study-btn" class="mr-7 my-auto" rounded="l">
             <img class="mx-2" src="../icons/nav/homePlus.svg" alt="" /><span class="mr-2"
@@ -27,22 +22,24 @@
           <div class="my-auto">
             <v-menu offset-y>
               <template v-slot:activator="{ props: activatorProps }">
-                  <img
-                    :src="authStore.userImgUrl"
-                    alt="userImg"
-                    v-bind="activatorProps"
-                    class="h-10"
-                  />
+                <img
+                  :src="authStore.userImgUrl"
+                  alt="userImg"
+                  v-bind="activatorProps"
+                  class="h-10"
+                />
               </template>
 
-          <v-list>
-            <v-list-item @click="goToMyPage">마이페이지</v-list-item>
-            <v-list-item @click="LogOut">로그아웃</v-list-item>
-          </v-list>
-        </v-menu>
+              <v-list>
+                <v-list-item @click="goToMyPage">마이페이지</v-list-item>
+                <v-list-item @click="authStore.Logout">로그아웃</v-list-item>
+              </v-list>
+            </v-menu>
+          </div>
+        </div>
       </div>
-    </v-row>
-  </v-container>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -81,9 +78,7 @@ const goMakeStudy = () => {
 }
 
 .logo {
-  
 }
 .start {
-  
 }
 </style>
