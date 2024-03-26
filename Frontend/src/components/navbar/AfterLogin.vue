@@ -35,16 +35,14 @@
                   />
               </template>
 
-              <v-list>
-                <v-list-item @click="goToMyPage">마이페이지</v-list-item>
-                <v-list-item @click="authStore.Logout">로그아웃</v-list-item>
-              </v-list>
-            </v-menu>
-          </div>
-        </div>
+          <v-list>
+            <v-list-item @click="goToMyPage">마이페이지</v-list-item>
+            <v-list-item @click="LogOut">로그아웃</v-list-item>
+          </v-list>
+        </v-menu>
       </div>
-    </div>
-  </div>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup>
@@ -56,6 +54,11 @@ const authStore = useAuthStore()
 
 const router = useRouter()
 const isAlarmExist = ref(false)
+
+const LogOut = () => {
+  sessionStorage.setItem('isLoginHAMAHAMA', false)
+  router.push({ name: 'home' })
+}
 
 const goToMyPage = () => {
   router.push({ name: 'mypage' })
