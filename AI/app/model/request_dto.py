@@ -1,4 +1,4 @@
 from pydantic import BaseModel
 
 class OriginalText(BaseModel):
-    originalText:str
+    original_text:str
