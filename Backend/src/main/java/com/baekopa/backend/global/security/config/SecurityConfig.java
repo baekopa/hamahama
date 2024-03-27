@@ -37,6 +37,9 @@ public class SecurityConfig {
     @Value("${BASE_URL_FRONT}")
     private String baseUrl;
 
+    @Value("${BASE_URL_AI}")
+    private String baseUrlAI;
+
     @Value("${WHITE_LIST}")
     private String[] whiteList;
 
@@ -80,6 +83,7 @@ public class SecurityConfig {
 
             // FRONT 주소 허용
             config.setAllowedOrigins(Collections.singletonList(baseUrl));
+//            config.setAllowedOrigins(Collections.singletonList(baseUrlAI));
             // 모든 REST Method 허용
             config.setAllowedMethods(Collections.singletonList("*"));
             // credential 값 허용

@@ -9,12 +9,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CorsMvcConfig implements WebMvcConfigurer {
 
     @Value("${BASE_URL_FRONT}")
-    private String baseUrl;
+    private String baseUrlFront;
+
+    @Value("${BASE_URL_AI}")
+    private String baseUrlAI;
 
     @Override
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/**")
                 .exposedHeaders("Set-Cookie")
-                .allowedOrigins(baseUrl);
+                .allowedOrigins(baseUrlFront);
+
     }
 }
