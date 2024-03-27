@@ -29,7 +29,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
 
-    @Value("${BASE_URL}")
+    @Value("${BASE_URL_FRONT}")
     private String baseUrl;
 
     @Override

@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsMvcConfig implements WebMvcConfigurer {
 
-    @Value("${BASE_URL}")
+    @Value("${BASE_URL_FRONT}")
     private String baseUrl;
 
     @Override

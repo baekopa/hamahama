@@ -98,7 +98,7 @@ public class StudyMemberService {
 
         // member가 스터디장인지 확인
         studyMemberRepository.findByStudyAndMemberAndTypeAndDeletedAtIsNull(studyMember.getStudy(), member, StudyMember.StudyMemberType.STUDY_LEADER)
-                                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_fORBIDDEN_ERROR, "스터디장만 보낼 수 있는 요청입니다"));
+                                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_FORBIDDEN_ERROR, "스터디장만 보낼 수 있는 요청입니다"));
 
         studyMemberRepository.delete(studyMember);
     }
@@ -110,7 +110,7 @@ public class StudyMemberService {
 
         // member가 스터디장인지 확인
         StudyMember curLeader = studyMemberRepository.findByStudyAndMemberAndTypeAndDeletedAtIsNull(newLeader.getStudy(), member, StudyMember.StudyMemberType.STUDY_LEADER)
-                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_fORBIDDEN_ERROR, "스터디장만 보낼 수 있는 요청입니다"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_FORBIDDEN_ERROR, "스터디장만 보낼 수 있는 요청입니다"));
 
         newLeader.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_LEADER);
         curLeader.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_MEMBER);
@@ -137,7 +137,7 @@ public class StudyMemberService {
 
         // member가 스터디장인지 확인
         studyMemberRepository.findByStudyAndMemberAndTypeAndDeletedAtIsNull(studyMember.getStudy(), leader, StudyMember.StudyMemberType.STUDY_LEADER)
-                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_fORBIDDEN_ERROR, "스터디장만 보낼 수 있는 요청입니다"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_FORBIDDEN_ERROR, "스터디장만 보낼 수 있는 요청입니다"));
 
         studyMemberRepository.delete(studyMember);
     }
