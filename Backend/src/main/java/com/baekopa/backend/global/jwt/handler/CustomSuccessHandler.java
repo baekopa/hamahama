@@ -61,7 +61,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.warn("access ==== {}", access);
         log.warn("refresh === {}", refresh);
 
-        response.sendRedirect(baseUrl + "/main");
+        response.sendRedirect(baseUrl + "/auth");
     }
 
     private void addRefreshEntity(String username, String refresh, Long expiredMs) {
