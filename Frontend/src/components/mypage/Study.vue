@@ -2,7 +2,8 @@
   <v-container>
     <div class="title">
       <span class="text-2xl ml-5 font-bold">
-        <span class="tossface text-3xl">📖</span> 참여 중인 스터디</span>
+        <span class="tossface text-3xl">📖</span> 같이하마</span>
+        <p class="text-xl ml-5 mt-2 italic text-gray-500">백오파님께서 참여 중인 스터디 입니다.</p>
     </div>
     <!-- <v-chip class="chip" variant="flat"> 전체 </v-chip>
     <v-chip class="chip" variant="flat"> 내가 만든 스터디 </v-chip> -->
