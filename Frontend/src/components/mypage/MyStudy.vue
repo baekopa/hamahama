@@ -11,7 +11,7 @@
         <v-row class="pa-10">
           <v-col cols="12" sm="6" md="4" lg="3" class="mb-8" v-for="note in noteList" :key="note.id">
             <v-card
-              @click="goNoteDetail(note.id)"
+              @click="GoNoteDetail(note.id)"
               variant="outlined"
               class="rounded-lg study-card"
               color="#4e4e4e"
@@ -49,7 +49,7 @@
           </v-col>
           <v-col cols="12" sm="6" md="4" lg="3" class="mb-8 d-flex align-center">
             <v-card
-              @click="addStudy"
+              @click="AddStudy"
               variant="tonal"
               color="#3FB1FA"
               class="rounded-lg d-flex justify-center items-center"
@@ -72,7 +72,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getStudyList } from '@/api/mypage'
+import instance from '@/api'
 const router = useRouter()
 
 const noteList = ref([
@@ -139,19 +139,26 @@ const noteList = ref([
   }
 ])
 
-const goNoteDetail = (id) => {
+const GoNoteDetail = (id) => {
   router.push({ name: 'note', params: { id } })
 }
-const goMyStudy = () => {
-  router.push({ name: 'mystudy' })
+const GetNoteList = () => {
+  instance
+    .get(`/members/me/notes`)
+    .then((res) => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 
-const addStudy = () => {
-  alert('뭘로만들지? 모달?')
+const AddStudy = () => {
+  router.push({ name: 'createnote' })
 }
 
 onMounted(() => {
-  getStudyList()
+  GetNoteList()
 })
 </script>
 
