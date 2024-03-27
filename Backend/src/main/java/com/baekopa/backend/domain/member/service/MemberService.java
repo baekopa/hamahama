@@ -8,6 +8,9 @@ import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
 import com.baekopa.backend.domain.member.dto.response.MyInfoResponseDto;
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.member.repository.MemberRepository;
+import com.baekopa.backend.domain.note.dto.response.NoteListResponseDto;
+import com.baekopa.backend.domain.note.entity.Note;
+import com.baekopa.backend.domain.note.repository.NoteRepository;
 import com.baekopa.backend.domain.study.entity.StudyMember;
 import com.baekopa.backend.domain.study.repository.StudyMemberRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
@@ -35,6 +38,7 @@ public class MemberService {
     private final S3UploadService s3UploadService;
     private final MeetingRepository meetingRepository;
     private final StudyMemberRepository studyMemberRepository;
+    private final NoteRepository noteRepository;
 
     @Transactional(readOnly = true)
     public MyInfoResponseDto getMyInfo(Member currentMember) {
@@ -109,6 +113,29 @@ public class MemberService {
         return MeetingListDto.of(meeting.getId(),
                 meeting.getTopic(),
                 meeting.getStudyAt());
+    }
+
+    // TODO: 일정 조회
+//    public List<WeekMeetingListDto> getMyMeetings(Member member, RequestWeekDto requestDto) {
+//
+//        // TODO: 반복 일정
+//
+//        // TODO: 실제 Meeting 일정
+//
+//        return null;
+//    }
+
+    // 내 노트 조회
+    @Transactional(readOnly = true)
+    public List<NoteListResponseDto> getMyNotes(Member member) {
+
+        List<NoteListResponseDto> noteList = noteRepository.findAllByMember(member).stream().map(this::convertToDto).toList();
+        return noteList;
+
+    }
+
+    public NoteListResponseDto convertToDto(Note note) {
+        return NoteListResponseDto.of(note.getId(), note.getTitle(), note.getCreatedAt(), note.getModifiedAt());
     }
 
 }

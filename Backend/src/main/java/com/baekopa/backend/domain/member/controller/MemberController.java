@@ -51,4 +51,37 @@ public class MemberController {
         return ApiResponse.of(SuccessCode.STUDY_MEETING_GET_SUCCESS, memberService.getStudyMeetings(member));
     }
 
+    // TODO: 일정 로직 작성
+//    @Operation(summary = "내 일정 조회", description = "나의 주간 일정을 조회합니다. 마이페이지 대시보드에서 사용합니다.")
+//    @GetMapping("/study-timeline")
+//    public ApiResponse<List<WeekMeetingListDto>> getMyMeetings(@AuthenticationPrincipal Member member, @RequestBody RequestWeekDto requestDto) {
+//
+//        log.info("요청 주간 : {} ~ {}", requestDto.getStartDate(), requestDto.getEndDate());
+//
+//        return ApiResponse.of(SuccessCode.MEETING_GET_SUCCESS, memberService.getMyMeetings(member, requestDto));
+//
+//    }
+
+    // TODO: 속한 스터디 목록
+    @Operation(summary = "내가 속한 스터디 목록 및 미팅 조회", description = "사용자가 속한 스터디 목록 및 미팅 조회")
+    @GetMapping("/studies")
+    public ApiResponse<?> getMyStudies(@AuthenticationPrincipal Member member) {
+
+        log.info("내가 속한 스터디 목록 조회 : {}", member.getName());
+
+        //return ApiResponse.of(SuccessCode.MY_STUDY_GET_SUCCESS, memberService.getMyStudies(member));
+        return null;
+
+    }
+
+    // TODO: 작성한 노트 목록
+    @Operation(summary = "내가 작성한 노트 목록 조회", description = "사용자가 작성한 노트 목록 조회")
+    @GetMapping("/notes")
+    public ApiResponse<?> getMyNotes(@AuthenticationPrincipal Member member) {
+
+        log.info("내가 작성한 노트 목록 조회 : {}", member.getName());
+        return ApiResponse.of(SuccessCode.NOTE_GET_SUCCESS, memberService.getMyNotes(member));
+
+    }
+
 }
