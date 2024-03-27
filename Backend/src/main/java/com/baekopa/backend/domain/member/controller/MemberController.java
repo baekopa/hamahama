@@ -62,19 +62,16 @@ public class MemberController {
 //
 //    }
 
-    // TODO: 속한 스터디 목록
     @Operation(summary = "내가 속한 스터디 목록 및 미팅 조회", description = "사용자가 속한 스터디 목록 및 미팅 조회")
     @GetMapping("/studies")
     public ApiResponse<?> getMyStudies(@AuthenticationPrincipal Member member) {
 
         log.info("내가 속한 스터디 목록 조회 : {}", member.getName());
 
-        //return ApiResponse.of(SuccessCode.MY_STUDY_GET_SUCCESS, memberService.getMyStudies(member));
-        return null;
+        return ApiResponse.of(SuccessCode.MY_STUDY_GET_SUCCESS, memberService.getMyStudies(member));
 
     }
 
-    // TODO: 작성한 노트 목록
     @Operation(summary = "내가 작성한 노트 목록 조회", description = "사용자가 작성한 노트 목록 조회")
     @GetMapping("/notes")
     public ApiResponse<?> getMyNotes(@AuthenticationPrincipal Member member) {
