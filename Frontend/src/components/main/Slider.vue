@@ -3,7 +3,7 @@
     <div class="carousel-container">
       <div class="welcome mb-5 ml-10">
         <div class="">
-          <span class="name-font text-3xl text-cyan-500">{{ useAuthStore().userName }}</span>
+          <span class="point-font text-3xl point-color">{{ useAuthStore().userName }}</span>
           <span class="text-2xl"> 님은</span>
         </div>
         <span class="text-2xl mt-3 "> 오늘도 열공중!</span>
@@ -120,7 +120,4 @@ const MainFeat = ref([
   object-fit: cover; /* 이미지 비율 유지 및 잘림 방지 */
 }
 
-.name-font {
-  font-family: "UhBeeSe_hyun";
-}
 </style>
