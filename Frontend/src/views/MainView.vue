@@ -3,9 +3,9 @@
   <v-container>
     <Slider class="my-10" />
     <div class="note-list pa-10">
-      <v-row align="center" class="mb-2">
+      <v-row align="center" class="mb-2 ml-16 text-2xl">
         <span class="text-light-blue-accent-2"> {{ authStore.userName }} </span> 님의 노트
-        <v-chip class="create-note ml-2" prepend-icon="mdi-plus" @click="CreateNote"
+        <v-chip class="create-note ml-5" prepend-icon="mdi-plus" @click="CreateNote"
           >노트 생성</v-chip
         >
       </v-row>
@@ -54,7 +54,6 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import axios from 'axios'
 import Slider from '@/components/main/Slider.vue'
 import instance from '@/api/index'
 
@@ -139,15 +138,6 @@ const StudyList = ref([
   }
 ])
 
-function SetAccessToken() {
-  const authorizationCookie = document.cookie.match(/Authorization=([^;]+)/)
-
-  if (authorizationCookie) {
-    localStorage.setItem('accessToken', authorizationCookie[1])
-    document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-  }
-}
-
 function GetPersonalData() {
   const accessToken = localStorage.getItem('accessToken')
   instance
@@ -167,7 +157,6 @@ function GetPersonalData() {
 }
 
 onMounted(() => {
-  SetAccessToken()
   GetPersonalData()
 })
 </script>
