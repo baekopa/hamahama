@@ -6,7 +6,8 @@
       <img :src="userImgUrl" alt="userImg" />
       <div class="d-flex flex-column ml-4">
         <span>{{ userName }}</span>
-        <span>{{ date }}</span>
+        <span>생성일 : {{ createdAt }}</span>
+        <span>수정일 : {{ modifiedAt }}</span>
       </div>
 
       <img
@@ -53,7 +54,7 @@
       </div>
 
       <div class="summary-content">
-        <p>{{ '요약자리' }}</p>
+        <p>{{ noteSummary }}</p>
       </div>
     </div>
 
@@ -113,7 +114,7 @@ const route = useRoute()
 const noteId = route.params.id
 
 // 원본 제목, 내용
-const title = ref('제목입니다용가리')
+const title = ref('제목')
 const content = ref(
   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
 )
@@ -122,20 +123,29 @@ const editContent = ref(content.value)
 
 const userImgUrl = ref('')
 const userName = ref('백오파')
-const date = ref('2024.03.13')
+const createdAt = ref('')
+const modifiedAt = ref('')
 const studyList = ref(['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming'])
 const selectedStudy = ref('')
 const isEdit = ref(false)
 const sharedStudy = ref(['a', 'b', 'c', 'd', 'e', 'f', 'e'])
+const noteSummary = ref('')
 
 // 노트 내용 조회
 const LoadNoteData = () => {
   instance
-    .get(`api/note/${noteId}`)
-    .then((response) => {
-      console.log(response)
-      title.value = response.data.message
-      content.value = response.data.reason
+    .get(`api/notes/${noteId}`)
+    .then((res) => {
+      if (res.data.status == 200) {
+        title.value = res.data.data.title
+        content.value = res.data.data.content
+        userImgUrl.value = res.data.data.writerImage
+        userName.value = res.data.data.writerName
+        createdAt.value = res.data.data.createdAt
+        modifiedAt.value = res.data.data.modifiedAt
+        noteSummary.value = res.data.data.summary
+        console.log(res)
+      }
     })
     .catch((error) => {
       console.error('Error fetching note:', error)
@@ -184,8 +194,11 @@ const ShareNote = () => {
 
 const MakeSummary = () => {
   instance
-    .get(`api/notes/${noteId}/summary`)
+    .post(`api/notes/${noteId}/summary`)
     .then((res) => {
+      if (res.data.status == 201) {
+        noteSummary.value = res.data.data.noteSummary
+      }
       console.log(res)
     })
     .catch((err) => {
