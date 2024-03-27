@@ -63,7 +63,8 @@
   import { ref } from 'vue'
   import { useStudyStore } from '@/stores/study'
   import { useAudioStore } from '@/stores/audioStore';
-  import axios from 'axios';
+  // import axios from 'axios';
+  import instance from '@/api/index'
   import mainImage from '@/assets/image/home/main2.png';
 
   const studyStore = useStudyStore();
@@ -76,7 +77,7 @@
   // --------------- 녹음 관련 변수와 함수 ------------------ //
   const mediaRecorder = ref(null);
   const audioChunks = ref([]);
-  const recordText = ref('');
+  // const recordText = ref('');
   const startTime = ref(null);
   const recording = ref(false);
   const elapsedTime = ref('00:00');
@@ -161,22 +162,25 @@
   const uploadAudio = async (audioBlob) => {
     const formData = new FormData();
     formData.append("file", audioBlob, "recording.wav");
+    
     console.log("트라이 직전")
-    console.log(formData)
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
     // FastAPI 서버로 오디오 파일 전송 
     try {
       console.log("post 간다!");
-      const response = await axios.post(`http://localhost:8000/stt/transcribe/${study_id.value}/${meeting_id.value}`, formData, {
+      await instance.post(`http://localhost:8080/api/studies/${study_id.value}/meetings/${meeting_id.value}/record`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        },
       });
       console.log("post끝");
 
-      const data = response.data;
-      console.log("Transcription result:", data);
-      recordText.value = data.transcription;
-      console.log(recordText.value)
+      // const data = response.data;
+      // console.log("Transcription result:", data);
+      // recordText.value = data.transcription;
+      // console.log(recordText.value)
     } catch (error) {
       console.error("오류가 발생했습니다:", error);
     }

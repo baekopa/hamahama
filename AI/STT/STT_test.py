@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 # CORS 미들웨어 추가
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Vue 앱의 URL, 배포 시 실제 도메인으로 변경
+    allow_origins=["http://localhost:8080"],  # Vue 앱의 URL, 배포 시 실제 도메인으로 변경
     allow_credentials=True,
     allow_methods=["*"],  # 모든 HTTP 메서드 허용 (GET, POST 등)
     allow_headers=["*"],  # 모든 HTTP 헤더 허용
@@ -70,7 +70,8 @@ async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...
     # ffmpeg로 wav 변환
     converted_filename = tmp_filename.replace(".wav", "_converted.wav")
     convert_audio_ffmpeg(tmp_filename, converted_filename)
-    
+
+
     # 화자 분할
     diarization = diarization_pipeline(converted_filename)
     
@@ -158,9 +159,9 @@ async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...
             print(result.stderr)
 
     print(transcription_data)
-    requests.post(f"http://localhost:8080/api/studies/{study_id}/meetings/{meeting_id}/record", json=transcription_data)
-
-    return 
+    print(study_id, meeting_id)
+    
+    return JSONResponse(content=transcription_data)
 
 if __name__ == "__main__":
     import uvicorn
