@@ -10,14 +10,8 @@ import java.util.List;
 public class MeetingScriptRequestDto {
 
     private List<Transcription> transcriptions;
-
-    // getters and setters
-
     public static class Transcription {
-
         private String speaker;
         private String text;
-
-        // getters and setters
     }
 }
