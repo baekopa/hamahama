@@ -52,6 +52,11 @@ public enum SuccessCode {
     STUDY_MEMBER_DELETE_SELF_SUCCESS(204, "스터디 나가기에 성공했습니다"),
     STUDY_MEMBER_DELETE_SUCCESS(204, "스터디원 강퇴에 성공했습니다"),
 
+    // Meeting
+    MEETING_SUMMARY_CREATE_SUCCESS(201, "미팅 요약에 성공했습니다."),
+    MEETING_SUMMARY_GET_SUCCESS(200,"미팅 요약 조회에 성공했습니다."),
+    MEETING_SUMMARY_UPDATE_SUCCESS(201,"미팅 재요약에 성공했습니다."),
+
     // Note
     NOTE_CREATE_SUCCESS(201, "새로운 노트 생성에 성공했습니다."),
     NOTE_GET_SUCCESS(200, "노트 조회에 성공했습니다."),

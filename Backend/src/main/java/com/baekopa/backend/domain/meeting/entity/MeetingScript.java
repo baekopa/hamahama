@@ -21,7 +21,7 @@ public class MeetingScript extends BaseBy {
     @JoinColumn(name = "meeting_id", nullable = false)
     private Meeting meeting;
 
-    @Column(name = "script_content")
+    @Column(name = "script_content", columnDefinition = "TEXT")
     @Lob
     private String scriptContent;
 
@@ -37,5 +37,10 @@ public class MeetingScript extends BaseBy {
                 .scriptContent(scriptContent)
                 .build();
     }
+
+    public void updateMeetingScript(String scriptContent) {
+        this.scriptContent = scriptContent;
+    }
+
 
 }
