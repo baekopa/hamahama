@@ -1,5 +1,7 @@
 package com.baekopa.backend.domain.study.service;
 
+import com.baekopa.backend.domain.meeting.dto.request.CreateMeetingRequestDto;
+import com.baekopa.backend.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
@@ -24,6 +26,20 @@ public class StudyMeetingService {
     private final MeetingRepository meetingRepository;
     private final StudyRepository studyRepository;
 
+    // 스터디 미팅 생성
+    @Transactional
+    public CreateMeetingResponseDto createNewMeeting(Long studyId, CreateMeetingRequestDto requestDto) {
+
+        Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
+
+        Meeting meeting = meetingRepository.save(Meeting.of(requestDto.getTopic(), requestDto.getStudyAt(), study));
+
+        return CreateMeetingResponseDto.of(meeting.getId(), meeting.getTopic(), meeting.getStudyAt());
+
+    }
+    
+    // 스터디 미팅 조회
     public List<MeetingListDto> getScheduledMeeting(Long studyId) {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId)
