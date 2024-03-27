@@ -1,15 +1,16 @@
 <template>
   <v-container>
-    <div class="title d-flex flex-column">
-      <span class="text-h5">{{ authStore.userName }}</span>
-      <span class="text-h6">님은 오늘도 열공중!</span>
+    <div class="title">
+      <span class="text-2xl">
+        <span class="text-2xl point-font point-color">{{ authStore.userName }}</span>
+        님 반가워요! 오늘도 파이팅 <span class="tossface text-3xl">👏</span></span>
     </div>
 
-    <div class="mt-10 d-flex">
+    <div class="mt-10 d-flex justify-start">
       <v-hover v-slot="{ isHovering, props }">
         <v-card
           @click=""
-          class="mx-auto"
+          class="mr-8 rounded-lg"
           :class="{ 'on-hover': isHovering }"
           :elevation="isHovering ? 16 : 2"
           v-bind="props"
@@ -23,7 +24,7 @@
       <v-hover v-slot="{ isHovering, props }">
         <v-card
           @click="goStudyRoom"
-          class="mx-auto"
+          class="mr-8 rounded-lg"
           :class="{ 'on-hover': isHovering }"
           :elevation="isHovering ? 16 : 2"
           v-bind="props"
@@ -37,12 +38,12 @@
       <v-hover v-slot="{ isHovering, props }">
         <v-card
           @click=""
-          class="mx-auto"
+          class="mr-8 rounded-lg"
           :class="{ 'on-hover': isHovering }"
           :elevation="isHovering ? 16 : 2"
           v-bind="props"
-          height="200"
           image="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+          height="200"
           width="200"
           theme="dark"
           title="내 노트들"
@@ -51,7 +52,7 @@
       <v-hover v-slot="{ isHovering, props }">
         <v-card
           @click=""
-          class="mx-auto"
+          class="mr-8 rounded-lg"
           :class="{ 'on-hover': isHovering }"
           :elevation="isHovering ? 16 : 2"
           v-bind="props"
@@ -64,17 +65,22 @@
       </v-hover>
     </div>
 
-    <div class="schedule-group d-flex mt-16">
-      <div class="weekly-study">
-        <span class="text-h6">주간 스터디 일정</span>
-        <div></div>
+    <div class="schedule-group d-flex mt-16 w-full">
+      <div class="weekly-study w-3/5">
+        <span class="text-2xl"><span class="tossface text-3xl">📅</span> 주간 스터디 일정</span>
+        <MyCalendar />
       </div>
-      <div class="schedule">
-        <span class="text-h6">일정</span>
-        <v-card class="scroll-container overflow-y-auto" max-width="425" max-height="300">
+      <div class="schedule ml-10 w-2/5">
+        <div class="mb-1">
+          <span class="text-2xl"><span class="tossface text-3xl">📅</span> 같이하마 일정</span>
+        </div>
+        <div>
+          <span class="text-lg italic ml-2 text-zinc-400">어떤 주제에 대해 공부하나요?</span>
+        </div>
+        <v-card variant="flat" class="scroll-container overflow-y-auto mt-7" max-height="330">
           <v-list two-line>
             <template v-for="(item, index) in scheduleItems" :key="index">
-              <v-list-item class="mt-3">
+              <v-list-item class="mb-3">
                 <template v-slot:title>{{ item.title }} {{ item.name }}</template>
                 <template v-slot:subtitle>
                   <span class="font-weight-bold">{{ item.date }}</span>
@@ -92,8 +98,10 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
-import * as myPageApi from '@/api/mypage'
+
+import instance from '@/api'
+import MyCalendar from '@/components/mypage/MyCalendar.vue'
+
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -149,9 +157,9 @@ const scheduleItems = ref([
   }
 ])
 
-const getDashBoardInfo = () => {
-  myPageApi
-    .getDashBoardInfo()
+const GetDashBoardInfo = () => {
+  instance
+    .get('api/members/me/dashboard')
     .then((response) => {
       console.log(response)
     })
@@ -160,9 +168,9 @@ const getDashBoardInfo = () => {
     })
 }
 
-const getWeeklySchedule = () => {
-  myPageApi
-    .getWeeklySchedule()
+const GetWeeklySchedule = () => {
+  instance
+    .get('members/me/study-timeline')
     .then((res) => {
       console.log(res)
     })
@@ -171,9 +179,9 @@ const getWeeklySchedule = () => {
     })
 }
 
-const editMyInfo = () => {
-  myPageApi
-    .editMyInfo()
+const EditMyInfo = () => {
+  instance
+    .put('api/members/me')
     .then((response) => {
       // 여기서 필요한 처리를 수행합니다.
     })
@@ -201,8 +209,8 @@ const goUserGuide = () => {
 }
 
 onMounted(() => {
-  getDashBoardInfo()
-  getWeeklySchedule()
+  GetDashBoardInfo()
+  GetWeeklySchedule()
 })
 </script>
 

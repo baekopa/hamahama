@@ -3,10 +3,11 @@
     <v-btn icon="mdi-arrow-left"></v-btn>
     <div class="title">{{ title }}</div>
     <div class="d-flex">
-      <img src="" alt="userImg" />
+      <img :src="userImgUrl" alt="userImg" />
       <div class="d-flex flex-column ml-4">
         <span>{{ userName }}</span>
-        <span>{{ date }}</span>
+        <span>생성일 : {{ createdAt }}</span>
+        <span>수정일 : {{ modifiedAt }}</span>
       </div>
 
       <img
@@ -14,37 +15,30 @@
         class="cursor-pointer"
         @click="isEdit = !isEdit"
         src="@/assets/image/note/edit.svg"
-        alt="User Image"
+        alt="pencil"
       />
-      <v-btn @click="edit" v-else prepend-icon="$vuetify"> 수정완료 </v-btn>
+      <v-btn @click="EditNote" v-else prepend-icon="$vuetify">수정완료</v-btn>
     </div>
 
+    <!-- 작성한노트 -->
     <v-sheet
       v-if="isEdit === false"
-      class="d-flex align-center justify-center flex-wrap text-center mx-auto px-4"
+      class="d-flex justify-center flex-wrap mx-auto px-4"
       elevation="4"
-      height="700"
-      width="1000"
+      height="1000"
+      width="1300"
       rounded
     >
-      <div>
-        <div class="text-area text-h5 font-weight-medium mb-2">
-          {{ content }}
-        </div>
-        <v-btn color="orange" variant="text">Go to Login</v-btn>
+      <div class="text-area text-h5 font-weight-medium mb-2">
+        <p>{{ content }}</p>
       </div>
     </v-sheet>
-    <!-- 수정하는 페이지 -->
+
+    <!--노트수정-->
     <v-textarea
       v-else
       class="justify-center flex-wrap mx-auto px-4"
-      style="
-        width: 1000px;
-        height: 700px;
-        font-family: 'Arial', sans-serif;
-        line-height: 2;
-        background-color: #f7f7f7;
-      "
+      style="font-family: 'Arial', sans-serif; line-height: 2; background-color: #f7f7f7"
       v-model="editContent"
       label="수정"
       outlined
@@ -53,11 +47,22 @@
       rows="20"
     ></v-textarea>
 
+    <div class="summary d-flex flex-column justify-center">
+      <div class="d-flex">
+        <p>요약</p>
+        <v-btn @click="MakeSummary">요약생성</v-btn>
+      </div>
+
+      <div class="summary-content">
+        <p>{{ noteSummary }}</p>
+      </div>
+    </div>
+
     <!-- 노트 스터디에 공유 -->
     <v-sheet
       v-if="!isEdit"
-      height="600"
-      width="650"
+      height="550"
+      width="950"
       border
       class="share-study align-center justify-center flex-wrap text-center mx-auto px-4 my-10"
     >
@@ -73,7 +78,7 @@
           :items="studyList"
           variant="outlined"
         ></v-select>
-        <v-btn @click="shareNote">내보내기</v-btn>
+        <v-btn @click="ShareNote">내보내기</v-btn>
       </div>
 
       <v-row style="overflow-y: auto; max-height: 380px">
@@ -103,15 +108,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import axios from 'axios'
 import instance from '@/api/index'
 
-const api = instance()
 const route = useRoute()
-const noteId = ref(route.params.id)
+const noteId = route.params.id
 
 // 원본 제목, 내용
-const title = ref('제목입니다용가리')
+const title = ref('제목')
 const content = ref(
   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
 )
@@ -120,44 +123,44 @@ const editContent = ref(content.value)
 
 const userImgUrl = ref('')
 const userName = ref('백오파')
-const date = ref('2024.03.13')
+const createdAt = ref('')
+const modifiedAt = ref('')
 const studyList = ref(['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming'])
 const selectedStudy = ref('')
 const isEdit = ref(false)
 const sharedStudy = ref(['a', 'b', 'c', 'd', 'e', 'f', 'e'])
+const noteSummary = ref('')
 
 // 노트 내용 조회
-const loadNoteData = () => {
-  api
-    .get(`api/note/${noteId.value}`)
-    .then((response) => {
-      console.log(response)
-      title.value = response.data.title
-      content.value = response.data.content
+const LoadNoteData = () => {
+  instance
+    .get(`api/notes/${noteId}`)
+    .then((res) => {
+      if (res.data.status == 200) {
+        title.value = res.data.data.title
+        content.value = res.data.data.content
+        userImgUrl.value = res.data.data.writerImage
+        userName.value = res.data.data.writerName
+        createdAt.value = res.data.data.createdAt
+        modifiedAt.value = res.data.data.modifiedAt
+        noteSummary.value = res.data.data.summary
+        console.log(res)
+      }
     })
     .catch((error) => {
       console.error('Error fetching note:', error)
     })
 }
 
-onMounted(loadNoteData)
+onMounted(LoadNoteData)
 
 // 노트 수정하기
-function edit() {
-  console.log(selectedStudy.value)
-  api
-    .put(
-      `api/notes/${noteId}`,
-      {
-        title,
-        editContent
-      },
-      {
-        headers: {
-          AUTHORIZATION: 'a'
-        }
-      }
-    )
+function EditNote() {
+  instance
+    .put(`api/notes/${noteId}`, {
+      title,
+      editContent
+    })
     .then((res) => {
       console.log('수정성공')
       content.value = editContent.value
@@ -171,20 +174,12 @@ function edit() {
 }
 
 // 노트 내보내기
-const shareNote = () => {
-  api
-    .post(
-      `api/notes/${noteId}/meetings`,
-      {
-        title,
-        editContent
-      },
-      {
-        headers: {
-          AUTHORIZATION: 'a'
-        }
-      }
-    )
+const ShareNote = () => {
+  instance
+    .post(`api/notes/${noteId}/meetings`, {
+      title,
+      editContent
+    })
     .then((res) => {
       console.log('수정성공')
       content.value = editContent.value
@@ -194,6 +189,20 @@ const shareNote = () => {
       isEdit.value = false
       alert('저장실패')
       console.log('저장실패', err)
+    })
+}
+
+const MakeSummary = () => {
+  instance
+    .post(`api/notes/${noteId}/summary`)
+    .then((res) => {
+      if (res.data.status == 201) {
+        noteSummary.value = res.data.data.noteSummary
+      }
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
     })
 }
 </script>
@@ -208,6 +217,12 @@ const shareNote = () => {
 }
 .study-select {
   margin-top: 50px;
+}
+
+.summary-content {
+  width: 1300px;
+  height: 400px;
+  border: solid 1px black;
 }
 
 ::-webkit-scrollbar {
