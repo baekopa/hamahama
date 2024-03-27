@@ -4,24 +4,14 @@ import { RouterLink, RouterView } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import AfterLogin from '@/components/navbar/AfterLogin.vue'
 import BeforeLogin from '@/components/navbar/BeforeLogin.vue'
-const auth = useAuthStore()
 
-const isLogin = ref(sessionStorage.getItem('isLoginHAMAHAMA'))
-
-watchEffect((isLogin) => {
-  const storedIsLogin = sessionStorage.getItem('isLoginHAMAHAMA')
-  if (storedIsLogin !== null) {
-    isLogin.value = storedIsLogin
-  } else {
-    isLogin.value = 'false'
-  }
-})
+const authStore = useAuthStore()
 </script>
 
 <template>
   <v-app>
     <!-- 로그인 상태에 따라 AfterLogin 또는 BeforeLogin 컴포넌트 렌더링 -->
-    <AfterLogin v-if="isLogin == 'true'" />
+    <AfterLogin v-if="authStore.isLogin" />
     <BeforeLogin v-else />
 
     <!-- 메인 컨텐츠 영역 -->
@@ -55,14 +45,20 @@ watchEffect((isLogin) => {
   font-family: 'NanumSquareNeo';
 }
 
-@font-face { font-family: 'UhBeeSe_hyun'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_five@.2.0/UhBeeSe_hyun.woff') format('woff'); font-weight: normal; font-style: normal; }
+@font-face {
+  font-family: 'UhBeeSe_hyun';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_five@.2.0/UhBeeSe_hyun.woff')
+    format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
 
 .point-font {
-  font-family: "UhBeeSe_hyun";
+  font-family: 'UhBeeSe_hyun';
 }
 
 .point-color {
-  color: #3FB1FA;
+  color: #3fb1fa;
 }
 
 .tossface {
