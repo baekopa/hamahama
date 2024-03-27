@@ -61,8 +61,10 @@ public enum SuccessCode {
 
     // Meeting
     STUDY_MEETING_GET_SUCCESS(200, "스터디 미팅 일정 목록 조회에 성공했습니다."),
-    MEETING_GET_SUCCESS(200, "내 주간 미팅 일정 조회에 성공했습니다."); // End
+    MEETING_GET_SUCCESS(200, "내 주간 미팅 일정 조회에 성공했습니다."),
 
+    // My Information
+    MY_STUDY_GET_SUCCESS(200, "내가 속한 스터디 조회에 성공했습니다."); // End
 
     /**
      * ******************************* Success Code Field ***************************************

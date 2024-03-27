@@ -1,4 +1,4 @@
-package com.baekopa.backend.domain.note.dto.request;
+package com.baekopa.backend.domain.note.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;
