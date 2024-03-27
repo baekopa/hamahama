@@ -66,8 +66,11 @@
   import axios from 'axios';
   import mainImage from '@/assets/image/home/main2.png';
 
-  const studyStore = useStudyStore()
+  const studyStore = useStudyStore();
   const audioStore = useAudioStore();
+
+  const study_id = ref(1)
+  const meeting_id = ref(1)
 
 
   // --------------- 녹음 관련 변수와 함수 ------------------ //
@@ -163,7 +166,7 @@
     // FastAPI 서버로 오디오 파일 전송 
     try {
       console.log("post 간다!");
-      const response = await axios.post("http://localhost:8000/", formData, {
+      const response = await axios.post(`http://localhost:8000/stt/transcribe/${study_id.value}/${meeting_id.value}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
