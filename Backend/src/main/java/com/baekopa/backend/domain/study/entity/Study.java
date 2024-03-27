@@ -82,6 +82,16 @@ public class Study extends BaseBy {
                 .build();
     }
 
+    // 개인 스터디 생성
+    public static Study of(String title, String description, String backgroundImage, StudyType type) {
+        return builder()
+                .type(StudyType.PERSONAL)
+                .title(title)
+                .description(description)
+                .backgroundImage(backgroundImage)
+                .build();
+    }
+
     public void updateStudyBasicInfo(String title, String description, String backgroundImage, String category) {
         this.title = title;
         this.description = description;

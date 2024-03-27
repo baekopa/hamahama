@@ -62,7 +62,15 @@ public enum SuccessCode {
     NOTE_GET_SUCCESS(200, "노트 조회에 성공했습니다."),
     NOTE_UPDATE_SUCCESS(204, "노트 수정에 성공했습니다."),
     NOTE_SHARE_SUCCESS(200, "스터디에 노트를 공유하는데 성공했습니다."),
-    NOTE_SUMMARY_SUCCESS(201, "새로운 요약 생성에 성공했습니다."); // End
+    NOTE_SUMMARY_SUCCESS(201, "새로운 요약 생성에 성공했습니다."),
+
+    // Meeting
+    STUDY_MEETING_GET_SUCCESS(200, "스터디 미팅 일정 목록 조회에 성공했습니다."),
+    MEETING_GET_SUCCESS(200, "미팅 조회에 성공했습니다."),
+    MEETING_CREATE_SUCCESS(201, "새로운 미팅 생성에 성공했습니다."); // End
+
+    // My Information
+    MY_STUDY_GET_SUCCESS(200, "내가 속한 스터디 조회에 성공했습니다."); // End
 
     /**
      * ******************************* Success Code Field ***************************************

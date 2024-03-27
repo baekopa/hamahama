@@ -2,7 +2,6 @@ package com.baekopa.backend.domain.meeting.entity;
 
 import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.global.entity.BaseBy;
-import com.baekopa.backend.global.entity.BaseTime;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -27,7 +26,7 @@ public class Meeting extends BaseBy {
     private String topic;
 
     @Column(name = "study_at")
-    private LocalDate studyAt;
+    private LocalDateTime studyAt;
 
     @Column(name = "record_file")
     private String recordFile;
@@ -37,18 +36,17 @@ public class Meeting extends BaseBy {
     private Study study;
 
     @Builder
-    private Meeting(String topic, LocalDate studyAt, String recordFile, Study study) {
+    private Meeting(String topic, LocalDateTime studyAt, String recordFile, Study study) {
         this.topic = topic;
         this.studyAt = studyAt;
         this.recordFile = recordFile;
         this.study = study;
     }
 
-    public static Meeting of(String topic, LocalDate studyAt, String recordFile, Study study) {
+    public static Meeting of(String topic, LocalDateTime studyAt, Study study) {
         return builder()
                 .topic(topic)
                 .studyAt(studyAt)
-                .recordFile(recordFile)
                 .study(study)
                 .build();
     }

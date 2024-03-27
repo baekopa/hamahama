@@ -3,16 +3,13 @@ import { useRouter, useRoute } from 'vue-router'
 import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', () => {
-  const isLogin = ref(false)
+  const isLogin = ref(!!sessionStorage.getItem('isLoginHAMAHAMA'))
   const router = useRouter()
   const userName = ref('백오파')
   const userImgUrl = ref('https://vuejs.org/images/logo.png')
   const userEmail = ref('baekOpa@ssafy.com')
   const accessToken = ref('i10j105d')
 
-  const goLogin = function () {
-    router.push({ name: 'login' })
-  }
   function Login() {
     isLogin.value = true
     router.push({ name: 'main' })
