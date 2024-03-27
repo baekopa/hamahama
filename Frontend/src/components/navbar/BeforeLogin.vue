@@ -1,19 +1,22 @@
 <template>
-  <v-container class="d-flex align-center bg-white w-screen">
-    <v-row class="justify-space-between">
-      <img
-        @click="goHome"
-        src="@/assets/image/logo.png"
-        alt="LOGO"
-        width="50px"
-        class="logo align-center"
-      />
+  <div class="filter drop-shadow">
+    <div class="bg-white">
+      <div class="mx-20 flex justify-between">
+        <div class="">
+          <img
+            @click="goHome"
+            src="@/assets/image/logo.png"
+            alt="LOGO"
+            class="logo h-16"
+          />
+        </div>
 
-      <div class="start d-flex align-center">
-        <p @click="goLogin">시작하기</p>
+        <div class="start my-auto">
+          <p @click="goLogin">시작하기</p>
+        </div>
       </div>
-    </v-row>
-  </v-container>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -33,10 +36,7 @@ const goHome = () => {
 </script>
 
 <style scoped>
-.logo {
-  margin-left: 220px;
-}
-.start {
-  margin-right: 220px;
+.navbar {
+  box-shadow: 3px;
 }
 </style>

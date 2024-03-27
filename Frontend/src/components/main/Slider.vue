@@ -1,12 +1,12 @@
 <template>
   <v-container class="d-flex justify-center">
     <div class="carousel-container">
-      <div class="welcome mb-5">
+      <div class="welcome mb-5 ml-10">
         <div class="">
-          <span class="text-h5">{{ useAuthStore().userName }}</span>
-          <span class="text-h6">님은</span>
+          <span class="point-font text-3xl point-color">{{ useAuthStore().userName }}</span>
+          <span class="text-2xl"> 님은</span>
         </div>
-        <span class="text-h6"> 오늘도 열공중!</span>
+        <span class="text-2xl mt-3 "> 오늘도 열공중!</span>
       </div>
       <Carousel
         :items-to-show="2"
@@ -116,7 +116,8 @@ const MainFeat = ref([
 .carousel__image {
   width: 800px;
   height: 100%;
-  border-radius: 30px;
+  border-radius: 20px;
   object-fit: cover; /* 이미지 비율 유지 및 잘림 방지 */
 }
+
 </style>

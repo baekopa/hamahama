@@ -64,7 +64,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+import instance from '@/api'
 
 const isList = ref(true)
 
@@ -95,20 +95,20 @@ const selectedStudyId = ref()
 
 async function GoQuizDetail(id) {
   try {
-    const keywordResponse = await axios.get(`/api/study/${id}/keywords`)
-    const remindQuizResponse = await axios.get(`/api/study/${id}/remindQuizzes`)
+    const keywordResponse = await instance.get(`/api/study/${id}/keywords`)
+    const remindQuizResponse = await instance.get(`/api/study/${id}/remindQuizzes`)
     // keyWordList.value = keywordResponse.data
     // remindQuizList.value = remindQuizResponse.data
     isList.value = !isList.value
     const matchedStudy = studyList.value.find((item) => item.id === id)
     quizSubject.value = matchedStudy.subject
-    selectedStudyId = id.value
+    selectedStudyId.value = id.value
   } catch (error) {
-    console.error('Error fetching data:', error)
+    console.log('Error fetching data:', error)
     isList.value = !isList.value
     const matchedStudy = studyList.value.find((item) => item.id === id)
     quizSubject.value = matchedStudy.subject
-    selectedStudyId = id.value
+    selectedStudyId.value = id
   }
 }
 

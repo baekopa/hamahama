@@ -12,7 +12,9 @@
                 개인 요약도 가능<span class="font-weight-bold text-teal-accent-2">하마하마</span>
               </p>
             </div>
-            <p class="my-2 text-h5">하마하마....</p>
+            <div class="text-h4">
+              <p class="my-2">하마하마....</p>
+            </div>
           </div>
         </div>
       </v-row>

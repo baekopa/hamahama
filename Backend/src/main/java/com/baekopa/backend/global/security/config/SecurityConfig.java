@@ -34,7 +34,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final UserDetailsService userDetailsService;
 
-    @Value("${BASE_URL}")
+    @Value("${BASE_URL_FRONT}")
     private String baseUrl;
 
     @Value("${WHITE_LIST}")
