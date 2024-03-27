@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Setter
 public class CreateMeetingRequestDto {
 
-    private Long studyId;
     private String topic;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime studyAt;
