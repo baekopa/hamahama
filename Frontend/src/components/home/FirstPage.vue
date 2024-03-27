@@ -20,7 +20,7 @@
             </div>
           </v-col>
           <v-col cols="6">
-            <img class="ml-20" src="@/assets/image/home/main1.png" alt="하마1" />
+            <img class="ml-20" src="@/assets/image/home/main2.png" style="width:550px" alt="하마1" />
           </v-col>
         </v-row>
       </v-container>
