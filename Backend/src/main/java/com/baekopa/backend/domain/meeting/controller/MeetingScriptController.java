@@ -37,8 +37,16 @@ public class MeetingScriptController {
         Map<String, Long> result = new HashMap<>();
 
         List<Transcription> response = meetingScriptService.sendFileToFastAPI(studyId, meetingId, file);
-        System.out.println("response = " + response);
+        StringBuilder sb = new StringBuilder();
+        for (MeetingScriptRequestDto.Transcription transcription : response) {
+            String textWithSpaces = transcription.getText().replace("\n", " "); // \n을 띄워쓰기로 바꿈
+            sb.append(transcription.getSpeaker()).append("  ").append(textWithSpaces).append("\n");
+        }
+        String text = sb.toString();
+        System.out.println(text);
 
+        Long meetingScriptId = meetingScriptService.saveScript(meetingId, text);
+        result.put("meetingScriptId", meetingScriptId);
         return ApiResponse.of(SuccessCode.STUDY_CREATE_SUCCESS, result);
     }
 }

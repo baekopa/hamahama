@@ -10,8 +10,31 @@ import java.util.List;
 public class MeetingScriptRequestDto {
 
     private List<Transcription> transcriptions;
+
     public static class Transcription {
         private String speaker;
         private String text;
+
+        // Getter and Setter for speaker and text
+        public String getSpeaker() {
+            return speaker;
+        }
+
+        public void setSpeaker(String speaker) {
+            this.speaker = speaker;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return "Speaker: " + speaker + ", Text: " + text;
+        }
     }
 }
