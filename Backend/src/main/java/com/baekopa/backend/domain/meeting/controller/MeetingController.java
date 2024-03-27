@@ -31,4 +31,5 @@ public class MeetingController {
         return ApiResponse.of(SuccessCode.MEETING_CREATE_SUCCESS, null);
 
     }
+
 }
