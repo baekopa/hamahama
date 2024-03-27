@@ -128,15 +128,18 @@ function CreateNote() {
       if (result.isConfirmed) {
         instance
           .post(`api/notes`, {
-            title,
-            content
+            title: title.value,
+            content: content.value
           })
           .then((res) => {
-            Swal.fire('저장되었습니다!', '', 'success')
-            console.log(res)
-            const noteId = 1
-            // noteId = res.data.noteId
-            router.push({ name: 'note', params: { id: noteId } })
+            if (res.data.status == 201) {
+              Swal.fire('저장되었습니다!', '', 'success')
+              console.log(res)
+              const noteId = res.data.data.noteId
+              router.push({ name: 'note', params: { id: noteId } })
+            } else {
+              console.log(res)
+            }
           })
           .catch((err) => {
             const noteId = 1
