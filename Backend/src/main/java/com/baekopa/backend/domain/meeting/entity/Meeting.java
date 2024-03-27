@@ -1,6 +1,8 @@
 package com.baekopa.backend.domain.meeting.entity;
 
 import com.baekopa.backend.domain.study.entity.Study;
+import com.baekopa.backend.global.entity.BaseBy;
+import com.baekopa.backend.global.entity.BaseTime;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -14,7 +16,7 @@ import java.time.LocalDate;
 @Getter
 @SQLDelete(sql = "UPDATE meeting SET deleted_at = NOW() WHERE meeting_id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Meeting {
+public class Meeting extends BaseBy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

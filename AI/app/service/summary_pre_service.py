@@ -18,7 +18,7 @@ def split_origin_text_list(list_text, max_len):
     temp_str = ""
     output_list = []
     for i in range(max_len):
-        if cnt == 15:
+        if cnt == 17:
             output_list.append(temp_str)
             cnt = 0
             temp_str = ""
@@ -26,6 +26,15 @@ def split_origin_text_list(list_text, max_len):
         cnt += 1
     output_list.append(temp_str)
     return output_list
+
+def split_summary_text_for_remind_quiz(list_text, max_len):
+    cnt = 0
+    temp_str = ""
+    output_list = []
+    for i in range(max_len):
+        temp_str += list_text[i]
+
+    return temp_str
 
 def do_summary(origin_text_list):
     output = ""
