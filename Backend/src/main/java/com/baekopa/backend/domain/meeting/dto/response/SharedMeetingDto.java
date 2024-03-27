@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -15,8 +15,8 @@ public class SharedMeetingDto {
 
     private String topic;
 
-    @JsonFormat(pattern = "YYYY-MM-DD")
-    private LocalDate studyAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime studyAt;
 
     private Long studyId;
 
@@ -25,7 +25,7 @@ public class SharedMeetingDto {
     private String studyImage;
 
     @Builder
-    private SharedMeetingDto(Long id, String topic, LocalDate studyAt, Long studyId, String studyName, String studyImage) {
+    private SharedMeetingDto(Long id, String topic, LocalDateTime studyAt, Long studyId, String studyName, String studyImage) {
         this.id = id;
         this.topic = topic;
         this.studyAt = studyAt;
@@ -34,7 +34,7 @@ public class SharedMeetingDto {
         this.studyImage = studyImage;
     }
 
-    public static SharedMeetingDto of(Long id, String topic, LocalDate studyAt, Long studyId, String studyName, String studyImage) {
+    public static SharedMeetingDto of(Long id, String topic, LocalDateTime studyAt, Long studyId, String studyName, String studyImage) {
         return builder().id(id)
                 .topic(topic)
                 .studyAt(studyAt)
