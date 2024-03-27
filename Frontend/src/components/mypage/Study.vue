@@ -1,4 +1,5 @@
 <template>
+  <!-- 같이하마 -->
   <v-container>
     <div class="title">
       <span class="text-2xl ml-5 font-bold">
@@ -13,7 +14,17 @@
         <v-row class="pa-10">
           <v-col cols="12" sm="6" md="4" lg="3" class="mb-8">
             <v-card
-              @click="goMyStudy"
+              @click="GoMyStudy"
+              elevation="4"
+              width="240"
+              height="350"
+              text="개인 스터디 룸"
+            ></v-card>
+          </v-col>
+          <v-col cols="12" sm="6" md="4" lg="3">
+            <v-card
+              @click="AddStudy"
+              elevation="4"
               variant="outlined"
               class="rounded-lg study-card"
               color="#3FB1FA"
@@ -50,7 +61,7 @@
           </v-col>
           <v-col cols="12" sm="6" md="4" lg="3" class="mb-8" v-for="study in StudyList" :key="study.id">
             <v-card
-              @click="goStudyHome(study.id)"
+              @click="GoStudyHome(study.id)"
               variant="outlined"
               class="rounded-lg study-card"
               color="indigo-darken-3"
@@ -111,7 +122,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import * as myPageApi from '@/api/mypage'
+import instance from '@/api'
 const router = useRouter()
 
 const defaultList = ref([
@@ -196,21 +207,22 @@ const StudyList = ref([
   }
 ])
 
-const goStudyHome = (id) => {
+const GoStudyHome = (id) => {
   router.push({ name: 'study', params: { id } })
 }
-const goMyStudy = () => {
+const GoMyStudy = () => {
   router.push({ name: 'myStudy' })
 }
 
-const addStudy = () => {
+const AddStudy = () => {
   router.push({ name: 'makeStudy' })
 }
 
-const getStudyList = () => {
-  myPageApi
-    .getStudyList()
+const GetStudyList = () => {
+  instance
+    .get(`/members/me/studies`)
     .then((response) => {
+      // StudyList 채우기
       console.log(response)
     })
     .catch((err) => {
@@ -219,7 +231,7 @@ const getStudyList = () => {
 }
 
 onMounted(() => {
-  // getStudyList()
+  GetStudyList()
 })
 </script>
 
