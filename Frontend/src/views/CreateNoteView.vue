@@ -1,17 +1,13 @@
 <template>
-  <div class="bg-gray">
-    <div class="d-flex">
-      <img width="50" src="@/components/icons/note/pencil.svg" alt="연필" />
-      <span class="text-h6 ml-4">공부하마 노트 작성</span>
-    </div>
-    <div class="bg-white d-flex flex-column">
+  <div class="">
+    <div class="bg-white d-flex flex-column items-center mt-15">
       <div class="d-flex flex-column" style="width: 1300px">
-        <v-text-field v-model="title" label="제목" variant="outlined"></v-text-field>
-        <v-textarea v-model="content" label="내용" variant="outlined" rows="20"></v-textarea>
+        <div class="text-gray-500 point-font"><span class="tossface text-xl">📝</span> 공부하마 노트 작성</div>
+        <input v-model="title" variant="plain" placeholder="어떤 주제에 대해 공부하셨나요?" class="note-title"/>
+        <textarea v-model="content" variant="plain" placeholder="공부한 내용을 작성해주세요. ( •̀ ω •́ )✧" class="note-content" rows="20"></textarea>
       </div>
-      <div class="">
-        <v-chip @click="share" class="export" flat>내보내기</v-chip>
-        <v-chip @click="CreateNote" class="save" flat>저장</v-chip>
+      <div class="d-flex justify-end mt-10" style="width: 1300px">
+        <v-btn @click="CreateNote" size="x-large" class="save" variant="flat" color="#3fb1fa" rounded="xl"><div class="save-btn">저장</div></v-btn>
       </div>
     </div>
   </div>
@@ -156,10 +152,17 @@ function CreateNote() {
 </script>
 
 <style scoped>
-.export {
-  background-color: #05d4c0;
+
+.note-title {
+  font-size: x-large;
+  outline: none;
+  margin: 20px 0px;
 }
-.save {
-  background-color: #3fb1fa;
+
+
+.note-content {
+  font-size: large;
+  outline: none;
+  /* line-height: 30px; */
 }
 </style>
