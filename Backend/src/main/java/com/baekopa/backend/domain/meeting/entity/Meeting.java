@@ -43,11 +43,10 @@ public class Meeting extends BaseBy {
         this.study = study;
     }
 
-    public static Meeting of(String topic, LocalDateTime studyAt, String recordFile, Study study) {
+    public static Meeting of(String topic, LocalDateTime studyAt, Study study) {
         return builder()
                 .topic(topic)
                 .studyAt(studyAt)
-                .recordFile(recordFile)
                 .study(study)
                 .build();
     }
