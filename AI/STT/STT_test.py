@@ -9,7 +9,7 @@ from tempfile import NamedTemporaryFile
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 import ffmpeg
-import re
+import re, glob, os
 from pydub import AudioSegment
 import subprocess
 
@@ -55,6 +55,15 @@ def millisec(timeStr):
 def remove_time_from_text(text):
     # 정규 표현식을 사용하여 대괄호([]) 안의 내용과 대괄호를 모두 찾아서 제거합니다.
     return re.sub(r'\[\d{2}:\d{2}\.\d{3} --> \d{2}:\d{2}\.\d{3}\]\s*', '', text)
+
+def clean_up_files(pattern):
+    files = glob.glob(pattern)
+    for f in files:
+        try:
+            os.remove(f)
+            print(f"{f} has been removed")
+        except OSError as e:
+            print(f"Error: {f} : {e.strerror}")
 
 @app.post("/stt/transcribe/{study_id}/{meeting_id}")
 async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...), file: UploadFile = File(...)):
@@ -145,7 +154,6 @@ async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...
             "--model", "small"
         ]
         
-
         # Whisper 명령 실행
         result = subprocess.run(whisper_command, capture_output=True, text=True, encoding='utf-8')
         cleaned_text = remove_time_from_text(result.stdout)
@@ -154,14 +162,17 @@ async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...
         # 결과 출력
         print(speaker[i]," : ", cleaned_text)
 
+        clean_up_files(f"{i}.*")
+
         # 에러 메시지가 있는 경우 출력
         if result.stderr:
             print(result.stderr)
-
+            
+    clean_up_files("diarization.txt")
     print(transcription_data)
     print(study_id, meeting_id)
     
-    return JSONResponse(content=transcription_data)
+    return JSONResponse(content=transcription_data["transcriptions"])
 
 if __name__ == "__main__":
     import uvicorn
