@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -131,9 +133,19 @@ public class MemberService {
     // 내 스터디 조회
     @Transactional(readOnly = true)
     public List<StudyListResponseDto> getMyStudies(Member member) {
+        List<StudyListResponseDto> allStudies = studyMemberRepository.findAllByMemberAndDeletedAtIsNull(member)
+                .stream()
+                .map(this::convertToDto)
+                .toList();
 
-        return studyMemberRepository.findAllByMemberAndDeletedAtIsNull(member).stream().map(this::convertToDto).toList();
+        // StudyListResponseDto의 id를 기준으로 중복 제거
+        List<StudyListResponseDto> uniqueStudies = allStudies.stream()
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toMap(StudyListResponseDto::getId, Function.identity(), (existing, replacement) -> existing),
+                        map -> new ArrayList<>(map.values())
+                ));
 
+        return uniqueStudies;
     }
 
     @Transactional(readOnly = true)
