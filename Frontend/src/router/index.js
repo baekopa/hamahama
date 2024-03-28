@@ -9,6 +9,7 @@ import ErrorView from '@/views/ErrorView.vue'
 import CreateNoteView from '@/views/CreateNoteView.vue'
 import NoteDetailView from '@/views/NoteDetailView.vue'
 import { useAuthStore } from '@/stores/auth'
+import ManualView from '@/views/ManualView.vue'
 
 const routes = [
   {
@@ -40,6 +41,11 @@ const routes = [
     path: '/note/:id',
     name: 'note',
     component: NoteDetailView
+  },
+  {
+    path: '/manual',
+    name: 'manual',
+    component: ManualView
   },
   ...StudyRoutes,
   ...MyPageRoutes,
