@@ -87,18 +87,49 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue'
-  import { useStudyStore } from '@/stores/study'
-  import { useAudioStore } from '@/stores/audioStore';
-  // import axios from 'axios';
-  import instance from '@/api/index'
-  import mainImage from '@/assets/image/home/main2.png';
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStudyStore } from '@/stores/study'
+import { useAudioStore } from '@/stores/audioStore'
+// import axios from 'axios'
+import instance from '@/api'
+import mainImage from '@/assets/image/home/main2.png'
 
   const studyStore = useStudyStore();
   const audioStore = useAudioStore();
 
-  const study_id = ref(1)
+  const route = useRoute()
+  const router = useRouter()
   const meeting_id = ref(1)
+  const studyId = route.params.id
+
+
+  function GoSetting() {
+    router.push({ name: 'studySetting', params: { id: studyId } })
+  }
+  function GoSummary() {
+    router.push({ name: 'studySummary', params: { id: studyId } })
+  }
+  function GoQuiz() {
+    router.push({ name: 'studyQuiz', params: { id: studyId } })
+  }
+
+  const LoadStudyData = () => {
+    instance.get(`api/studies/${studyId}/settings`).then((res) => {
+      const data = res.data.data
+      if (res.data.status == 200) {
+        studyStore.studyTitle = data.title
+        studyStore.studyDescription = data.description
+        studyStore.studyBackgroundImage = data.backgroundImage
+        studyStore.studyCategory = data.category
+        studyStore.studyMembers = data.members
+      }
+    })
+  }
+
+onMounted(LoadStudyData)
+
+// ------------------------------------ //
 
 
   // --------------- 녹음 관련 변수와 함수 ------------------ //
@@ -197,7 +228,7 @@
     // FastAPI 서버로 오디오 파일 전송 
     try {
       console.log("post 간다!");
-      await instance.post(`http://localhost:8080/api/studies/${study_id.value}/meetings/${meeting_id.value}/record`, formData, {
+      await instance.post(`http://localhost:8080/api/studies/${studyId}/meetings/${meeting_id.value}/record`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
