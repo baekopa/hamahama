@@ -2,9 +2,11 @@ package com.baekopa.backend.domain.note.service;
 
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
+import com.baekopa.backend.domain.note.dto.request.CreateSubmittedNoteSummaryRequestDto;
 import com.baekopa.backend.domain.note.dto.response.CreateSubmittedNoteSummaryResponseDto;
 import com.baekopa.backend.domain.note.entity.SubmittedNote;
 import com.baekopa.backend.domain.note.repository.SubmittedNoteRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,12 +27,13 @@ public class SubmittedNoteSummaryService {
     private final MeetingRepository meetingRepository;
     private final SubmittedNoteRepository submittedNoteRepository;
 
-    // TODO: 30분 마다 검사!
-    @Scheduled(fixedRate = 10000, zone = "Asia/Seoul") // fixedRate = 30분?
+    // TODO: 20분 마다 검사로 변경해야합니당
+    // test를 위해서 10초로 설정해둠 (1초 == 1000ms)
+    @Scheduled(fixedRate = 10000, zone = "Asia/Seoul") // fixedRate = 20분 = 20 * 60 * 1000
     @Transactional
-    public CreateSubmittedNoteSummaryResponseDto createSubmittedNoteSummary() {
+    public void createSubmittedNoteSummary() {
 
-        log.info("10초 후 실행 => time : " + LocalDateTime.now());
+        log.info("[스케쥴링 테스트] 10초 후 실행 => time : " + LocalDateTime.now());
 
         // TODO: 요약을 생성할 시간이 되었는 지 확인
         // 요약 해야하는 미팅 조회
@@ -40,34 +43,36 @@ public class SubmittedNoteSummaryService {
         // 요약 해야하는 제출된 노트 조회
         for(Meeting meeting : meetingList) {
 
-            log.info("미팅 주제 : {} =======> 시작 시간 : {}" , meeting.getTopic(), meeting.getStudyAt());
+            log.info("[스케쥴링 테스트] 미팅 주제 : {} ==== 시작 시간 : {}" , meeting.getTopic(), meeting.getStudyAt());
 
-            List<SubmittedNote> submittedNoteList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
-
-            log.info("제출된 노트 요약은 {} 개 입니다.", submittedNoteList.size());
-
-            // 개인 요약들을 하나로 합치기
             // TODO: 요약 api 요청에 맞게 data를 변경하세용
+            // 1. List 제출된 개인 요약 ( CreateSubmittedNoteSummaryRequestDto엔 originText밖에 없습니다. 변경하셔도 좋아요.)
+            List<CreateSubmittedNoteSummaryRequestDto> submittedNoteList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
+                    .stream().map((submittedNote) -> CreateSubmittedNoteSummaryRequestDto.from(submittedNote.getNote().getSummary())).toList();
+
+            log.info("[스케쥴링 테스트] 제출된 노트 요약: {} 개", submittedNoteList.size());
+
+
+            // 2. String 하나로!!
             Map<String, String> summaryRequestData = new HashMap<>();
-            summaryRequestData.put("Key를 입력하세요", combineSumittedNote(submittedNoteList));
-            log.info("하나로 합쳐진 요약본... : {}", summaryRequestData.get("Key를 입력하세요"));
+            summaryRequestData.put("originText", combineSumittedNote(submittedNoteList));
+            log.info("[스케쥴링 테스트] 합쳐진 data 확인 : {}", summaryRequestData.get("originText"));
 
             // TODO: 요약 해주세요
             // TODO: 요약을 완료하면 Meeting의 updateNoteSummary() 메서드를 호출해서 update 해주세용
 
         }
 
-        return null;
     }
 
     // 개인 요약 text를 하나로 합침
-    public String combineSumittedNote(List<SubmittedNote> submittedNoteList) {
+    public String combineSumittedNote(List<CreateSubmittedNoteSummaryRequestDto> requestDtoList) {
 
         String combindText = "";
 
-        for(SubmittedNote submittedNote : submittedNoteList){
+        for(CreateSubmittedNoteSummaryRequestDto requestDto : requestDtoList){
 
-            combindText += submittedNote.getNote().getSummary() + "\n";
+            combindText += requestDto.getOriginText() + "\n";
 
         }
 
