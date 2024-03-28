@@ -56,6 +56,7 @@ public enum SuccessCode {
     MEETING_SUMMARY_CREATE_SUCCESS(201, "미팅 요약에 성공했습니다."),
     MEETING_SUMMARY_GET_SUCCESS(200,"미팅 요약 조회에 성공했습니다."),
     MEETING_SUMMARY_UPDATE_SUCCESS(201,"미팅 재요약에 성공했습니다."),
+    MEETING_SCRIPT_CREATE_SUCCESS(201, "회의록을 성공적으로 저장했습니다."),
 
     // Note
     NOTE_CREATE_SUCCESS(201, "새로운 노트 생성에 성공했습니다."),
@@ -67,7 +68,7 @@ public enum SuccessCode {
     // Meeting
     STUDY_MEETING_GET_SUCCESS(200, "스터디 미팅 일정 목록 조회에 성공했습니다."),
     MEETING_GET_SUCCESS(200, "미팅 조회에 성공했습니다."),
-    MEETING_CREATE_SUCCESS(201, "새로운 미팅 생성에 성공했습니다."); // End
+    MEETING_CREATE_SUCCESS(201, "새로운 미팅 생성에 성공했습니다."),
 
     // My Information
     MY_STUDY_GET_SUCCESS(200, "내가 속한 스터디 조회에 성공했습니다."); // End
