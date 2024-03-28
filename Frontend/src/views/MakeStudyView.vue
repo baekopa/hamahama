@@ -342,7 +342,7 @@ function createStudy() {
   }
 
   instance
-    .post('api/studies/new', formData, {
+    .post('api/studies', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
