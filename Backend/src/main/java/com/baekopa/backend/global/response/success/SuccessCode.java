@@ -56,6 +56,7 @@ public enum SuccessCode {
     MEETING_SUMMARY_CREATE_SUCCESS(201, "미팅 요약에 성공했습니다."),
     MEETING_SUMMARY_GET_SUCCESS(200,"미팅 요약 조회에 성공했습니다."),
     MEETING_SUMMARY_UPDATE_SUCCESS(201,"미팅 재요약에 성공했습니다."),
+    MEETING_SCRIPT_CREATE_SUCCESS(201, "STT 텍스트 파일 저장에 성공했습니다."),
 
     // Note
     NOTE_CREATE_SUCCESS(201, "새로운 노트 생성에 성공했습니다."),
