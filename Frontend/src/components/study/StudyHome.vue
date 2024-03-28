@@ -87,163 +87,135 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useStudyStore } from '@/stores/study'
-import { useAudioStore } from '@/stores/audioStore'
-import axios from 'axios'
-import instance from '@/api'
-import mainImage from '@/assets/image/home/main2.png'
+  import { ref } from 'vue'
+  import { useStudyStore } from '@/stores/study'
+  import { useAudioStore } from '@/stores/audioStore';
+  // import axios from 'axios';
+  import instance from '@/api/index'
+  import mainImage from '@/assets/image/home/main2.png';
 
-const route = useRoute()
-const router = useRouter()
-const studyId = route.params.id
-const studyStore = useStudyStore()
+  const studyStore = useStudyStore();
+  const audioStore = useAudioStore();
 
-function GoSetting() {
-  router.push({ name: 'studySetting', params: { id: studyId } })
-}
-function GoSummary() {
-  router.push({ name: 'studySummary', params: { id: studyId } })
-}
-function GoQuiz() {
-  router.push({ name: 'studyQuiz', params: { id: studyId } })
-}
+  const study_id = ref(1)
+  const meeting_id = ref(1)
 
-const LoadStudyData = () => {
-  instance.get(`api/studies/${studyId}/settings`).then((res) => {
-    const data = res.data.data
-    if (res.data.status == 200) {
-      studyStore.studyTitle = data.title
-      studyStore.studyDescription = data.description
-      studyStore.studyBackgroundImage = data.backgroundImage
-      studyStore.studyCategory = data.category
-      studyStore.studyMembers = data.members
-    }
-  })
-}
 
-onMounted(LoadStudyData)
+  // --------------- 녹음 관련 변수와 함수 ------------------ //
+  const mediaRecorder = ref(null);
+  const audioChunks = ref([]);
+  // const recordText = ref('');
+  const startTime = ref(null);
+  const recording = ref(false);
+  const elapsedTime = ref('00:00');
+  const timer = ref(null);
+  const paused = ref(false); // 일시정지 상태 관리를 위한 참조
+  const pausedTime = ref(0);
+  const totalPausedDuration = ref(0); 
+  
+  
+  const updateElapsedTime = () => {
+    const now = Date.now()
+    const diff = now - startTime.value - totalPausedDuration.value; // 일시정지된 시간을 고려
+    const minutes = Math.floor(diff / 60000)
+    const seconds = Math.floor((diff % 60000) / 1000)
 
-// ------------------------------------ //
-
-const audioStore = useAudioStore()
-
-const study_id = ref(1)
-const meeting_id = ref(1)
-
-// --------------- 녹음 관련 변수와 함수 ------------------ //
-const mediaRecorder = ref(null)
-const audioChunks = ref([])
-const recordText = ref('')
-const startTime = ref(null)
-const recording = ref(false)
-const elapsedTime = ref('00:00')
-const timer = ref(null)
-const paused = ref(false) // 일시정지 상태 관리를 위한 참조
-const pausedTime = ref(0)
-const totalPausedDuration = ref(0)
-
-const updateElapsedTime = () => {
-  const now = Date.now()
-  const diff = now - startTime.value - totalPausedDuration.value // 일시정지된 시간을 고려
-  const minutes = Math.floor(diff / 60000)
-  const seconds = Math.floor((diff % 60000) / 1000)
-
-  elapsedTime.value = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-}
-
-const startRecording = async () => {
-  console.log('녹음이 시작됨')
-  recording.value = true
-  startTime.value = Date.now()
-  updateElapsedTime()
-  timer.value = setInterval(updateElapsedTime, 1000)
-  if (navigator.mediaDevices.getUserMedia) {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-    mediaRecorder.value = new MediaRecorder(stream)
-    audioChunks.value = []
-    mediaRecorder.value.ondataavailable = (event) => {
-      audioChunks.value.push(event.data)
-    }
-    mediaRecorder.value.start()
-    audioStore.setRecordingStatus(true)
-  } else {
-    alert('오디오 녹음을 지원하지 않는 브라우저입니다.')
+    elapsedTime.value = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
   }
-}
 
-const pauseRecording = () => {
-  if (mediaRecorder.value && recording.value && !paused.value) {
-    mediaRecorder.value.pause()
-    clearInterval(timer.value)
-    paused.value = true
-    pausedTime.value = Date.now() // 일시정지 시작 시간 저장
-    console.log('녹음이 일시정지됨')
-  }
-}
-
-const resumeRecording = () => {
-  if (mediaRecorder.value && paused.value) {
-    mediaRecorder.value.resume()
-    const pausedDuration = Date.now() - pausedTime.value
-    totalPausedDuration.value += pausedDuration // 총 일시정지 시간 업데이트
+  const startRecording = async () => {
+    console.log("녹음이 시작됨");
+    recording.value = true
+    startTime.value = Date.now()
+    updateElapsedTime()
     timer.value = setInterval(updateElapsedTime, 1000)
-    paused.value = false
-    console.log('녹음이 재개됨')
-  }
-}
-
-const stopRecording = () => {
-  console.log('레코딩 멈춰 명령 실행')
-  if (mediaRecorder.value) {
-    console.log('녹음파일 있으니 녹음 중지할게요')
-    mediaRecorder.value.stop()
-    mediaRecorder.value.stream.getTracks().forEach((track) => track.stop()) // 스트림의 모든 트랙을 멈춤. 마이크 종료
-    clearInterval(timer.value)
-    pausedTime.value = 0
-    totalPausedDuration.value = 0
-    recording.value = false
-    mediaRecorder.value.onstop = async () => {
-      const audioBlob = new Blob(audioChunks.value, { type: 'audio/wav' })
-      console.log('업로드 함수 실행 직전')
-      await uploadAudio(audioBlob)
-      audioStore.setRecordingStatus(false)
+    if (navigator.mediaDevices.getUserMedia) {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder.value = new MediaRecorder(stream);
+      audioChunks.value = [];
+      mediaRecorder.value.ondataavailable = event => {
+        audioChunks.value.push(event.data);
+      };
+      mediaRecorder.value.start();
+      audioStore.setRecordingStatus(true);
+    } else {
+      alert("오디오 녹음을 지원하지 않는 브라우저입니다.");
     }
-  } else {
-    console.log('녹음 시작은 했니?')
-  }
-}
+  };
 
-const uploadAudio = async (audioBlob) => {
-  const formData = new FormData()
-  formData.append('file', audioBlob, 'recording.wav')
-  console.log('트라이 직전')
-  console.log(formData)
-  // FastAPI 서버로 오디오 파일 전송
-  try {
-    console.log('post 간다!')
-    const response = await axios.post(
-      `http://localhost:8000/stt/transcribe/${study_id.value}/${meeting_id.value}`,
-      formData,
-      {
+  const pauseRecording = () => {
+    if (mediaRecorder.value && recording.value && !paused.value) {
+      mediaRecorder.value.pause();
+      clearInterval(timer.value);
+      paused.value = true;
+      pausedTime.value = Date.now(); // 일시정지 시작 시간 저장
+      console.log("녹음이 일시정지됨");
+    }
+  };
+
+  const resumeRecording = () => {
+    if (mediaRecorder.value && paused.value) {
+      mediaRecorder.value.resume();
+      const pausedDuration = Date.now() - pausedTime.value;
+      totalPausedDuration.value += pausedDuration; // 총 일시정지 시간 업데이트
+      timer.value = setInterval(updateElapsedTime, 1000);
+      paused.value = false;
+      console.log("녹음이 재개됨");
+    }
+  };
+
+
+  const stopRecording = () => {
+    console.log("레코딩 멈춰 명령 실행");
+    if (mediaRecorder.value) {
+      console.log("녹음파일 있으니 녹음 중지할게요");
+      mediaRecorder.value.stop();
+      mediaRecorder.value.stream.getTracks().forEach(track => track.stop()); // 스트림의 모든 트랙을 멈춤. 마이크 종료
+      clearInterval(timer.value)
+      pausedTime.value = 0;
+      totalPausedDuration.value = 0; 
+      recording.value = false
+      mediaRecorder.value.onstop = async () => {
+        const audioBlob = new Blob(audioChunks.value, { type: 'audio/wav' });
+        console.log("업로드 함수 실행 직전");
+        await uploadAudio(audioBlob);
+        audioStore.setRecordingStatus(false);
+      };
+    } else {
+      console.log("녹음 시작은 했니?");
+    }
+  };
+
+  const uploadAudio = async (audioBlob) => {
+    const formData = new FormData();
+    formData.append("file", audioBlob, "recording.wav");
+    
+    console.log("트라이 직전")
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+    // FastAPI 서버로 오디오 파일 전송 
+    try {
+      console.log("post 간다!");
+      await instance.post(`http://localhost:8080/api/studies/${study_id.value}/meetings/${meeting_id.value}/record`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
-      }
-    )
-    console.log('post끝')
+        },
+      });
+      console.log("post끝");
 
-    const data = response.data
-    console.log('Transcription result:', data)
-    recordText.value = data.transcription
-    console.log(recordText.value)
-  } catch (error) {
-    console.error('오류가 발생했습니다:', error)
-  }
-}
+      // const data = response.data;
+      // console.log("Transcription result:", data);
+      // recordText.value = data.transcription;
+      // console.log(recordText.value)
+    } catch (error) {
+      console.error("오류가 발생했습니다:", error);
+    }
+  };
 // --------------------------- 녹음  ---------------------------------------- //
+
 </script>
+
 
 <style scoped>
 .gradient-btn {
