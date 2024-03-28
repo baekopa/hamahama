@@ -33,7 +33,7 @@ public class MeetingScriptService {
 
     public Long saveScript(Long meetingId, String text) {
 
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, "유효하지 않은 meetingId"));
+        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_EXIST, "유효하지 않은 meetingId"));
 
         MeetingScript meetingScript = MeetingScript.of(meeting, text);
         meetingScript = meetingScriptRepository.save(meetingScript);
