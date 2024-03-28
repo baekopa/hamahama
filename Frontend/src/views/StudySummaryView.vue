@@ -172,7 +172,7 @@ function GoSummaryDetail(id) {
 
 function LoadSummaryList() {
   instance
-    .get(`api/study/summary`)
+    .get(`api/studies/${studyId}/summary`)
     .then((res) => {
       console.log(res)
     })
