@@ -1,9 +1,10 @@
-import uvicorn
+import uvicorn, os
 from fastapi import FastAPI
 from routers import study
 from dotenv import load_dotenv
 
 load_dotenv()
+token = os.getenv("STT_TOKEN")
 
 app=FastAPI()
 app.include_router(study.router)
