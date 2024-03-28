@@ -29,8 +29,9 @@ async def keyword_text(origin_dto: OriginalText):
 async def quiz_text(origin_dto: QuizRequest):
     summary_text_for_quiz= process_for_remind_quiz(origin_dto.summaryText)
     
-    quiz_list = do_quiz(summary_text_for_quiz)
-    return QuizDTO(quiz=quiz_list)
+    quiz_created = do_quiz(summary_text_for_quiz)
+    quiz_created=str(quiz_created)
+    return QuizDTO(quiz=quiz_created)
 
 @router.post("/tailquestion", tags=["꼬리 질문"], response_model=TailQuestionDTO)
 async def tail_question_text(origin_dto: OriginalText):

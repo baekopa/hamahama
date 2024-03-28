@@ -1,5 +1,6 @@
 package com.baekopa.backend.domain.meeting.entity;
 
+import com.baekopa.backend.domain.meeting.dto.RemindQuizDTO;
 import com.baekopa.backend.global.entity.BaseTime;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -39,6 +40,14 @@ public class RemindQuiz extends BaseTime {
         return builder().meeting(meeting)
                 .openDate(openDate)
                 .content(content)
+                .build();
+    }
+
+    public static RemindQuiz from(Meeting meeting, RemindQuizDTO remindQuizDTO){
+        return builder()
+                .meeting(meeting)
+                .openDate(remindQuizDTO.getOpenDate())
+                .content(remindQuizDTO.getQuiz())
                 .build();
     }
 
