@@ -95,9 +95,6 @@ function GetPersonalData() {
         authStore.userName = userData.data.name
         authStore.userEmail = userData.data.email
         authStore.userImgUrl = userData.data.image_url
-        console.log(authStore.userName)
-        console.log(authStore.userEmail)
-        console.log(authStore.userImgUrl)
       }
       return instance.get('api/members/me/studies', config)
       
@@ -127,9 +124,4 @@ onMounted(() => {
 })
 </script>
 
-<style>
-.note-card {
-  background-image: url('@/assets/image/home/NoteBasic.jpg');
-  background-size: cover;
-}
-</style>
+<style></style>
