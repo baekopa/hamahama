@@ -3,7 +3,7 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
-import "./style.css"
+import './style.css'
 
 // Vuetify
 import 'vuetify/styles'
@@ -15,8 +15,6 @@ import * as directives from 'vuetify/directives'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 
-import axios from 'axios'
-
 const vuetify = createVuetify({
   components,
   directives
@@ -24,14 +22,10 @@ const vuetify = createVuetify({
 
 const app = createApp(App)
 
-axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
-app.config.globalProperties.axios = axios
-
 app.use(createPinia())
 app.use(router)
 app.use(vuetify)
 app.use(ElementPlus)
 Kakao.init('8e0daabccbcb70d0d97a40d41297576d')
-console.log(Kakao.isInitialized())
 
 app.mount('#app')
