@@ -63,7 +63,7 @@ public class NoteService {
     public String createSummary(Long noteId) throws JsonProcessingException {
 
         Note note = noteRepository.findById(noteId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_FOUND, ErrorCode.NOTE_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_EXIST, ErrorCode.NOTE_NOT_EXIST.getMessage()));
 
         // 요약 요청
         String summaryUrl = aiUrl + "/studies/summary";
@@ -91,7 +91,7 @@ public class NoteService {
     public NoteResponseDto getNote(Long noteId, Member member) {
 
         Note note = noteRepository.findById(noteId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_FOUND, ErrorCode.NOTE_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_EXIST, ErrorCode.NOTE_NOT_EXIST.getMessage()));
 
         List<SubmittedNote> meetingList = submittedNoteRepository.findMeetingByNote(note);
 

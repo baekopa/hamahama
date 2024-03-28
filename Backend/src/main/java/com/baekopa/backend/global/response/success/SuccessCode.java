@@ -71,8 +71,8 @@ public enum SuccessCode {
     MEETING_CREATE_SUCCESS(201, "새로운 미팅 생성에 성공했습니다."),
     MEETING_REMIND_QUIZ_SUCCESS(201,"새로운 리마인드 퀴즈 생성에 성공했습니다."),
 
-    // My Information
-    MY_STUDY_GET_SUCCESS(200, "내가 속한 스터디 조회에 성공했습니다."),
+    // Remind Quiz
+    REMIND_QUIZ_GET_SUCCESS(200, "리마인드 퀴즈 조회에 성공했습니다."),
     ; // End
 
     /**
