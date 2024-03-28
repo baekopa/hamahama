@@ -57,7 +57,7 @@ pipeline {
                 sh "docker rm -f fastapi"
                 sh "docker rmi oiatmil/d105-ai:latest"
                 sh "docker image prune -f"
-                sh "docker pull oiatmil/d105-ai:latest && docker run -d -p 9090:9090 -v /var/opt/models:/MODEL --name fastapi oiatmil/d105-ai:latest"
+                sh "docker pull oiatmil/d105-ai:latest && docker run -d -p 9000:9000 -v /var/opt/models:/MODEL --name fastapi oiatmil/d105-ai:latest"
                 
                 echo 'FastAPI EC2에 배포 완료!'
             }
