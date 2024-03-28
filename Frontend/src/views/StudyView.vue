@@ -100,7 +100,7 @@ import mainImage from '@/assets/image/home/main2.png'
 
   const route = useRoute()
   const router = useRouter()
-  const meeting_id = ref(1)
+  const meeting_id = ref(2)
   const studyId = route.params.id
 
 
