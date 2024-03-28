@@ -70,6 +70,7 @@ public enum SuccessCode {
     MEETING_GET_SUCCESS(200, "미팅 조회에 성공했습니다."),
     MEETING_CREATE_SUCCESS(201, "새로운 미팅 생성에 성공했습니다."),
     MEETING_REMIND_QUIZ_SUCCESS(201,"새로운 리마인드 퀴즈 생성에 성공했습니다."),
+    MEETING_SCRIPT_CREATE_SUCCESS(201, "STT 텍스트 파일 저장에 성공했습니다."),
 
 
     // My Information
