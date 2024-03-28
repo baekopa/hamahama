@@ -188,7 +188,6 @@ pyrightconfig.json
 pyvenv.cfg
 pip-selfcheck.json
 
-requirements.txt
 # End of https://www.toptal.com/developers/gitignore/api/python,venv
 
 kobart_summary
