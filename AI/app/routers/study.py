@@ -1,4 +1,5 @@
 import os, re, subprocess
+from whisper import transcribe
 from fastapi import APIRouter, FastAPI, UploadFile, File, HTTPException, Path
 from fastapi.responses import JSONResponse
 from pyannote.audio import Pipeline
@@ -10,7 +11,7 @@ from service.text_processing import process_text, process_for_remind_quiz
 from service.summary_pre_service import do_summary
 from service.keyword_quiz_pre_service import do_keyword, do_quiz
 from service.tail_question_service import do_tail_question
-from service.audio_to_text_service import load_model, set_pipeline, convert_audio_ffmpeg, millisec, remove_time_from_text, clean_up_files
+from service.audio_to_text_service import load_models, set_pipeline, convert_audio_ffmpeg, millisec, remove_time_from_text, clean_up_files
 
 
 router=APIRouter(
@@ -46,10 +47,12 @@ async def tail_question_text(origin_dto: OriginalText):
     tail_question = do_tail_question(origin_dto.original_text)
     return TailQuestionDTO(original_text=origin_dto.original_text, tail_question=tail_question)
 
+
+
 @router.post("/transcribe/{study_id}/{meeting_id}", tags=["STT"])
 async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...), file: UploadFile = File(...)):
 
-    whisper_model = load_model
+    model = load_models()
     token = os.getenv("STT_TOKEN")
     diarization_pipeline = set_pipeline(token=token)
     if not file.filename.endswith('.wav'):
@@ -141,6 +144,13 @@ async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...
         
         # Whisper 명령 실행
         result = subprocess.run(whisper_command, capture_output=True, text=True, encoding='utf-8')
+        # try:
+        #     result = model.transcribe(audio_file, language="ko")
+        #     transcribed_text = result["text"]
+        # finally:
+        #     # 사용이 끝난 임시 파일 삭제
+        #     os.remove(tmp_filename)
+        
         cleaned_text = remove_time_from_text(result.stdout)
         transcription_data["transcriptions"].append({"speaker": speaker[i], "text": cleaned_text})
         print(result)
