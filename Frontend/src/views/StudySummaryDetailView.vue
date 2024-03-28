@@ -152,9 +152,10 @@ function GoSummary() {
   router.push({ name: 'studySummary', params: { id: studyId } })
 }
 
+// 미팅 요약 조회
 function LoadSummaryData() {
   instance
-    .get(`/api/studies/${studyId}/meetings/${meetingId}/summary`)
+    .get(`api/studies/${studyId}/meetings/${meetingId}/summary`)
     .then((res) => {
       console.log(res)
     })
@@ -163,6 +164,7 @@ function LoadSummaryData() {
     })
 }
 
+// 미팅 요약 재생성
 function RegenSummary() {
   instance
     .put(`api/studies/${studyId}/meetings/${meetingId}/summary`)
@@ -177,11 +179,12 @@ function RegenSummary() {
 function EditSummary() {
   instance
     .put(`api/studies/${studyId}/meetings/${meetingId}/summary-update`, {
-      content: editedSummary
+      summaryText: editedSummary
     })
 
     .then((res) => {
       console.log(res)
+
       isEdit.value = !isEdit.value
     })
     .catch((err) => {
