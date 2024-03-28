@@ -29,46 +29,6 @@ public class MeetingScriptService {
 
     public Long saveScript(Long meetingId, String text) {
 
-//        String text = null;
-//        try {
-//            RestTemplate restTemplate = new RestTemplate();
-//            String serverUrl = "http://localhost:8000/stt/transcribe/" + studyId + "/" + meetingId;
-//
-//            // 파일을 ByteArrayResource로 변환
-//            ByteArrayResource byteArrayResource = new ByteArrayResource(file.getBytes()) {
-//                @Override
-//                public String getFilename() {
-//                    return file.getOriginalFilename(); // 파일 이름을 제공하기 위해 오버라이드
-//                }
-//            };
-//
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-//
-//            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-//            body.add("file", byteArrayResource); // ByteArrayResource를 사용
-//
-//            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-//
-//            ResponseEntity<List<Transcription>> response = restTemplate.exchange(
-//                    serverUrl,
-//                    HttpMethod.POST,
-//                    requestEntity,
-//                    new ParameterizedTypeReference<List<Transcription>>() {}
-//            );
-//
-//            List<Transcription> textList = response.getBody();
-//
-//            StringBuilder sb = new StringBuilder();
-//            for (MeetingScriptRequestDto.Transcription transcription : textList) {
-//                String textWithSpaces = transcription.getText().replace("\n", " "); // \n을 띄워쓰기로 바꿈
-//                sb.append(transcription.getSpeaker()).append("  ").append(textWithSpaces).append("\n");
-//            }
-//            text = sb.toString();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, "유효하지 않은 meetingId"));
 
         MeetingScript meetingScript = MeetingScript.of(meeting, text);
