@@ -66,7 +66,9 @@ public enum ErrorCode {
     NOTE_DUPLICATE_MEETING(400, "이미 내보내기 된 미팅입니다."),
 
     // Meeting
-    MEETING_NOT_FOUND(400, "미팅이 존재하지 않습니다."); // End
+    MEETING_NOT_FOUND(400, "미팅이 존재하지 않습니다."),
+    MEETING_SUMMARY_NOT_FOUND(400,"미팅 요약이 존재하지 않습니다."),
+    ; // End
 
     /**
      * ******************************* Error Code Field ***************************************
