@@ -12,19 +12,9 @@
     <v-card rounded="0" variant="flat" class="study-list">
       <div class="list-section">
         <v-row class="pa-10">
-          <v-col cols="12" sm="6" md="4" lg="3" class="mb-8">
-            <v-card
-              @click="GoMyStudy"
-              elevation="4"
-              width="240"
-              height="350"
-              text="개인 스터디 룸"
-            ></v-card>
-          </v-col>
           <v-col cols="12" sm="6" md="4" lg="3">
             <v-card
-              @click="AddStudy"
-              elevation="4"
+              @click="GoMyStudy"
               variant="outlined"
               class="rounded-lg study-card"
               color="#3FB1FA"
@@ -99,7 +89,7 @@
           </v-col>
           <v-col cols="12" sm="6" md="4" lg="3" class="mb-8 d-flex align-center">
             <v-card
-              @click="addStudy"
+              @click="AddStudy"
               variant="tonal"
               color="#3FB1FA"
               class="rounded-lg d-flex justify-center items-center"
