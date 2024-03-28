@@ -6,7 +6,7 @@ import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.member.repository.MemberRepository;
 import com.baekopa.backend.domain.note.dto.request.CreateNoteRequestDto;
 import com.baekopa.backend.domain.note.dto.request.CreateNoteSummaryRequestDto;
-import com.baekopa.backend.domain.note.dto.request.CreateNoteSummaryResponseDto;
+import com.baekopa.backend.domain.note.dto.response.CreateNoteSummaryResponseDto;
 import com.baekopa.backend.domain.note.dto.response.NoteResponseDto;
 import com.baekopa.backend.domain.note.entity.Note;
 import com.baekopa.backend.domain.note.entity.SubmittedNote;
@@ -58,7 +58,7 @@ public class NoteService {
         return noteRepository.save(note).getId();
 
     }
-    
+
     // 요약 생성
     public String createSummary(Long noteId) throws JsonProcessingException {
 

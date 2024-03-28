@@ -8,9 +8,10 @@ def do_keyword(origin_text_list):
 
     return output
 
-def do_quiz(origin_text_list):
-    output = []
-    for i in range(len(origin_text_list)):
-        output.append(quiz_create(origin_text_list[i]))
+def do_quiz(summary_text_for_quiz):
+    return quiz_create(summary_text_for_quiz)
+    # output = []
+    # for i in range(len(summary_text_for_quiz)):
+    #     output.append(quiz_create(summary_text_for_quiz[i]))
 
-    return output
+    # return output
