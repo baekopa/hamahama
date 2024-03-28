@@ -18,14 +18,14 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/notes")
 @RequiredArgsConstructor
 public class NoteController {
 
     private final NoteService noteService;
 
     @Operation(summary = "새 노트 생성", description = "공부하마 페이지를 통해 노트 생성")
-    @PostMapping("/notes")
+    @PostMapping("")
     public ApiResponse<Map<String, Long>> createNewNote(@AuthenticationPrincipal Member member, @RequestBody CreateNoteRequestDto requestDto) {
 
         log.info("새 노트 생성 : {}", requestDto.getTitle());
@@ -39,7 +39,7 @@ public class NoteController {
     }
 
     @Operation(summary = "새 요약 생성", description = "공부하마 노트 요약 생성")
-    @PostMapping("/notes/{note-id}/summary")
+    @PostMapping("/{note-id}/summary")
     public ApiResponse<Map<String, String>> createSummary(@PathVariable(name = "note-id") Long noteId) throws JsonProcessingException {
 
         log.info("새 요약 생성 : {}", noteId);
@@ -52,7 +52,7 @@ public class NoteController {
     }
 
     @Operation(summary = "노트 조회", description = "공부하마 노트 조회")
-    @GetMapping("/notes/{note-id}")
+    @GetMapping("/{note-id}")
     public ApiResponse<NoteResponseDto> getNote(@PathVariable(name = "note-id") Long noteId, @AuthenticationPrincipal Member member) {
 
         log.info("노트 조회 : {}", noteId);
