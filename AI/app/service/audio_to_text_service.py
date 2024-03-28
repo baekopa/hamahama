@@ -6,7 +6,7 @@ import ffmpeg
 import re, glob, os
 
 
-def load_model():
+def load_models():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     whisper_model = load_model("small", device=device)
     return whisper_model
