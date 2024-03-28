@@ -31,22 +31,11 @@ public class MeetingScriptController {
     public ApiResponse<Map<String, Long>> saveMeetingScript(@PathVariable(value="studyId") Long studyId,
                                                             @PathVariable(value="meetingId") Long meetingId,
                                                             @RequestParam("file") MultipartFile file) {
-        logger.info("POST 요청을 받았습니다. studyId: {}, meetingId: {}", studyId, meetingId);
 
-        // 파일을 처리하고, FastAPI로 전송하는 로직 구현
         Map<String, Long> result = new HashMap<>();
+        String text = meetingScriptService.sendFileToFastAPI(studyId, meetingId, file);
+        result.put("meetingScriptId", meetingScriptService.saveScript(meetingId, text));
 
-        List<Transcription> response = meetingScriptService.sendFileToFastAPI(studyId, meetingId, file);
-        StringBuilder sb = new StringBuilder();
-        for (MeetingScriptRequestDto.Transcription transcription : response) {
-            String textWithSpaces = transcription.getText().replace("\n", " "); // \n을 띄워쓰기로 바꿈
-            sb.append(transcription.getSpeaker()).append("  ").append(textWithSpaces).append("\n");
-        }
-        String text = sb.toString();
-        System.out.println(text);
-
-        Long meetingScriptId = meetingScriptService.saveScript(meetingId, text);
-        result.put("meetingScriptId", meetingScriptId);
-        return ApiResponse.of(SuccessCode.STUDY_CREATE_SUCCESS, result);
+        return ApiResponse.of(SuccessCode.MEETING_SCRIPT_CREATE_SUCCESS, result);
     }
 }

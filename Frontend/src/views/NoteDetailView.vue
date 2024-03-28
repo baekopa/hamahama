@@ -1,108 +1,95 @@
 <template>
-  <v-container>
-    <v-btn icon="mdi-arrow-left"></v-btn>
-    <div class="title">{{ title }}</div>
-    <div class="d-flex">
-      <img :src="userImgUrl" alt="userImg" />
-      <div class="d-flex flex-column ml-4">
-        <span>{{ userName }}</span>
-        <span>생성일 : {{ createdAt }}</span>
-        <span>수정일 : {{ modifiedAt }}</span>
+  <div class="mb-32">
+  <div class="bg-white d-flex flex-column items-center mt-15">
+    <div class="d-flex flex-column" style="width: 1300px">
+      <div class="text-gray-500 point-font"><span class="text-xl mr-2"><</span><span class="tossface text-xl">📝</span> 공부하마 노트</div>
+      <div class="note-title">{{ title }}</div>
+      <div class="d-flex justify-between">
+        <div class="d-flex items-center">
+          <div>
+            <img :src="userImgUrl" alt="userImg" class="profile-img"/>
+          </div>
+          <div class="mx-2">{{ userName }}</div>
+        </div>
+        <div class="d-flex items-center">
+          <div>
+            <div>생성일 : {{ createdAt }}</div>
+            <div>수정일 : {{ modifiedAt }}</div>
+          </div>
+          <div class="ml-5">
+            <img
+              v-if="!isEdit"
+              class="cursor-pointer"
+              @click="isEdit = !isEdit"
+              src="@/assets/image/note/edit.svg"
+              alt="pencil"
+            />
+            <v-btn @click="EditNote" v-else prepend-icon="$vuetify">수정완료</v-btn>
+          </div>
+        </div>
       </div>
-
-      <img
+      <textarea v-if="isEdit === false" readonly v-model="content" variant="plain" class="note-content mt-5" rows="15"></textarea>
+      <textarea v-else v-model="content" variant="plain" placeholder="공부한 내용을 작성해주세요. ( •̀ ω •́ )✧" class="note-content mt-5" rows="20"></textarea>
+    </div>
+    <div class="d-flex flex-column mt-20" style="width: 1300px">
+      <div class="d-flex items-end justify-between">
+        <div class="note-title point-font"> 요약 <span class="tossface">💻</span></div>
+        <v-btn @click="MakeSummary" size="large" class="save" variant="flat" color="#3fb1fa" rounded="xl">요약생성</v-btn>
+      </div>
+      <textarea readonly v-model="noteSummary" variant="plain" class="note-content mt-5" rows="8"></textarea>
+      
+    </div>
+    <div class="d-flex flex-column mt-20" style="width: 1300px">
+      <div class="d-flex items-end justify-between">
+        <div class="note-title point-font">공유하기 <span class="tossface">👥</span></div>
+      </div>
+      <div class="note-content text-gray-500">공부한 내용을 스터디 미팅으로 공유해보세요. </div>
+      <!-- 노트 스터디에 공유 -->
+      <v-sheet
         v-if="!isEdit"
-        class="cursor-pointer"
-        @click="isEdit = !isEdit"
-        src="@/assets/image/note/edit.svg"
-        alt="pencil"
-      />
-      <v-btn @click="EditNote" v-else prepend-icon="$vuetify">수정완료</v-btn>
+        height="550"
+        width="1300"
+        class="share-study"
+      >
+        <div class="d-flex align-end mt-3">
+          <v-select
+            class="study-select"
+            v-model="selectedStudy"
+            label="예정된 미팅"
+            :items="studyList"
+            :item-props="true"
+            variant="underlined"
+          ></v-select>
+          <v-btn @click="ShareNote" size="large" class="save ml-5 mb-6" variant="flat" color="#3fb1fa" rounded="xl">내보내기</v-btn>
+          <div class="w-1/2"></div>
+        </div>
+
+        <v-row>
+          <v-col v-for="study in sharedStudy" :key="study" cols="12" sm="4">
+            <v-card
+              class="mr-2 my-2 rounded-md"
+              max-width="440"
+              subtitle="2024-03-20 22:00"
+              :title="study"
+              variant="tonal"
+              color="gray"
+              hover
+            >
+              <template v-slot:prepend>
+                <v-avatar size="25">
+                  <img alt="studyImg" src="@/assets/image/mypage/hama.png" />
+                </v-avatar>
+              </template>
+              <v-card-text>
+                CS 면접 대비 2차수 - 네트워크
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-sheet>
     </div>
-
-    <!-- 작성한노트 -->
-    <v-sheet
-      v-if="isEdit === false"
-      class="d-flex justify-center flex-wrap mx-auto px-4"
-      elevation="4"
-      height="1000"
-      width="1300"
-      rounded
-    >
-      <div class="text-area text-h5 font-weight-medium mb-2">
-        <p>{{ content }}</p>
-      </div>
-    </v-sheet>
-
-    <!--노트수정-->
-    <v-textarea
-      v-else
-      class="justify-center flex-wrap mx-auto px-4"
-      style="font-family: 'Arial', sans-serif; line-height: 2; background-color: #f7f7f7"
-      v-model="editContent"
-      label="수정"
-      outlined
-      no-resize
-      row-height="2"
-      rows="20"
-    ></v-textarea>
-
-    <div class="summary d-flex flex-column justify-center">
-      <div class="d-flex">
-        <p>요약</p>
-        <v-btn @click="MakeSummary">요약생성</v-btn>
-      </div>
-
-      <div class="summary-content">
-        <p>{{ noteSummary }}</p>
-      </div>
-    </div>
-
-    <!-- 노트 스터디에 공유 -->
-    <v-sheet
-      v-if="!isEdit"
-      height="550"
-      width="950"
-      border
-      class="share-study align-center justify-center flex-wrap text-center mx-auto px-4 my-10"
-    >
-      <div class="d-flex flex-column">
-        <span>게시된 스터디</span>
-        <span>공부한 내용을 스터디원들에게 공유해보세요</span>
-      </div>
-      <div class="d-flex align-center">
-        <v-select
-          class="study-select"
-          v-model="selectedStudy"
-          label="Select"
-          :items="studyList"
-          variant="outlined"
-        ></v-select>
-        <v-btn @click="ShareNote">내보내기</v-btn>
-      </div>
-
-      <v-row style="overflow-y: auto; max-height: 380px">
-        <v-col v-for="study in sharedStudy" :key="study" cols="12" sm="6">
-          <v-card
-            class="mx-auto my-2"
-            max-width="344"
-            subtitle="prepend and append"
-            :title="study"
-            elevation="2"
-          >
-            <template v-slot:prepend>
-              <v-avatar size="24">
-                <v-img alt="John" src="https://cdn.vuetifyjs.com/images/john.png"></v-img>
-              </v-avatar>
-            </template>
-            <v-card-text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-sheet>
-  </v-container>
+  </div>
+</div>
 </template>
 
 <script setup>
@@ -123,15 +110,28 @@ watch(content, (newValue) => {
   editContent.value = newValue
 })
 
-const userImgUrl = ref('')
+const userImgUrl = ref('https://cdn.vuetifyjs.com/images/john.png')
 const userName = ref('백오파')
-const createdAt = ref('')
-const modifiedAt = ref('')
-const studyList = ref(['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming'])
+const createdAt = ref('2024-01-20 14:00')
+const modifiedAt = ref('2024-01-20 14:00')
+const studyList = ref([
+  {
+    title: 'CS 면접 대비 1',
+    subtitle: '공부하마하마스터디 @2024-05-01 14:00',
+  },
+  {
+    title: 'CS 면접 대비 2',
+    subtitle: '공부하마하마스터디 @2024-05-01 14:00',
+  },
+  {
+    title: 'CS 면접 대비 3',
+    subtitle: '공부하마하마스터디 @2024-05-01 14:00',
+  },
+])
 const selectedStudy = ref('')
 const isEdit = ref(false)
 const sharedStudy = ref(['a', 'b', 'c', 'd', 'e', 'f', 'e'])
-const noteSummary = ref('')
+const noteSummary = ref('현재 노트에 대한 요약이 없어요. 요약 생성 버튼으로 요약된 노트 내용을 확인해보세요! 😊')
 
 // 노트 내용 조회
 const LoadNoteData = () => {
@@ -226,6 +226,24 @@ const MakeSummary = () => {
   width: 1300px;
   height: 400px;
   border: solid 1px black;
+}
+
+.note-title {
+  font-size: x-large;
+  outline: none;
+  margin: 20px 0px;
+  font-weight: bold;
+}
+
+.note-content {
+  font-size: large;
+  outline: none;
+  /* line-height: 30px; */
+}
+
+.profile-img {
+  width: 40px;
+  border-radius: 50%;
 }
 
 ::-webkit-scrollbar {
