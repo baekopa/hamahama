@@ -9,7 +9,6 @@ class KeywordDTO(BaseModel):
     keyword:list
 
 class QuizDTO(BaseModel):
-    # original_text:str
     quiz:str
 
 class TailQuestionDTO(BaseModel):
