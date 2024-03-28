@@ -9,6 +9,7 @@ import com.baekopa.backend.domain.meeting.repository.MeetingScriptRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
 import com.baekopa.backend.global.response.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
@@ -23,6 +24,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MeetingScriptService {
+
+    @Value("${BASE_URL_AI}")
+    private String fastUrl;
 
     private final MeetingRepository meetingRepository;
     private final MeetingScriptRepository meetingScriptRepository;
@@ -41,7 +45,7 @@ public class MeetingScriptService {
     public String sendFileToFastAPI(Long studyId, Long meetingId, MultipartFile file) {
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String serverUrl = "http://localhost:8000/stt/transcribe/" + studyId + "/" + meetingId;
+            String serverUrl = fastUrl + "/studies/transcribe/" + studyId + "/" + meetingId;
 
             // 파일을 ByteArrayResource로 변환
             ByteArrayResource byteArrayResource = new ByteArrayResource(file.getBytes()) {
