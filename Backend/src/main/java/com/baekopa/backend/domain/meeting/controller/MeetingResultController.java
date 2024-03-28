@@ -1,6 +1,7 @@
 package com.baekopa.backend.domain.meeting.controller;
 
 import com.baekopa.backend.domain.meeting.dto.request.MeetingSummaryUpdateDTO;
+import com.baekopa.backend.domain.meeting.dto.response.MeetingRemindQuizResponseDTO;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingSummaryResponseDTO;
 import com.baekopa.backend.domain.meeting.service.MeetingService;
 import com.baekopa.backend.domain.member.entity.Member;
@@ -43,7 +44,17 @@ public class MeetingResultController {
         return ApiResponse.of(SuccessCode.MEETING_SUMMARY_UPDATE_SUCCESS, meetingService.updateMeetingSummary(meetingSummaryUpdateDTO, meetingId));
     }
 
+    @Operation(summary = "미팅 리마인드 퀴즈 생성", description = "미팅 요약을 활용하여 리마인드 퀴즈를 생성합니다.")
+    @PostMapping("/studies/{study-id}/meetings/{meeting-id}/remind-quiz")
+    public ApiResponse<MeetingRemindQuizResponseDTO> createMeetingRemindQuiz(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member){
+        return ApiResponse.of(SuccessCode. MEETING_REMIND_QUIZ_SUCCESS, meetingService.createMeetingRemindQuiz(meetingId));
+    }
 
+    @Operation(summary = "미팅 리마인드 퀴즈 재생성", description = "미팅 요약을 활용하여 리마인드 퀴즈를 재생성 합니다.")
+    @PutMapping("/studies/{study-id}/meetings/{meeting-id}/remind-quiz")
+    public ApiResponse<MeetingRemindQuizResponseDTO>reCreateMeetingRemindQuiz(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member){
+        return ApiResponse.of(SuccessCode.MEETING_REMIND_QUIZ_SUCCESS,meetingService.reCreateMeetingRemindQuiz(meetingId));
+    }
 
 
 }
