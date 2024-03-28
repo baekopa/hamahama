@@ -56,11 +56,10 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import Slider from '@/components/main/Slider.vue'
 import instance from '@/api/index'
-import noteBasicImage from '@/assets/image/home/NoteBasic.jpg';
+import noteBasicImage from '@/assets/image/home/NoteBasic.jpg'
 
 const authStore = useAuthStore()
 const router = useRouter()
-
 
 const CreateNote = () => {
   router.push({ name: 'createnote' })
@@ -79,25 +78,17 @@ const GoStudyPage = (study) => {
 const StudyList = ref(null)
 
 function GetPersonalData() {
-  const accessToken = localStorage.getItem('accessToken')
-  const config = {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${accessToken}`
-    }
-  };
   instance
-    .get('api/members/me', config)
+    .get('api/members/me')
     .then((res) => {
       console.log(res.data)
-      const userData = res.data;
+      const userData = res.data
       if (userData.status === 200) {
         authStore.userName = userData.data.name
         authStore.userEmail = userData.data.email
         authStore.userImgUrl = userData.data.image_url
       }
-      return instance.get('api/members/me/studies', config)
-      
+      return instance.get('api/members/me/studies')
     })
     .then((res) => {
       console.log(res.data)
@@ -105,7 +96,7 @@ function GetPersonalData() {
     })
     .then((res) => {
       console.log(res)
-      return instance.get('api/members/me/notes', config)
+      return instance.get('api/members/me/notes')
     })
     .then((res) => {
       console.log(res.data)
@@ -116,11 +107,8 @@ function GetPersonalData() {
     })
 }
 
-
-
 onMounted(() => {
   GetPersonalData()
-  
 })
 </script>
 

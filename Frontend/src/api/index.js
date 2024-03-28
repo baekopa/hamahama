@@ -5,7 +5,7 @@ const isTwice = ref(false)
 const router = useRouter()
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
-  timeout: 100000000,
+  timeout: 10000,
   withCredentials: true
 })
 
