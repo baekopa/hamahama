@@ -66,7 +66,7 @@ public class SubmittedNoteSummaryService {
     }
 
     // 개인 요약 text를 하나로 합침
-    public String combineSumittedNote(List<CreateSubmittedNoteSummaryRequestDto> requestDtoList) {
+    private String combineSumittedNote(List<CreateSubmittedNoteSummaryRequestDto> requestDtoList) {
 
         String combindText = "";
 
