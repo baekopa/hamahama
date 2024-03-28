@@ -1,16 +1,16 @@
 from pydantic import BaseModel
 
 class SummaryDTO(BaseModel):
-    original_text: str
-    summary_text:str
+    originalText: str
+    summaryText:str
 
 class KeywordDTO(BaseModel):
-    original_text:str
+    # original_text:str
     keyword:list
 
 class QuizDTO(BaseModel):
-    original_text:str
-    quiz:list
+    # original_text:str
+    quiz:str
 
 class TailQuestionDTO(BaseModel):
     original_text:str
