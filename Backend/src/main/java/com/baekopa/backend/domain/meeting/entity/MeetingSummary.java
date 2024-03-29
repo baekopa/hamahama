@@ -18,7 +18,7 @@ public class MeetingSummary extends BaseBy {
     private Meeting meeting;
 
     @Lob
-    @Column(name = "summary_content")
+    @Column(name = "summary_content", columnDefinition = "TEXT")
     private String summaryContent;
 
     @Builder
