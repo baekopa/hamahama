@@ -80,6 +80,7 @@ async function GetPersonalData() {
   await instance
     .get('api/members/me/main')
     .then((res) => {
+      console.log(res)
       const personalData = res.data
       if (personalData.status === 200) {
         noteList.value = personalData.data.notes
