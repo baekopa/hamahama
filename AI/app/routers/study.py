@@ -133,7 +133,7 @@ async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...
         # 오디오 파일 이름 구성
         audio_file = f"{i}.wav"
     
-        result = transcribe(model=model, audio=audio_file)
+        result = model.transcribe(audio_file, language="ko")
         transcribed_text = result["text"]
 
         print("result 나옴 : ", result)
