@@ -1,15 +1,12 @@
 package com.baekopa.backend.domain.meeting.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MeetingKeywordResponseDTO {
     private List<String> keyword;
 

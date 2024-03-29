@@ -7,7 +7,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 
@@ -27,7 +26,7 @@ public class RemindQuiz extends BaseTime {
     @Column(name = "open_date")
     private LocalDateTime openDate;
 
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     @Builder

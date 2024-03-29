@@ -1,9 +1,12 @@
 package com.baekopa.backend.domain.member.service;
 
+import com.baekopa.backend.domain.meeting.dto.request.MyRemindQuizResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
 import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
+import com.baekopa.backend.domain.meeting.entity.RemindQuiz;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
+import com.baekopa.backend.domain.meeting.repository.RemindQuizRepository;
 import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
 import com.baekopa.backend.domain.member.dto.response.MemberMainResponseDto;
 import com.baekopa.backend.domain.member.dto.response.MyInfoResponseDto;
@@ -47,6 +50,7 @@ public class MemberService {
     private final MeetingRepository meetingRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final NoteRepository noteRepository;
+    private final RemindQuizRepository remindQuizRepository;
 
     @Transactional(readOnly = true)
     public MyInfoResponseDto getMyInfo(Member currentMember) {
@@ -117,7 +121,7 @@ public class MemberService {
 
     }
 
-    public MeetingListDto convertToDto(Meeting meeting) {
+    private MeetingListDto convertToDto(Meeting meeting) {
         return MeetingListDto.of(meeting.getId(),
                 meeting.getTopic(),
                 meeting.getStudyAt());
@@ -178,13 +182,46 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<NoteListResponseDto> getMyNotes(Member member) {
 
-        List<NoteListResponseDto> noteList = noteRepository.findAllByMember(member).stream().map(this::convertToDto).toList();
-        return noteList;
-
+        return noteRepository.findAllByMember(member).stream().map(this::convertToDto).toList();
     }
 
-    public NoteListResponseDto convertToDto(Note note) {
+    private NoteListResponseDto convertToDto(Note note) {
         return NoteListResponseDto.of(note.getId(), note.getTitle(), note.getCreatedAt(), note.getModifiedAt());
+    }
+
+    // 내 리마인드 퀴즈 조회
+    @Transactional(readOnly = true)
+    public List<MyRemindQuizResponseDto> getMyRemindQuiz(Member member) {
+
+        List<StudyMember> studyMemberList = studyMemberRepository.findAllByMemberAndDeletedAtIsNull(member);
+
+        List<MyRemindQuizResponseDto> responseDtoList = new ArrayList<>();
+
+        // 내가 속한 스터디의 일정 목록 조회
+        for (StudyMember st : studyMemberList) {
+
+            List<Meeting> meetingList = meetingRepository.findAllByStudyAndDeletedAtIsNull(st.getStudy());
+
+            // TODO: 최적화 하고 싶다 그거 어떻게 하는 건데...
+            for(Meeting meeting : meetingList) {
+
+                log.warn(" 미팅 번호 : {}, 스터디 번호 : {}", meeting.getId(), meeting.getStudy().getId());
+
+               RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meeting)
+                       .orElseThrow(()-> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
+
+                // 현재 시간이 openDate 이전인지 확인
+                boolean isOpened = LocalDateTime.now().isAfter(remindQuiz.getOpenDate()) || LocalDateTime.now().isEqual(remindQuiz.getOpenDate());
+
+               responseDtoList.add(MyRemindQuizResponseDto.of(remindQuiz.getId(), meeting.getTopic(), st.getStudy().getTitle(), meeting.getStudyAt(),
+                       remindQuiz.getOpenDate(), isOpened,remindQuiz.getModifiedAt()));
+
+
+            }
+
+        }
+
+        return responseDtoList;
     }
 
     // 메인 화면 조회용
