@@ -199,20 +199,9 @@ const resumeRecording = () => {
     const pausedDuration = Date.now() - pausedTime.value
     totalPausedDuration.value += pausedDuration // 총 일시정지 시간 업데이트
     timer.value = setInterval(updateElapsedTime, 1000)
-    if (navigator.mediaDevices.getUserMedia) {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      // const options = { mimeType: 'audio/wav' };
-      mediaRecorder.value = new MediaRecorder(stream);
-      audioChunks.value = [];
-      mediaRecorder.value.ondataavailable = event => {
-        audioChunks.value.push(event.data);
-      };
-      mediaRecorder.value.start();
-      audioStore.setRecordingStatus(true);
-    } else {
-      alert("오디오 녹음을 지원하지 않는 브라우저입니다.");
-    }
-  };
+    paused.value = false
+    console.log('녹음이 재개됨')
+  }
 }
 
 const stopRecording = () => {
