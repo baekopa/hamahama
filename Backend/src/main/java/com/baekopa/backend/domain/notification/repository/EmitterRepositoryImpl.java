@@ -15,13 +15,13 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     private final Map<String, NotificationResponseDto> events = new ConcurrentHashMap<>();
 
     @Override
-    public void save(String emitterId, SseEmitter emitter) {
+    public void saveEmitter(String emitterId, SseEmitter emitter) {
 
         emitters.put(emitterId, emitter);
     }
 
     @Override
-    public void save(String eventId, NotificationResponseDto responseDto) {
+    public void saveEvent(String eventId, NotificationResponseDto responseDto) {
 
         events.put(eventId, responseDto);
     }
@@ -43,9 +43,15 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     }
 
     @Override
-    public void deleteById(String emitterId) {
+    public void deleteEmitterById(String emitterId) {
 
         emitters.remove(emitterId);
+    }
+
+    @Override
+    public void deleteEventById(String eventId) {
+
+        events.remove(eventId);
     }
 
     @Override

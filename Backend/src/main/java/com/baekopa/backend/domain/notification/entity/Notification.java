@@ -37,25 +37,30 @@ public class Notification extends BaseBy {
     @Column(name = "is_check", nullable = false)
     private Boolean isChecked;
 
+    @Column(name = "event_id")
+    private String eventId;
+
     @Column(name = "related_content_id")
     private Long relatedContentId;
 
     @Builder
-    public Notification(Member receiver, NotificationType notificationType, String notificationContent, Boolean isChecked, Long relatedContentId) {
+    public Notification(Member receiver, NotificationType notificationType, String notificationContent, Boolean isChecked, String eventId, Long relatedContentId) {
         this.receiver = receiver;
         this.notificationType = notificationType;
         this.notificationContent = notificationContent;
         this.isChecked = isChecked;
+        this.eventId = eventId;
         this.relatedContentId = relatedContentId;
     }
 
-    public static Notification of(Member receiver, NotificationType notificationType, String notificationContent, Long relatedContentId) {
+    public static Notification of(Member receiver, NotificationType notificationType, String notificationContent, String eventId, Long relatedContentId) {
 
         return builder()
                 .receiver(receiver)
                 .notificationType(notificationType)
                 .notificationContent(notificationContent)
                 .isChecked(false)
+                .eventId(eventId)
                 .relatedContentId(relatedContentId)
                 .build();
     }

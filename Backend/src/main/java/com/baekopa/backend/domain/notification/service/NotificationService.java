@@ -35,7 +35,7 @@ public class NotificationService {
 
         // cache에 emitter 저장
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
-        emitterRepository.save(emitterId, emitter);
+        emitterRepository.saveEmitter(emitterId, emitter);
 
         // emitter 전처리 작업
         preProcessEmitter(emitter, emitterId, key);
@@ -55,26 +55,30 @@ public class NotificationService {
 
     // 알림 전송
     @Transactional
-    public void send(NotificationDto notificationDto) {
+    public void send(NotificationDto[] notificationDtoList) {
 
-        String key = createKeyByEmailAndDomain(notificationDto.getReceiver());
-        String eventId = createIdByKeyAndTime(key);
+        for (NotificationDto notificationDto : notificationDtoList) {
 
-        // DB에 notification 저장
-        Notification notification = notificationRepository.save(notificationDto.toEntity());
+            String key = createKeyByEmailAndDomain(notificationDto.getReceiver());
+            String eventId = createIdByKeyAndTime(key);
 
-        // cache에 event 저장
-        NotificationResponseDto responseDto = NotificationResponseDto.of(notification);
-        emitterRepository.save(eventId, responseDto);
+            // DB에 notification 저장
+            notificationDto.setEventId(eventId);
+            Notification notification = notificationRepository.save(notificationDto.toEntity());
 
-        // 수신자 event 전송
-        Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithKey(key);
-        emitters.entrySet().stream()
-                .forEach(entry -> {
-                    String emitterId = entry.getKey();
-                    SseEmitter emitter = entry.getValue();
-                    sendNotification(emitter, emitterId, eventId, NotificationStatus.NEW.name(), responseDto);
-                });
+            // cache에 event 저장
+            NotificationResponseDto responseDto = NotificationResponseDto.of(notification);
+            emitterRepository.saveEvent(eventId, responseDto);
+
+            // 수신자 event 전송
+            Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithKey(key);
+            emitters.entrySet().stream()
+                    .forEach(entry -> {
+                        String emitterId = entry.getKey();
+                        SseEmitter emitter = entry.getValue();
+                        sendNotification(emitter, emitterId, eventId, NotificationStatus.NEW.name(), responseDto);
+                    });
+        }
     }
 
     // 미확인 알림 목록 조회
@@ -103,19 +107,24 @@ public class NotificationService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOTIFICATION_NOT_FOUND, ErrorCode.NOTIFICATION_NOT_FOUND.getMessage()));
 
         notification.updateIsChecked(true);
+        String eventId = notification.getEventId();
+        emitterRepository.deleteEventById(eventId);
     }
 
     private void preProcessEmitter(SseEmitter emitter, String emitterId, String key) {
-        emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
+
+        emitter.onCompletion(() -> emitterRepository.deleteEmitterById(emitterId));
         emitter.onTimeout(() -> {
-            emitterRepository.deleteById(emitterId);
+            emitterRepository.deleteEmitterById(emitterId);
             emitter.complete();
         });
+
         String message = createMessage(key, NotificationStatus.CONNECT.name());
         sendNotification(emitter, emitterId, emitterId, NotificationStatus.CONNECT.name(), message);
     }
 
     private void sendNotification(SseEmitter emitter, String emitterId, String eventId, String notificationName, Object data) {
+
         try {
             emitter.send(SseEmitter.event()
                     .id(eventId)
@@ -126,22 +135,25 @@ public class NotificationService {
         } catch (IllegalStateException | IOException exception) {
             // 클라이언트와의 연결이 끊긴 경우, emitter를 만료시킨다.
             emitter.complete();
-            emitterRepository.deleteById(emitterId);
+            emitterRepository.deleteEmitterById(emitterId);
             throw new BusinessException(ErrorCode.NOTIFICATION_NOT_SEND, ErrorCode.NOTIFICATION_NOT_SEND.getMessage());
         }
     }
 
     private String createMessage(String key, String data) {
+
         StringBuilder stringBuilder = new StringBuilder();
         return stringBuilder.append("[알림] ").append(data).append(" (").append(key).append(")").toString();
     }
 
     private String createKeyByEmailAndDomain(Member member) {
+
         StringBuilder stringBuilder = new StringBuilder();
         return stringBuilder.append(member.getEmail()).append("_").append(member.getProvider().name()).toString();
     }
 
     private String createIdByKeyAndTime(String key) {
+
         StringBuilder stringBuilder = new StringBuilder();
         return stringBuilder.append(key).append("_").append(System.currentTimeMillis()).toString();
     }

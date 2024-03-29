@@ -7,15 +7,17 @@ import java.util.Map;
 
 public interface EmitterRepository {
 
-    void save(String emitterId, SseEmitter emitter);
+    void saveEmitter(String emitterId, SseEmitter emitter);
 
-    void save(String eventId, NotificationResponseDto event);
+    void saveEvent(String eventId, NotificationResponseDto event);
 
     Map<String, SseEmitter> findAllEmitterStartWithKey(String key);
 
     Map<String, NotificationResponseDto> findAllEventStartWithKey(String key);
 
-    void deleteById(String id);
+    void deleteEmitterById(String id);
+
+    void deleteEventById(String id);
 
     void deleteAllEmitterStartWithKey(String key);
 
