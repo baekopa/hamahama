@@ -69,6 +69,8 @@ public enum ErrorCode {
     MEETING_NOT_FOUND(400, "미팅이 존재하지 않습니다."),
     MEETING_SUMMARY_NOT_FOUND(400,"미팅 요약이 존재하지 않습니다."),
     MEETING_REMIND_QUIZ_NOT_FOUND(400, "리마인드 퀴즈가 존재하지 않습니다."),
+    MEETING_SCRIPT_NOT_FOUND(400,"미팅 스크립트가 존재하지 않습니다"),
+    MEETING_KEYWORD_NOT_FOUND(400, "미팅 키워드가 존재하지 않습니다"),
     ; // End
 
     /**
