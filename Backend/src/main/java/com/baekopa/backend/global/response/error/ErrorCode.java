@@ -71,7 +71,10 @@ public enum ErrorCode {
     MEETING_REMIND_QUIZ_NOT_FOUND(400, "리마인드 퀴즈가 존재하지 않습니다."),
     MEETING_SCRIPT_NOT_FOUND(400,"미팅 스크립트가 존재하지 않습니다"),
     MEETING_KEYWORD_NOT_FOUND(400, "미팅 키워드가 존재하지 않습니다"),
-    ; // End
+
+    // Notification
+    NOTIFICATION_NOT_FOUND(400, "알림이 존재하지 않습니다."),
+    NOTIFICATION_NOT_SEND(400, "알림 전송에 실패했습니다."); // End
 
     /**
      * ******************************* Error Code Field ***************************************
