@@ -118,7 +118,7 @@ import { useStudyStore } from '@/stores/study'
 const studyStore = useStudyStore()
 const router = useRouter()
 const route = useRoute()
-const summaryId = route.params.id
+const meetingId = route.params.id
 const studyId = route.params.studyId
 const toggle = ref('요약')
 const isEdit = ref(false)
@@ -152,9 +152,10 @@ function GoSummary() {
   router.push({ name: 'studySummary', params: { id: studyId } })
 }
 
+// 미팅 요약 조회
 function LoadSummaryData() {
   instance
-    .get(`api/study/summary/${summaryId}`)
+    .get(`api/studies/${studyId}/meetings/${meetingId}/summary`)
     .then((res) => {
       console.log(res)
     })
@@ -163,9 +164,10 @@ function LoadSummaryData() {
     })
 }
 
+// 미팅 요약 재생성
 function RegenSummary() {
   instance
-    .get(`api/study/summary/regen/${summaryId}`)
+    .put(`api/studies/${studyId}/meetings/${meetingId}/summary`)
     .then((res) => {
       console.log(res)
     })
@@ -176,12 +178,13 @@ function RegenSummary() {
 
 function EditSummary() {
   instance
-    .put(`api/study/summary/${summaryId}`, {
-      content: editedSummary
+    .put(`api/studies/${studyId}/meetings/${meetingId}/summary-update`, {
+      summaryText: editedSummary
     })
 
     .then((res) => {
       console.log(res)
+
       isEdit.value = !isEdit.value
     })
     .catch((err) => {

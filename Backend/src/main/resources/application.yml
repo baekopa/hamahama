@@ -12,6 +12,10 @@ spring:
       - security
   mvc:
     log-request-details: true
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
 
   datasource:
     driver-class-name: ${DATABASE_DRIVER}
