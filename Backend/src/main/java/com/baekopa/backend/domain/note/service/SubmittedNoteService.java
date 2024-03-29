@@ -45,9 +45,9 @@ public class SubmittedNoteService {
     public List<SharedMeetingDto> createSubmittedNote(Long noteId, CreateSubmittedNoteRequestDto requestDto) throws JsonProcessingException {
 
         Note note = noteRepository.findById(noteId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_FOUND, ErrorCode.NOTE_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_EXIST, ErrorCode.NOTE_NOT_EXIST.getMessage()));
         Meeting meeting = meetingRepository.findById(requestDto.getMeetingId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_EXIST, ErrorCode.MEETING_NOT_EXIST.getMessage()));
 
         // 이미 내보내기 된 노트와 스터디인지 확인한다.
         if (submittedNoteRepository.existsByNoteAndMeeting(note, meeting)) {
@@ -83,7 +83,7 @@ public class SubmittedNoteService {
         submittedNoteRepository.save(submittedNote);
 
         return submittedNoteRepository.findMeetingByNote(note).stream()
-                .map((m) -> SharedMeetingDto.of(m.getMeeting().getId(),
+                .map(m -> SharedMeetingDto.of(m.getMeeting().getId(),
                         m.getMeeting().getTopic(),
                         m.getMeeting().getStudyAt(),
                         m.getMeeting().getStudy().getId(),

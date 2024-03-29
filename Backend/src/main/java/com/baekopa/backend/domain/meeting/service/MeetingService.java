@@ -28,10 +28,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.io.ObjectInput;
 
 @Slf4j
 @Service
@@ -52,7 +48,7 @@ public class MeetingService {
         String summaryUrl = fastUrl + "/studies/summary";
 
         String originalText = meetingScriptRepository.findByIdAndDeletedAtIsNull(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()))
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SCRIPT_NOT_EXIST, ErrorCode.MEETING_SCRIPT_NOT_EXIST.getMessage()))
                 .getScriptContent();
 
         originalText = originalText.replace(".", ".\n");
@@ -74,7 +70,7 @@ public class MeetingService {
 
         // db 저장
         Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_EXIST, ErrorCode.MEETING_NOT_EXIST.getMessage()));
         MeetingSummaryDTO meetingSummaryDTO = restTemplate.postForObject(summaryUrl, requestEntity, MeetingSummaryDTO.class);
         MeetingSummary meetingSummary = MeetingSummary.of(meeting, meetingSummaryDTO.getSummaryText());
         meetingSummaryRepository.save(meetingSummary);
@@ -84,7 +80,7 @@ public class MeetingService {
     }
 
     public MeetingSummaryResponseDTO getMeetingSummary(Long meetingId) {
-        MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+        MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_EXIST, ErrorCode.MEETING_SUMMARY_NOT_EXIST.getMessage()));
         return MeetingSummaryResponseDTO.getMeetingSummary(meetingSummary);
     }
 
@@ -92,7 +88,7 @@ public class MeetingService {
         String summaryUrl = fastUrl + "/studies/summary";
 
         String originalText = meetingScriptRepository.findByIdAndDeletedAtIsNull(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()))
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_EXIST, ErrorCode.MEETING_NOT_EXIST.getMessage()))
                 .getScriptContent();
         originalText = originalText.replace(".", ".\n");
 
@@ -114,7 +110,7 @@ public class MeetingService {
 
         // db 저장
         MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_EXIST, ErrorCode.MEETING_SUMMARY_NOT_EXIST.getMessage()));
         meetingSummary.updateMeetingSummary(meetingSummaryDTO.getSummaryText());
 
         return MeetingSummaryResponseDTO.from(meetingSummaryDTO);
@@ -122,7 +118,7 @@ public class MeetingService {
 
     public MeetingSummaryResponseDTO updateMeetingSummary(MeetingSummaryUpdateDTO meetingSummaryUpdateDTO, Long meetingId) {
         MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_EXIST, ErrorCode.MEETING_SUMMARY_NOT_EXIST.getMessage()));
         meetingSummary.updateMeetingSummary(meetingSummaryUpdateDTO.getSummaryText());
 
         return MeetingSummaryResponseDTO.getMeetingSummary(meetingSummary);
@@ -132,7 +128,7 @@ public class MeetingService {
         String remindQuizUrl = fastUrl + "/studies/quiz";
 
         MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_EXIST, ErrorCode.MEETING_SUMMARY_NOT_EXIST.getMessage()));
 
         CreateMeetingRemindQuizDTO createMeetingRemindQuizDTO = CreateMeetingRemindQuizDTO.from(meetingSummary);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -152,7 +148,7 @@ public class MeetingService {
         MeetingRemindQuizResponseDTO meetingRemindQuizResponseDTO = restTemplate.postForObject(remindQuizUrl, requestEntity, MeetingRemindQuizResponseDTO.class);
 
         Meeting meeting=meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_EXIST, ErrorCode.MEETING_NOT_EXIST.getMessage()));
         // db 저장
         RemindQuizDTO remindQuizDTO=RemindQuizDTO.of(meetingRemindQuizResponseDTO.getQuiz());
         remindQuizRepository.save(RemindQuiz.from(meeting, remindQuizDTO));
@@ -164,7 +160,7 @@ public class MeetingService {
         String remindQuizUrl = fastUrl + "/studies/quiz";
 
         MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_EXIST, ErrorCode.MEETING_SUMMARY_NOT_EXIST.getMessage()));
 
         CreateMeetingRemindQuizDTO createMeetingRemindQuizDTO = CreateMeetingRemindQuizDTO.from(meetingSummary);
         ObjectMapper objectMapper = new ObjectMapper();
