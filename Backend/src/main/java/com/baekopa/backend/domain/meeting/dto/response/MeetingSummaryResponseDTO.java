@@ -1,12 +1,11 @@
 package com.baekopa.backend.domain.meeting.dto.response;
 
 import com.baekopa.backend.domain.meeting.entity.MeetingSummary;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MeetingSummaryResponseDTO {
     private String summaryText;
 
