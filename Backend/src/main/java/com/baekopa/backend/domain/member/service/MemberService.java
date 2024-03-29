@@ -8,6 +8,7 @@ import com.baekopa.backend.domain.meeting.entity.RemindQuiz;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
 import com.baekopa.backend.domain.meeting.repository.RemindQuizRepository;
 import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
+import com.baekopa.backend.domain.member.dto.response.MemberMainResponseDto;
 import com.baekopa.backend.domain.member.dto.response.MyInfoResponseDto;
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.member.repository.MemberRepository;
@@ -17,12 +18,14 @@ import com.baekopa.backend.domain.note.repository.NoteRepository;
 import com.baekopa.backend.domain.study.dto.response.StudyListResponseDto;
 import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.domain.study.entity.StudyMember;
+import com.baekopa.backend.domain.study.entity.StudyType;
 import com.baekopa.backend.domain.study.repository.StudyMemberRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
 import com.baekopa.backend.global.response.error.exception.BusinessException;
 import com.baekopa.backend.global.service.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -218,5 +221,33 @@ public class MemberService {
 
         return responseDtoList;
     }
+
+    // 메인 화면 조회용
+    public MemberMainResponseDto getMemberMainInfo(Member member) {
+
+        StudyListResponseDto personalStudy = StudyListResponseDto.from(studyMemberRepository.findPersonalStudy(member, StudyType.PERSONAL).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "개인 스터디 조회에 실패했습니다")));
+
+        List<NoteListResponseDto> noteList = getRecentNotes(member);
+        List<StudyListResponseDto> studyList = getRecentStudy(member, 5);
+
+        return MemberMainResponseDto.of(personalStudy, noteList, studyList);
+
+    }
+
+    // 내 노트 최근 다섯 개 조회
+    @Transactional(readOnly = true)
+    public List<NoteListResponseDto> getRecentNotes(Member member) {
+
+        return noteRepository.findTop5ByMemberAndDeletedAtIsNullOrderByModifiedAtDesc(member).stream().map(NoteListResponseDto::from).toList();
+    }
+
+    // 내 스터디 최근 몇 개 조회
+    @Transactional(readOnly = true)
+    public List<StudyListResponseDto> getRecentStudy(Member member, int n) {
+        List<Study> studies = studyMemberRepository.findStudyAllByMemberAndTypeIsNot(member, StudyMember.StudyMemberType.INVITATION);
+
+        return meetingRepository.findAllStudyOrderByMeeting(studies, PageRequest.of(0, n)).stream().map(StudyListResponseDto::from).toList();
+    }
+
 
 }
