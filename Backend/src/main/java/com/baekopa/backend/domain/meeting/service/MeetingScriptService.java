@@ -50,6 +50,7 @@ public class MeetingScriptService {
         }
     }
 
+    @Transactional
     public Map<String, Long> saveMeetingScript(Long studyId, Long meetingId, MultipartFile file) {
         Map<String, Long> result = new HashMap<>();
 
