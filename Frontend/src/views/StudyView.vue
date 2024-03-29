@@ -105,7 +105,7 @@ const audioStore = useAudioStore()
 
 const route = useRoute()
 const router = useRouter()
-const meeting_id = ref(1)
+const meeting_id = ref(5)
 const studyId = route.params.id
 
 function GoSetting() {
@@ -242,7 +242,8 @@ const uploadAudio = async (audioBlob) => {
       {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        },
+        timeout: 99999999999
       }
     )
     console.log('post끝')
