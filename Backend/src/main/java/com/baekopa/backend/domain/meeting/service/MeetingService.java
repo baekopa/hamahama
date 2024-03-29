@@ -30,7 +30,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MeetingService {
     private final MeetingRepository meetingRepository;
@@ -61,6 +61,7 @@ public class MeetingService {
 
     }
 
+    @Transactional
     public MeetingSummaryResponseDTO createSummary(Long meetingId) {
         String summaryUrl = fastUrl + "/studies/summary";
 
@@ -102,6 +103,7 @@ public class MeetingService {
         return MeetingSummaryResponseDTO.getMeetingSummary(meetingSummary);
     }
 
+    @Transactional
     public MeetingSummaryResponseDTO updateCreateSummary(Long meetingId) {
         String summaryUrl = fastUrl + "/studies/summary";
 
@@ -135,6 +137,7 @@ public class MeetingService {
         return MeetingSummaryResponseDTO.from(meetingSummaryDTO);
     }
 
+    @Transactional
     public MeetingSummaryResponseDTO updateMeetingSummary(MeetingSummaryUpdateDTO meetingSummaryUpdateDTO, Long meetingId) {
         MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
@@ -143,6 +146,7 @@ public class MeetingService {
         return MeetingSummaryResponseDTO.getMeetingSummary(meetingSummary);
     }
 
+    @Transactional
     public MeetingRemindQuizResponseDTO createMeetingRemindQuiz(Long meetingId) {
         String remindQuizUrl = fastUrl + "/studies/quiz";
 
@@ -175,6 +179,7 @@ public class MeetingService {
         return meetingRemindQuizResponseDTO;
     }
 
+    @Transactional
     public MeetingRemindQuizResponseDTO reCreateMeetingRemindQuiz(Long meetingId) {
         String remindQuizUrl = fastUrl + "/studies/quiz";
 
@@ -208,6 +213,7 @@ public class MeetingService {
         return meetingRemindQuizResponseDTO;
     }
 
+    @Transactional
     public MeetingKeywordListDTO createMeetingKeyword(Long meetingId) {
         Meeting meeting=meetingRepository.findById(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
         //이미 기존의 키워드가 존재 한다면?
@@ -275,6 +281,7 @@ public class MeetingService {
         return MeetingKeywordListDTO.from(meetingKeywordDTOList);
     }
 
+    @Transactional
     public MeetingKeywordListDTO updateMeetingKeyword(Long meetingId, UpdateMeetingKeywordListDTO updateMeetingKeywordListDTO){
         for(UpdateMeetingKeywordDTO updateMeetingKeywordDTO : updateMeetingKeywordListDTO.getUpdateMeetingKeywordList()){
             MeetingKeyword meetingKeyword=meetingKeywordRepository.findByIdAndDeletedAtIsNull(updateMeetingKeywordDTO.getGroupKeywordId())
