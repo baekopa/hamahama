@@ -1,10 +1,10 @@
 package com.baekopa.backend.domain.notification.service;
 
 import com.baekopa.backend.domain.member.entity.Member;
-import com.baekopa.backend.domain.notification.dto.NotificationDto;
 import com.baekopa.backend.domain.notification.dto.response.NotificationResponseDto;
 import com.baekopa.backend.domain.notification.entity.Notification;
 import com.baekopa.backend.domain.notification.entity.NotificationStatus;
+import com.baekopa.backend.domain.notification.entity.NotificationType;
 import com.baekopa.backend.domain.notification.repository.EmitterRepository;
 import com.baekopa.backend.domain.notification.repository.NotificationRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
@@ -54,30 +54,34 @@ public class EmitterService {
 
     // 알림 전송
     @Transactional
-    public void send(NotificationDto[] notificationDtoList) {
+    public void send(Member receiver, NotificationType notificationType, String notificationContent, Long relatedContentId) {
 
-        for (NotificationDto notificationDto : notificationDtoList) {
+        String key = createKeyByEmailAndDomain(receiver);
+        String eventId = createIdByKeyAndTime(key);
 
-            String key = createKeyByEmailAndDomain(notificationDto.getReceiver());
-            String eventId = createIdByKeyAndTime(key);
+        // DB에 notification 저장
+        Notification notification = Notification.of(
+                receiver,
+                notificationType,
+                notificationContent,
+                eventId,
+                relatedContentId
+        );
+        notificationRepository.save(notification);
 
-            // DB에 notification 저장
-            notificationDto.setEventId(eventId);
-            Notification notification = notificationRepository.save(notificationDto.toEntity());
+        // cache에 event 저장
+        NotificationResponseDto responseDto = NotificationResponseDto.of(notification);
+        emitterRepository.saveEvent(eventId, responseDto);
 
-            // cache에 event 저장
-            NotificationResponseDto responseDto = NotificationResponseDto.of(notification);
-            emitterRepository.saveEvent(eventId, responseDto);
+        // 수신자 event 전송
+        Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithKey(key);
+        emitters.entrySet().stream()
+                .forEach(entry -> {
+                    String emitterId = entry.getKey();
+                    SseEmitter emitter = entry.getValue();
+                    sendNotification(emitter, emitterId, eventId, NotificationStatus.NEW.name(), responseDto);
+                });
 
-            // 수신자 event 전송
-            Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithKey(key);
-            emitters.entrySet().stream()
-                    .forEach(entry -> {
-                        String emitterId = entry.getKey();
-                        SseEmitter emitter = entry.getValue();
-                        sendNotification(emitter, emitterId, eventId, NotificationStatus.NEW.name(), responseDto);
-                    });
-        }
     }
 
     private void preProcessEmitter(SseEmitter emitter, String emitterId, String key) {
