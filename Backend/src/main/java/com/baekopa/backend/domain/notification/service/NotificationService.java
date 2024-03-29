@@ -1,11 +1,9 @@
 package com.baekopa.backend.domain.notification.service;
 
 import com.baekopa.backend.domain.member.entity.Member;
-import com.baekopa.backend.domain.notification.dto.NotificationDto;
 import com.baekopa.backend.domain.notification.dto.response.NotificationListResponseDto;
 import com.baekopa.backend.domain.notification.dto.response.NotificationResponseDto;
 import com.baekopa.backend.domain.notification.entity.Notification;
-import com.baekopa.backend.domain.notification.entity.NotificationStatus;
 import com.baekopa.backend.domain.notification.repository.EmitterRepository;
 import com.baekopa.backend.domain.notification.repository.NotificationRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
@@ -13,10 +11,6 @@ import com.baekopa.backend.global.response.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.io.IOException;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
