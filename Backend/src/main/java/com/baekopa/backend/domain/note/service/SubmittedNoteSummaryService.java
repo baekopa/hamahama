@@ -3,10 +3,7 @@ package com.baekopa.backend.domain.note.service;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
 import com.baekopa.backend.domain.note.dto.request.CreateSubmittedNoteSummaryRequestDto;
-import com.baekopa.backend.domain.note.dto.response.CreateSubmittedNoteSummaryResponseDto;
-import com.baekopa.backend.domain.note.entity.SubmittedNote;
 import com.baekopa.backend.domain.note.repository.SubmittedNoteRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -41,9 +38,9 @@ public class SubmittedNoteSummaryService {
         List<Meeting> meetingList = meetingRepository.findUpcomingMeetings();
 
         // 요약 해야하는 제출된 노트 조회
-        for(Meeting meeting : meetingList) {
+        for (Meeting meeting : meetingList) {
 
-            log.info("[스케쥴링 테스트] 미팅 주제 : {} ==== 시작 시간 : {}" , meeting.getTopic(), meeting.getStudyAt());
+            log.info("[스케쥴링 테스트] 미팅 주제 : {} ==== 시작 시간 : {}", meeting.getTopic(), meeting.getStudyAt());
 
             // TODO: 요약 api 요청에 맞게 data를 변경하세용
             // 1. List 제출된 개인 요약 ( CreateSubmittedNoteSummaryRequestDto엔 originText밖에 없습니다. 변경하셔도 좋아요.)
@@ -70,7 +67,7 @@ public class SubmittedNoteSummaryService {
 
         String combindText = "";
 
-        for(CreateSubmittedNoteSummaryRequestDto requestDto : requestDtoList){
+        for (CreateSubmittedNoteSummaryRequestDto requestDto : requestDtoList) {
 
             combindText += requestDto.getOriginText() + "\n";
 

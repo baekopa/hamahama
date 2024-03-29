@@ -1,102 +1,140 @@
 <template>
   <div class="mb-32">
-  <div class="bg-white d-flex flex-column items-center mt-15">
-    <div class="d-flex flex-column" style="width: 1300px">
-      <div class="text-gray-500 point-font"><span class="text-xl mr-2"><</span><span class="tossface text-xl">📝</span> 공부하마 노트</div>
-      <div class="note-title">{{ title }}</div>
-      <div class="d-flex justify-between">
-        <div class="d-flex items-center">
-          <div>
-            <img :src="userImgUrl" alt="userImg" class="profile-img"/>
-          </div>
-          <div class="mx-2">{{ userName }}</div>
+    <div class="bg-white d-flex flex-column items-center mt-15">
+      <div class="d-flex flex-column" style="width: 1300px">
+        <div class="text-gray-500 point-font">
+          <span class="text-xl mr-2"><</span><span class="tossface text-xl">📝</span> 공부하마 노트
         </div>
-        <div class="d-flex items-center">
-          <div>
-            <div>생성일 : {{ createdAt }}</div>
-            <div>수정일 : {{ modifiedAt }}</div>
+        <div class="note-title">{{ title }}</div>
+        <div class="d-flex justify-between">
+          <div class="d-flex items-center">
+            <div>
+              <img :src="userImgUrl" alt="userImg" class="profile-img" />
+            </div>
+            <div class="mx-2">{{ userName }}</div>
           </div>
-          <div class="ml-5">
-            <img
-              v-if="!isEdit"
-              class="cursor-pointer"
-              @click="isEdit = !isEdit"
-              src="@/assets/image/note/edit.svg"
-              alt="pencil"
-            />
-            <v-btn @click="EditNote" v-else prepend-icon="$vuetify">수정완료</v-btn>
+          <div class="d-flex items-center">
+            <div>
+              <div>생성일 : {{ createdAt }}</div>
+              <div>수정일 : {{ modifiedAt }}</div>
+            </div>
+            <div class="ml-5">
+              <img
+                v-if="!isEdit"
+                class="cursor-pointer"
+                @click="isEdit = !isEdit"
+                src="@/assets/image/note/edit.svg"
+                alt="pencil"
+              />
+              <v-btn @click="EditNote" v-else
+                ><img src="@/assets/image/note/edit.svg" alt="" />수정</v-btn
+              >
+            </div>
           </div>
         </div>
+        <textarea
+          v-if="isEdit === false"
+          readonly
+          v-model="content"
+          variant="plain"
+          class="note-content mt-5"
+          rows="15"
+        ></textarea>
+        <textarea
+          v-else
+          v-model="content"
+          variant="plain"
+          placeholder="공부한 내용을 작성해주세요. ( •̀ ω •́ )✧"
+          class="note-content mt-5"
+          rows="20"
+        ></textarea>
       </div>
-      <textarea v-if="isEdit === false" readonly v-model="content" variant="plain" class="note-content mt-5" rows="15"></textarea>
-      <textarea v-else v-model="content" variant="plain" placeholder="공부한 내용을 작성해주세요. ( •̀ ω •́ )✧" class="note-content mt-5" rows="20"></textarea>
-    </div>
-    <div class="d-flex flex-column mt-20" style="width: 1300px">
-      <div class="d-flex items-end justify-between">
-        <div class="note-title point-font"> 요약 <span class="tossface">💻</span></div>
-        <v-btn @click="MakeSummary" size="large" class="save" variant="flat" color="#3fb1fa" rounded="xl">요약생성</v-btn>
-      </div>
-      <textarea readonly v-model="noteSummary" variant="plain" class="note-content mt-5" rows="8"></textarea>
-      
-    </div>
-    <div class="d-flex flex-column mt-20" style="width: 1300px">
-      <div class="d-flex items-end justify-between">
-        <div class="note-title point-font">공유하기 <span class="tossface">👥</span></div>
-      </div>
-      <div class="note-content text-gray-500">공부한 내용을 스터디 미팅으로 공유해보세요. </div>
-      <!-- 노트 스터디에 공유 -->
-      <v-sheet
-        v-if="!isEdit"
-        height="550"
-        width="1300"
-        class="share-study"
-      >
-        <div class="d-flex align-end mt-3">
-          <v-select
-            class="study-select"
-            v-model="selectedStudy"
-            label="예정된 미팅"
-            :items="studyList"
-            :item-props="true"
-            variant="underlined"
-          ></v-select>
-          <v-btn @click="ShareNote" size="large" class="save ml-5 mb-6" variant="flat" color="#3fb1fa" rounded="xl">내보내기</v-btn>
-          <div class="w-1/2"></div>
+      <div class="d-flex flex-column mt-20" style="width: 1300px">
+        <div class="d-flex items-end justify-between">
+          <div class="note-title point-font">요약 <span class="tossface">💻</span></div>
+          <v-btn
+            @click="MakeSummary"
+            size="large"
+            class="save"
+            variant="flat"
+            color="#3fb1fa"
+            rounded="xl"
+            >요약생성</v-btn
+          >
         </div>
-
-        <v-row>
-          <v-col v-for="study in sharedStudy" :key="study" cols="12" sm="4">
-            <v-card
-              class="mr-2 my-2 rounded-md"
-              max-width="440"
-              subtitle="2024-03-20 22:00"
-              :title="study"
-              variant="tonal"
-              color="gray"
-              hover
+        <textarea
+          readonly
+          v-model="noteSummary"
+          variant="plain"
+          class="note-content mt-5"
+          rows="8"
+        ></textarea>
+      </div>
+      <div class="d-flex flex-column mt-20" style="width: 1300px">
+        <div class="d-flex items-end justify-between">
+          <div class="note-title point-font">공유하기 <span class="tossface">👥</span></div>
+        </div>
+        <div class="note-content text-gray-500">공부한 내용을 스터디 미팅으로 공유해보세요.</div>
+        <!-- 노트 스터디에 공유 -->
+        <v-sheet v-if="!isEdit" height="550" width="1300" class="share-study">
+          <div class="d-flex align-end mt-3">
+            <v-select
+              v-model="selectedMeeting"
+              :items="meetingList"
+              item-text="title"
+              item-value="id"
+              :item-props="true"
+              label="예정된 미팅"
+              variant="underlined"
+              @change="handleMeetingSelection"
             >
-              <template v-slot:prepend>
-                <v-avatar size="25">
-                  <img alt="studyImg" src="@/assets/image/mypage/hama.png" />
-                </v-avatar>
+              <template v-slot:item="{ props, item }">
+                <v-list-item v-bind="props" :subtitle="item.raw.subtitle"></v-list-item>
               </template>
-              <v-card-text>
-                CS 면접 대비 2차수 - 네트워크
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-sheet>
+            </v-select>
+            <v-btn
+              @click="ShareNote(selectedStudy)"
+              size="large"
+              class="save ml-5 mb-6"
+              variant="flat"
+              color="#3fb1fa"
+              rounded="xl"
+              >내보내기</v-btn
+            >
+            <div class="w-1/2"></div>
+          </div>
+
+          <v-row>
+            <v-col v-for="study in sharedStudy" :key="study.id" cols="12" sm="4">
+              <v-card
+                class="mr-2 my-2 rounded-md"
+                max-width="440"
+                subtitle="2024-03-20 22:00"
+                :title="study.studyName"
+                variant="tonal"
+                color="gray"
+                hover
+              >
+                <template v-slot:prepend>
+                  <v-avatar size="25">
+                    <img alt="studyImg" :src="study.studyImage" />
+                  </v-avatar>
+                </template>
+                <v-card-text> {{ study.studyName }} - {{ study.topic }} </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-sheet>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import instance from '@/api/index'
-
+import Swal from 'sweetalert2'
 const route = useRoute()
 const noteId = route.params.id
 
@@ -114,27 +152,48 @@ const userImgUrl = ref('https://cdn.vuetifyjs.com/images/john.png')
 const userName = ref('백오파')
 const createdAt = ref('2024-01-20 14:00')
 const modifiedAt = ref('2024-01-20 14:00')
-const studyList = ref([
-  {
-    title: 'CS 면접 대비 1',
-    subtitle: '공부하마하마스터디 @2024-05-01 14:00',
-  },
-  {
-    title: 'CS 면접 대비 2',
-    subtitle: '공부하마하마스터디 @2024-05-01 14:00',
-  },
-  {
-    title: 'CS 면접 대비 3',
-    subtitle: '공부하마하마스터디 @2024-05-01 14:00',
-  },
-])
+const studyMeetingScheduleList = ref([])
 const selectedStudy = ref('')
 const isEdit = ref(false)
-const sharedStudy = ref(['a', 'b', 'c', 'd', 'e', 'f', 'e'])
-const noteSummary = ref('현재 노트에 대한 요약이 없어요. 요약 생성 버튼으로 요약된 노트 내용을 확인해보세요! 😊')
+const sharedStudy = ref([])
+const noteSummary = ref(
+  '현재 노트에 대한 요약이 없어요. 요약 생성 버튼으로 요약된 노트 내용을 확인해보세요! 😊'
+)
 
+// meetingList 초기화 함수
+function initializeMeetingList() {
+  return studyMeetingScheduleList.value.flatMap((schedule) => {
+    return schedule.meetings.map((meeting) => {
+      return {
+        title: schedule.studyName,
+        subtitle: `${meeting.topic}, ${meeting.studyAt}`,
+        id: meeting.id
+      }
+    })
+  })
+}
+
+// meetingList 생성
+const meetingList = ref(initializeMeetingList())
+
+// studyMeetingScheduleList 변경 감지
+watch(studyMeetingScheduleList, () => {
+  meetingList.value = initializeMeetingList()
+})
+
+const meetingId = ref()
+
+const selectedMeeting = ref(null)
+
+const handleMeetingSelection = () => {
+  if (selectedMeeting.value) {
+    const selectedMeetingId = selectedMeeting.value
+    // 여기서 선택된 항목의 ID를 사용하여 원하는 작업을 수행할 수 있습니다.
+    console.log('선택된 미팅 ID:', selectedMeetingId)
+  }
+}
 // 노트 내용 조회
-const LoadNoteData = () => {
+function LoadNoteData() {
   instance
     .get(`api/notes/${noteId}`)
     .then((res) => {
@@ -146,7 +205,7 @@ const LoadNoteData = () => {
         createdAt.value = res.data.data.createdAt
         modifiedAt.value = res.data.data.modifiedAt
         noteSummary.value = res.data.data.summary
-        console.log(res)
+        sharedStudy.value = res.data.data.meetings
       }
     })
     .catch((error) => {
@@ -154,8 +213,26 @@ const LoadNoteData = () => {
     })
 }
 
-onMounted(LoadNoteData)
+function LoadMeetingSchedule() {
+  instance
+    .get(`api/members/me/meetings`)
+    .then((res) => {
+      console.log(res)
+      if (res.data.status == 200) {
+        console.log(res.data.data)
+        studyMeetingScheduleList.value = res.data.data
+        console.log(studyMeetingScheduleList)
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
 
+onMounted(() => {
+  LoadNoteData()
+  LoadMeetingSchedule()
+})
 // 노트 수정하기
 function EditNote() {
   instance
@@ -176,22 +253,31 @@ function EditNote() {
     })
 }
 
-// 노트 내보내기
-const ShareNote = () => {
+// 노트 공유하기
+function ShareNote() {
+  console.log(meetingId.value)
   instance
     .post(`api/notes/${noteId}/meetings`, {
-      title,
-      editContent
+      meetingId: selectedMeeting.value
     })
     .then((res) => {
-      console.log('수정성공')
-      content.value = editContent.value
-      isEdit.value = false
+      if (res.data.status == 200) {
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: '노트 공유 완료',
+          showConfirmButton: false,
+          timer: 1500
+        })
+      }
+      console.log(res)
     })
     .catch((err) => {
-      isEdit.value = false
-      alert('저장실패')
-      console.log('저장실패', err)
+      Swal.fire({
+        icon: 'error',
+        title: '저장실패',
+        text: err.response.data.message
+      })
     })
 }
 
