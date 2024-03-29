@@ -7,11 +7,9 @@ import com.baekopa.backend.domain.notification.service.NotificationService;
 import com.baekopa.backend.global.response.success.ApiResponse;
 import com.baekopa.backend.global.response.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
 @RequestMapping("/api/notifications")
@@ -19,23 +17,15 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class NotificationController {
     private final NotificationService notificationService;
 
-    @Operation(summary = "SSE 연결", description = "Server-Sent Events (SSE)를 사용하여 알림을 구독합니다.")
-    @GetMapping(value = "/subscribe", produces = "text/event-stream")
-    public SseEmitter subscribe(@AuthenticationPrincipal Member member, HttpServletResponse response) {
-
-        response.setHeader("X-Accel-Buffering", "no");
-        return notificationService.subscribe(member);
-    }
-
     @Operation(summary = "미확인 알림 목록 조회", description = "인증된 회원에 대한 미확인 알림 목록을 가져옵니다.")
-    @GetMapping("/notification")
+    @GetMapping("/")
     public ApiResponse<NotificationListResponseDto> getNotificationAll(@AuthenticationPrincipal Member member) {
 
         return ApiResponse.of(SuccessCode.NOTIFICATION_GET_SUCCESS, notificationService.getNotificationList(member));
     }
 
     @Operation(summary = "미확인 알림 목록 확인 시간 갱신", description = "인증된 회원의 마지막 알림 이벤트 ID를 업데이트하여 알림을 읽음으로 표시합니다.")
-    @PutMapping("/notification")
+    @PutMapping("/")
     public ApiResponse updateLastEventId(@AuthenticationPrincipal Member member, @RequestBody UpdateNotificationEventIdRequestDto requestDto) {
 
         notificationService.updateLastEventId(member, requestDto.getLastEventId());
@@ -43,7 +33,7 @@ public class NotificationController {
     }
 
     @Operation(summary = "특정 알림 확인", description = "인증된 회원의 특정 알림을 읽은 상태로 변환합니다.")
-    @PutMapping("/notification/{notification-id}")
+    @PutMapping("/{notification-id}")
     public ApiResponse readNotification(@AuthenticationPrincipal Member member,
                                         @PathVariable("notification-id") Long notificationId) {
         notificationService.readNotification(member, notificationId);
