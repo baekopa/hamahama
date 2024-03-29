@@ -5,6 +5,9 @@ import com.baekopa.backend.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
+import com.baekopa.backend.domain.note.dto.SubmittedNoteDto;
+import com.baekopa.backend.domain.note.repository.SubmittedNoteRepository;
+import com.baekopa.backend.domain.study.dto.response.StudyMeetingResponseDto;
 import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.domain.study.repository.StudyRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
@@ -25,6 +28,7 @@ public class StudyMeetingService {
 
     private final MeetingRepository meetingRepository;
     private final StudyRepository studyRepository;
+    private final SubmittedNoteRepository submittedNoteRepository;
 
     // 스터디 미팅 생성
     @Transactional
@@ -38,8 +42,8 @@ public class StudyMeetingService {
         return CreateMeetingResponseDto.of(meeting.getId(), meeting.getTopic(), meeting.getStudyAt());
 
     }
-    
-    // 스터디 미팅 조회
+
+    // 스터디 미팅 목록 조회
     public List<MeetingListDto> getScheduledMeeting(Long studyId) {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId)
@@ -55,4 +59,26 @@ public class StudyMeetingService {
     public MeetingListDto convertToDto(Meeting meeting) {
         return MeetingListDto.of(meeting.getId(), meeting.getTopic(), meeting.getStudyAt());
     }
+
+
+    // 스터디 예정 일정 조회 , 없다면 null 반환
+    public StudyMeetingResponseDto getStudyMeeting(Long studyId) {
+
+        Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
+        Meeting meeting = meetingRepository.findTopByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(study, LocalDateTime.now()).orElse(null);
+
+        if (meeting == null) {
+            return null;
+        }
+
+        List<SubmittedNoteDto> submittedNoteDtoList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
+                .stream().map(submittedNote -> SubmittedNoteDto.of(submittedNote.getId(), submittedNote.getNote().getContent(),
+                        submittedNote.getNote().getSummary(),
+                        submittedNote.getNote().getMember().getId(),
+                        submittedNote.getNote().getMember().getName(),
+                        submittedNote.getNote().getMember().getImage())).toList();
+
+        return StudyMeetingResponseDto.of(meeting.getId(), meeting.getTopic(), meeting.getStudyAt(), submittedNoteDtoList);
+    }
+
 }
