@@ -83,7 +83,7 @@ public class SubmittedNoteService {
         submittedNoteRepository.save(submittedNote);
 
         return submittedNoteRepository.findMeetingByNote(note).stream()
-                .map((m) -> SharedMeetingDto.of(m.getMeeting().getId(),
+                .map(m -> SharedMeetingDto.of(m.getMeeting().getId(),
                         m.getMeeting().getTopic(),
                         m.getMeeting().getStudyAt(),
                         m.getMeeting().getStudy().getId(),
