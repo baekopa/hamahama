@@ -2,12 +2,11 @@ package com.baekopa.backend.domain.meeting.service;
 
 import com.baekopa.backend.domain.meeting.dto.RemindQuizDTO;
 import com.baekopa.backend.domain.meeting.dto.request.*;
-import com.baekopa.backend.domain.meeting.dto.response.MeetingKeywordListDTO;
-import com.baekopa.backend.domain.meeting.dto.response.MeetingRemindQuizResponseDTO;
-import com.baekopa.backend.domain.meeting.dto.response.MeetingSummaryDTO;
-import com.baekopa.backend.domain.meeting.dto.response.MeetingSummaryResponseDTO;
+import com.baekopa.backend.domain.meeting.dto.response.*;
 import com.baekopa.backend.domain.meeting.entity.*;
 import com.baekopa.backend.domain.meeting.repository.*;
+import com.baekopa.backend.domain.study.entity.Study;
+import com.baekopa.backend.domain.study.repository.StudyRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
 import com.baekopa.backend.global.response.error.exception.BusinessException;
 import com.baekopa.backend.global.service.S3UploadService;
@@ -40,10 +39,27 @@ public class MeetingService {
     private final RemindQuizRepository remindQuizRepository;
     private final MeetingKeywordRepository meetingKeywordRepository;
     private final S3UploadService s3UploadService;
+    private final StudyRepository studyRepository;
 
     @Value("${BASE_URL_AI}")
     private String fastUrl;
     private final RestTemplate restTemplate;
+
+    public StudyMeetingListDto getMeetingList(Long studyId){
+        Study study= studyRepository.findById(studyId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
+
+        List<Meeting> meetingList = meetingRepository.findAllByStudyAndDeletedAtIsNullAndRecordFileIsNotNullOrderByStudyAtDesc(study);
+        List<MeetingListDto> meetingListDtoList = new ArrayList<>();
+
+        for(Meeting meeting: meetingList){
+            MeetingListDto meetingListDto = MeetingListDto.from(meeting);
+            meetingListDtoList.add(meetingListDto);
+        }
+
+        return StudyMeetingListDto.of(study.getTitle(), meetingListDtoList);
+
+    }
 
     public MeetingSummaryResponseDTO createSummary(Long meetingId) {
         String summaryUrl = fastUrl + "/studies/summary";
@@ -227,28 +243,36 @@ public class MeetingService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Object> requestEntity = new HttpEntity<>(jsonText, headers);
 
-        MeetingKeywordListDTO meetingKeywordListDTO = restTemplate.postForObject(keywordUrl, requestEntity, MeetingKeywordListDTO.class);
+        MeetingKeywordResponseDTO MeetingKeywordResponseDTO = restTemplate.postForObject(keywordUrl, requestEntity, MeetingKeywordResponseDTO.class);
 
 
         // db 저장
 
-        for (int i = 0; i < meetingKeywordListDTO.getKeyword().size(); i++) {
-            meetingKeywordRepository.save(MeetingKeyword.of(meeting, meetingKeywordListDTO.getKeyword().get(i)));
+        for (int i = 0; i < MeetingKeywordResponseDTO.getKeyword().size(); i++) {
+            meetingKeywordRepository.save(MeetingKeyword.of(meeting, MeetingKeywordResponseDTO.getKeyword().get(i)));
         }
 
-        return meetingKeywordListDTO;
+        List<MeetingKeyword> meetingKeywordList = meetingKeywordRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
+        List<MeetingKeywordDTO>meetingKeywordDTOList=new ArrayList<>();
+        for(MeetingKeyword meetingKeyword : meetingKeywordList){
+            MeetingKeywordDTO meetingKeywordDTO = MeetingKeywordDTO.from(meetingKeyword);
+            meetingKeywordDTOList.add(meetingKeywordDTO);
+        }
+
+        return MeetingKeywordListDTO.from(meetingKeywordDTOList);
     }
 
     public MeetingKeywordListDTO getMeetingKeyword(Long meetingId){
         Meeting meeting=meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
         List<MeetingKeyword> meetingKeywordList= meetingKeywordRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
-        List<String> result=new ArrayList<>();
+        List<MeetingKeywordDTO> meetingKeywordDTOList=new ArrayList<>();
 
         for(MeetingKeyword meetingKeyword : meetingKeywordList){
-            result.add(meetingKeyword.getKeyword());
+            MeetingKeywordDTO meetingKeywordDTO=MeetingKeywordDTO.from(meetingKeyword);
+            meetingKeywordDTOList.add(meetingKeywordDTO);
         }
-        return MeetingKeywordListDTO.from(result);
+        return MeetingKeywordListDTO.from(meetingKeywordDTOList);
     }
 
     public MeetingKeywordListDTO updateMeetingKeyword(Long meetingId, UpdateMeetingKeywordListDTO updateMeetingKeywordListDTO){
@@ -262,11 +286,31 @@ public class MeetingService {
         Meeting meeting=meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
         List<MeetingKeyword> meetingKeywordList= meetingKeywordRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
-        List<String> result=new ArrayList<>();
+        List<MeetingKeywordDTO> meetingKeywordDTOList=new ArrayList<>();
 
         for(MeetingKeyword meetingKeyword : meetingKeywordList){
-            result.add(meetingKeyword.getKeyword());
+            MeetingKeywordDTO meetingKeywordDTO=MeetingKeywordDTO.from(meetingKeyword);
+            meetingKeywordDTOList.add(meetingKeywordDTO);
         }
-        return MeetingKeywordListDTO.from(result);
+        return MeetingKeywordListDTO.from(meetingKeywordDTOList);
+    }
+
+    public MeetingResponseDTO getMeetingResultAll(Long meetingId){
+        Meeting meeting=meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+        MeetingScript meetingScript = meetingScriptRepository.findByMeetingAndDeletedAtIsNull(meeting)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SCRIPT_NOT_FOUND, ErrorCode.MEETING_SCRIPT_NOT_FOUND.getMessage()));
+        MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+        RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meeting)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
+        List<MeetingKeyword> meetingKeywordList =meetingKeywordRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
+
+        List<MeetingKeywordDTO> meetingKeywordDTOList=new ArrayList<>();
+        for(MeetingKeyword meetingKeyword : meetingKeywordList){
+            MeetingKeywordDTO meetingKeywordDTO=MeetingKeywordDTO.from(meetingKeyword);
+            meetingKeywordDTOList.add(meetingKeywordDTO);
+        }
+        return MeetingResponseDTO.of(meeting, meetingScript, meetingSummary, remindQuiz, meetingKeywordDTOList);
     }
 }

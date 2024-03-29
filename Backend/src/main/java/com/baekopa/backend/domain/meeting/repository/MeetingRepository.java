@@ -31,4 +31,6 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
             "CASE WHEN m.studyAt >= now() THEN m.studyAt END DESC")
     List<Study> findAllStudyOrderByMeeting(@Param("studies") List<Study> studies, Pageable pageable);
 
+    List<Meeting> findAllByStudyAndDeletedAtIsNullAndRecordFileIsNotNullOrderByStudyAtDesc(Study study);
+
 }

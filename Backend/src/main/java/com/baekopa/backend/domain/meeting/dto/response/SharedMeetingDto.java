@@ -1,14 +1,13 @@
 package com.baekopa.backend.domain.meeting.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SharedMeetingDto {
 
     private Long id;
