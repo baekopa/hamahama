@@ -6,7 +6,7 @@
           <span class="point-font text-3xl point-color">{{ useAuthStore().userName }}</span>
           <span class="text-2xl"> 님은</span>
         </div>
-        <span class="text-2xl mt-3 "> 오늘도 열공중!</span>
+        <span class="text-2xl mt-3"> 오늘도 열공중!</span>
       </div>
       <Carousel
         :items-to-show="2"
@@ -17,7 +17,8 @@
       >
         <Slide v-for="feat in MainFeat" :key="feat.id">
           <div class="carousel__item">
-            <img :src="feat.imgUrl" :alt="feat.id" class="carousel__image" />
+            <p>{{ feat.content }}</p>
+            <img @click="feat.function" :src="feat.imgUrl" :alt="feat.id" class="carousel__image" />
           </div>
         </Slide>
         <template #addons>
@@ -29,19 +30,36 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useMainPageStore } from '@/stores/mainPage'
 import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 
-import Main_1 from '../../assets/image/main/karina.jpg'
-import Main_2 from '../../assets/image/main/irean.jpg'
-import Main_3 from '../../assets/image/main/ajeong.png'
+import noteBasicImage from '@/assets/image/home/NoteBasic.jpg'
+import emptynote from '@/assets/image/main/emptynote.jpg'
+
+// 1. 개인스터디 이동
+// 2. 최근작성한노트
+// 3. 노트 작성
+
+const mainPageStore = useMainPageStore()
+const myStudyImg = computed(() => mainPageStore.myStudyImg)
 
 const MainFeat = ref([
-  { id: 1, imgUrl: Main_1 },
-  { id: 2, imgUrl: Main_2 },
-  { id: 3, imgUrl: Main_3 }
+  {
+    id: 1,
+    function: () => mainPageStore.GoMyStudyRoom(mainPageStore.myStudy),
+    imgUrl: myStudyImg,
+    content: '내 스터디룸'
+  },
+  {
+    id: 2,
+    function: () => mainPageStore.GoRecentEditNote(mainPageStore.recentEditNote),
+    imgUrl: noteBasicImage,
+    content: '최근 노트'
+  },
+  { id: 3, function: () => mainPageStore.GoCreateNote(), imgUrl: emptynote, content: '노트작성' }
 ])
 </script>
 
@@ -119,5 +137,4 @@ const MainFeat = ref([
   border-radius: 20px;
   object-fit: cover; /* 이미지 비율 유지 및 잘림 방지 */
 }
-
 </style>
