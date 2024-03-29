@@ -1,11 +1,14 @@
 package com.baekopa.backend.domain.member.controller;
 
+import com.baekopa.backend.domain.meeting.dto.request.MyRemindQuizResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
 import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
 import com.baekopa.backend.domain.member.dto.response.MemberMainResponseDto;
 import com.baekopa.backend.domain.member.dto.response.MyInfoResponseDto;
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.member.service.MemberService;
+import com.baekopa.backend.domain.note.dto.response.NoteListResponseDto;
+import com.baekopa.backend.domain.study.dto.response.StudyListResponseDto;
 import com.baekopa.backend.global.response.success.ApiResponse;
 import com.baekopa.backend.global.response.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,21 +68,29 @@ public class MemberController {
 
     @Operation(summary = "내가 속한 스터디 목록 및 미팅 조회", description = "사용자가 속한 스터디 목록 및 미팅 조회")
     @GetMapping("/studies")
-    public ApiResponse<?> getMyStudies(@AuthenticationPrincipal Member member) {
+    public ApiResponse<List<StudyListResponseDto>> getMyStudies(@AuthenticationPrincipal Member member) {
 
         log.info("내가 속한 스터디 목록 조회 : {}", member.getName());
 
-        return ApiResponse.of(SuccessCode.MY_STUDY_GET_SUCCESS, memberService.getMyStudies(member));
+        return ApiResponse.of(SuccessCode.STUDY_GET_SUCCESS, memberService.getMyStudies(member));
 
     }
 
     @Operation(summary = "내가 작성한 노트 목록 조회", description = "사용자가 작성한 노트 목록 조회")
     @GetMapping("/notes")
-    public ApiResponse<?> getMyNotes(@AuthenticationPrincipal Member member) {
+    public ApiResponse<List<NoteListResponseDto>> getMyNotes(@AuthenticationPrincipal Member member) {
 
         log.info("내가 작성한 노트 목록 조회 : {}", member.getName());
         return ApiResponse.of(SuccessCode.NOTE_GET_SUCCESS, memberService.getMyNotes(member));
 
+    }
+
+    @Operation(summary = "내가 속한 스터디의 리마인드 퀴즈 목록 조회", description = "사용자가 속한 스터디의 리마인드 퀴즈 목록 조회")
+    @GetMapping("/remind-quiz")
+    public ApiResponse<List<MyRemindQuizResponseDto>> getMyRemindQuiz(@AuthenticationPrincipal Member member) {
+
+        log.info("내가 속한 스터디의 리마인드 퀴즈 목록 조회 : {}", member.getName());
+        return ApiResponse.of(SuccessCode.REMIND_QUIZ_GET_SUCCESS, memberService.getMyRemindQuiz(member));
     }
 
     @Operation(summary = "메인 페이지 조회", description = "메인 페이지 개인 데이터 조회")
