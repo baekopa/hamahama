@@ -1,15 +1,14 @@
 package com.baekopa.backend.domain.meeting.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RemindQuizDTO {
     @JsonFormat(pattern = "yyy-MM-dd HH:mm")
     private LocalDateTime openDate;

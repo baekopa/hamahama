@@ -1,21 +1,18 @@
 package com.baekopa.backend.domain.meeting.dto.response;
 
 import com.baekopa.backend.domain.meeting.entity.MeetingKeyword;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MeetingKeywordListDTO {
     private List<MeetingKeywordDTO> keyword;
 
     @Builder
-    public MeetingKeywordListDTO(List<MeetingKeywordDTO> keyword) {
+    private MeetingKeywordListDTO(List<MeetingKeywordDTO> keyword) {
         this.keyword = keyword;
     }
 

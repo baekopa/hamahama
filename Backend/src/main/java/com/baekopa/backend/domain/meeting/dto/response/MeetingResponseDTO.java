@@ -4,16 +4,13 @@ import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.entity.MeetingScript;
 import com.baekopa.backend.domain.meeting.entity.MeetingSummary;
 import com.baekopa.backend.domain.meeting.entity.RemindQuiz;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MeetingResponseDTO {
     private Long meetingId; //미팅 id
     private String topic; //미팅 주제
@@ -23,7 +20,7 @@ public class MeetingResponseDTO {
     private List<MeetingKeywordDTO> keyword;
 
     @Builder
-    public MeetingResponseDTO(Long meetingId, String topic, String scriptContent, String summaryContent, String remindQuiz, List<MeetingKeywordDTO> keyword) {
+    private MeetingResponseDTO(Long meetingId, String topic, String scriptContent, String summaryContent, String remindQuiz, List<MeetingKeywordDTO> keyword) {
         this.meetingId = meetingId;
         this.topic = topic;
         this.scriptContent = scriptContent;
