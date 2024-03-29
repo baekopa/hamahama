@@ -1,4 +1,4 @@
-import os, re, subprocess
+import os, re, subprocess, speechbrain
 from whisper import transcribe
 from fastapi import APIRouter, FastAPI, UploadFile, File, HTTPException, Path
 from fastapi.responses import JSONResponse
@@ -53,8 +53,7 @@ async def tail_question_text(origin_dto: OriginalText):
 async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...), file: UploadFile = File(...)):
 
     model = load_models()
-    token = os.getenv("STT_TOKEN")
-    diarization_pipeline = set_pipeline(token=token)
+    diarization_pipeline = set_pipeline()
     if not file.filename.endswith('.wav'):
         raise HTTPException(status_code=400, detail="Only WAV files are supported.")
     
