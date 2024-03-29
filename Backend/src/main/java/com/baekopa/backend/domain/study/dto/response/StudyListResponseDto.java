@@ -1,11 +1,13 @@
 package com.baekopa.backend.domain.study.dto.response;
 
+import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.domain.study.entity.StudyType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -37,5 +39,28 @@ public class StudyListResponseDto {
                 .type(type)
                 .build();
     }
+
+    public static StudyListResponseDto from(Study study) {
+        return builder().id(study.getId())
+                .title(study.getTitle())
+                .backgroundImage(study.getBackgroundImage())
+                .category(study.getCategory())
+                .type(study.getType())
+                .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StudyListResponseDto that = (StudyListResponseDto) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
 
 }

@@ -43,11 +43,44 @@
                 <p>{{ studyStore.studyMembers.length }}</p>
               </div>
               <div class="invite-user">
-                <input
-                  v-bind="inviteUser"
-                  type="text"
-                  label="스터디원으로 초대할 유저의 이메일을 입력하세요"
-                />
+                <div>
+                  <div>
+                    <label for="memberName">멤버 이름:</label>
+                    <input
+                      class="border"
+                      type="text"
+                      id="memberName"
+                      v-model="memberName"
+                      @input="searchMembers"
+                    />
+                  </div>
+
+                  <div v-if="members.length > 0" class="mt-5">
+                    <span>검색 결과:</span>
+                    <ul>
+                      <li
+                        v-for="(member, index) in members"
+                        :key="index"
+                        @click="selectMember(member)"
+                      >
+                        {{ member.name }}
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="mt-5">
+                    <span>선택된 멤버:</span>
+                    <ul>
+                      <li
+                        v-for="(member, index) in selectedMembersName"
+                        :key="index"
+                        @click="toggleMemberSelection(member)"
+                      >
+                        {{ member.name }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
                 <v-btn @click="InviteStudy()">초대하기</v-btn>
               </div>
               <div class="member-list">
@@ -67,11 +100,11 @@
                 </div>
                 <p>{{ studyStartTime }} ~ {{ studyEndTime }}</p>
               </div>
-              <v-btn class="w-full" color="#3FB1FA">일정추가</v-btn>
+              <v-btn @click="CreateMeeting" class="w-full" color="#3FB1FA">일정추가</v-btn>
               <div class="schedule-list">
-                <div v-for="schedule in scheduleList">
-                  <p>{{ schedule.title }}</p>
-                  <p>{{ schedule.time }}</p>
+                <div v-for="schedule in scheduleList" :key="schedule.id">
+                  <p>{{ schedule.topic }}</p>
+                  <p>{{ schedule.studyAt }}</p>
                   <hr />
                 </div>
               </div>
@@ -87,50 +120,18 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStudyStore } from '@/stores/study'
+import Swal from 'sweetalert2'
 import instance from '@/api'
 const route = useRoute()
 const router = useRouter()
 const studyId = route.params.id
 const studyStore = useStudyStore()
-const inviteUser = ref()
 
 const studyDate = ref('0010100')
 const studyStartTime = ref('19:00')
 const studyEndTime = ref('21:00')
 
-const scheduleList = ref([
-  {
-    id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜',
-    time: '2024/03/15 PM 3:00'
-  },
-  {
-    id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜',
-    time: '2024/03/15 PM 3:00'
-  },
-  {
-    id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜',
-    time: '2024/03/15 PM 3:00'
-  },
-  {
-    id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜',
-    time: '2024/03/15 PM 3:00'
-  },
-  {
-    id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜',
-    time: '2024/03/15 PM 3:00'
-  },
-  {
-    id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜',
-    time: '2024/03/15 PM 3:00'
-  },
-  { id: 1, title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜', time: '2024/03/15 PM 3:00' }
-])
+const scheduleList = ref([])
 
 function GoHome() {
   router.push({ name: 'study', params: { id: studyId } })
@@ -142,10 +143,63 @@ function GoSummary() {
   router.push({ name: 'studySummary', params: { id: studyId } })
 }
 
-function InviteStudy(user) {
+const memberName = ref('')
+const members = ref([])
+const selectedMembers = ref([])
+const selectedMembersName = ref([])
+const searchMembers = async () => {
+  if (!memberName.value.trim()) {
+    members.value = []
+    return
+  }
+
+  try {
+    const response = await instance.get(`api/members?q=${memberName.value}`)
+    console.log(response)
+    members.value = response.data.data
+  } catch (error) {
+    console.error('멤버 검색 오류:', error)
+    // 오류 처리
+  }
+}
+
+const selectMember = (member) => {
+  // 이미 선택된 멤버인지 확인
+  if (!selectedMembers.value.find((m) => m.id === member.id)) {
+    selectedMembers.value.push(member.memberId)
+    selectedMembersName.value.push(member)
+  }
+  console.log(selectedMembers)
+}
+const toggleMemberSelection = (member) => {
+  const index = selectedMembers.value.findIndex((m) => m.id === member.id)
+  if (index !== -1) {
+    // 이미 선택된 멤버인 경우 선택 해제
+    selectedMembers.value.splice(index, 1)
+    selectedMembersName.value.splice(index, 1)
+    console.log(selectedMembers)
+  } else {
+    // 선택되지 않은 멤버인 경우 선택
+    selectedMembers.value.push(member.memberId)
+  }
+}
+
+function InviteStudy() {
   instance
-    .post(`api/study/invite/${inviteUser}`)
+    .post(`api/studies/${studyId}/members`, {
+      memberId: selectedMembers.value[0]
+    })
     .then((res) => {
+      if (res.data.status == 201) {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 1500
+        })
+      }
+
       console.log(res)
     })
     .catch((err) => {
@@ -158,6 +212,65 @@ const getDayOfWeek = (index) => {
   const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일']
   return daysOfWeek[index]
 }
+
+function LoadMeetingSchedule() {
+  instance
+    .get(`/api/studies/${studyId}/meetings`)
+    .then((res) => {
+      console.log(res)
+      const data = res.data
+      if (data.status == 200) {
+        scheduleList.value = data.data
+        console.log(res)
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+async function CreateMeeting() {
+  const { value: formValues } = await Swal.fire({
+    title: '스터디 일정 추가하마',
+    html: `
+    <label for="swal-input1">스터디 주제</label>
+    <input id="swal-input1" class="swal2-input">
+    <label for="swal-input2">날짜</label>
+    <input type=date id="swal-input2" class="swal2-input">
+    <label for="swal-input3">시간</label>
+    <input type="time" id="swal-input3" class="swal2-input">
+  `,
+    focusConfirm: false,
+    preConfirm: () => {
+      return [
+        document.getElementById('swal-input1').value,
+        document.getElementById('swal-input2').value,
+        document.getElementById('swal-input3').value
+      ]
+    }
+  })
+  if (formValues) {
+    instance
+      .post(`/api/studies/${studyId}/meetings`, {
+        topic: formValues[0],
+        studyAt: `${formValues[1]} ${formValues[2]}`
+      })
+      .then((res) => {
+        const data = res.data
+        if (data.status == 201) {
+          Swal.fire(JSON.stringify(formValues))
+          LoadMeetingSchedule()
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+}
+
+onMounted(() => {
+  LoadMeetingSchedule()
+})
 </script>
 
 <style scoped>

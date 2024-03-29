@@ -3,7 +3,10 @@ package com.baekopa.backend.domain.study.repository;
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.domain.study.entity.StudyMember;
+import com.baekopa.backend.domain.study.entity.StudyType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,5 +24,12 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
     Optional<StudyMember> findByStudyIdAndMemberIdAndDeletedAtIsNull(Long studyId, Long memberId);
 
     List<StudyMember> findAllByMemberAndDeletedAtIsNull(Member member);
+
+    @Query("SELECT sm.study FROM StudyMember sm WHERE sm.member = :member AND sm.type <> :type AND sm.deletedAt is null")
+    List<Study> findStudyAllByMemberAndTypeIsNot(@Param(value = "member") Member member, @Param(value = "type") StudyMember.StudyMemberType type);
+
+    @Query("SELECT sm.study FROM StudyMember sm WHERE sm.member = :member AND sm.study.type = :studyType AND sm.deletedAt is null")
+    Optional<Study> findPersonalStudy(@Param("member") Member member, @Param("studyType") StudyType studyType);
+
 }
 
