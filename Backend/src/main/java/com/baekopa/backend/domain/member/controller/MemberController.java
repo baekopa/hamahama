@@ -2,6 +2,7 @@ package com.baekopa.backend.domain.member.controller;
 
 import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
 import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
+import com.baekopa.backend.domain.member.dto.response.MemberMainResponseDto;
 import com.baekopa.backend.domain.member.dto.response.MyInfoResponseDto;
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.member.service.MemberService;
@@ -79,6 +80,13 @@ public class MemberController {
         log.info("내가 작성한 노트 목록 조회 : {}", member.getName());
         return ApiResponse.of(SuccessCode.NOTE_GET_SUCCESS, memberService.getMyNotes(member));
 
+    }
+
+    @Operation(summary = "메인 페이지 조회", description = "메인 페이지 개인 데이터 조회")
+    @GetMapping("/main")
+    public ApiResponse<MemberMainResponseDto> getMemberMainInfo(@AuthenticationPrincipal Member member) {
+
+        return ApiResponse.of(SuccessCode.MEMBER_MAIN_GET_SUCCESS, memberService.getMemberMainInfo(member));
     }
 
 }

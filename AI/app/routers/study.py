@@ -28,10 +28,10 @@ async def summary_text(origin_dto: OriginalText):
 
 @router.post("/keyword",  tags=["키워드"], response_model=KeywordDTO)
 async def keyword_text(origin_dto: OriginalText):
-    origin_text_list = process_text(origin_dto.original_text)
+    origin_text_list = process_text(origin_dto.originalText)
     
     keyword_list = do_keyword(origin_text_list)
-    return KeywordDTO(original_text=origin_dto.original_text, keyword=keyword_list)
+    return KeywordDTO(keyword=keyword_list)
 
 @router.post("/quiz", tags=["리마인드 퀴즈"], response_model=QuizDTO)
 async def quiz_text(origin_dto: QuizRequest):
