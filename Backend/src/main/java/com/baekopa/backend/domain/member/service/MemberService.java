@@ -205,6 +205,8 @@ public class MemberService {
             // TODO: 최적화 하고 싶다 그거 어떻게 하는 건데...
             for(Meeting meeting : meetingList) {
 
+                log.warn(" 미팅 번호 : {}, 스터디 번호 : {}", meeting.getId(), meeting.getStudy().getId());
+
                RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meeting)
                        .orElseThrow(()-> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
 
