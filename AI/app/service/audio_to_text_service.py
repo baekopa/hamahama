@@ -6,6 +6,7 @@ import torchaudio
 from torchaudio.transforms import Resample
 import ffmpeg
 import re, glob, os
+import speechbrain
 
 
 def load_models():
@@ -13,8 +14,10 @@ def load_models():
     whisper_model = load_model("small", device=device)
     return whisper_model
 
-def set_pipeline(token):
-    diarization_pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token=token)
+def set_pipeline():
+    token = os.getenv("STT_TOKEN")
+    diarization_pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization@2.1", use_auth_token=token)
+    print(diarization_pipeline)
     return diarization_pipeline
 
 def convert_audio_ffmpeg(input_path, output_path, sample_rate=16000):
