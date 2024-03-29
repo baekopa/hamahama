@@ -105,7 +105,7 @@ const audioStore = useAudioStore()
 
 const route = useRoute()
 const router = useRouter()
-const meeting_id = ref(5)
+const meeting_id = ref(3)
 const studyId = route.params.id
 
 function GoSetting() {
@@ -237,7 +237,7 @@ const uploadAudio = async (audioBlob) => {
   try {
     console.log('post 간다!')
     await instance.post(
-      `http://localhost:8080/api/studies/${studyId}/meetings/${meeting_id.value}/record`,
+      `/api/studies/${studyId}/meetings/${meeting_id.value}/record`,
       formData,
       {
         headers: {

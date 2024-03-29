@@ -250,6 +250,4 @@ public class MemberService {
 
         return meetingRepository.findAllStudyOrderByMeeting(studies, PageRequest.of(0, n)).stream().map(StudyListResponseDto::from).toList();
     }
-
-
 }
