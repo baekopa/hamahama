@@ -10,4 +10,6 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
 
     List<Note> findAllByMember(Member member);
 
+    List<Note> findTop5ByMemberAndDeletedAtIsNullOrderByModifiedAtDesc(Member member);
+
 }
