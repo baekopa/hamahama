@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 
 @Getter
 @Setter
@@ -24,7 +23,7 @@ public class RemindQuizDTO {
 
     public static RemindQuizDTO of(String quiz){
         return builder()
-                .openDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")).plus(7, ChronoUnit.DAYS))
+                .openDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(7))
                 .quiz(quiz)
                 .build();
     }

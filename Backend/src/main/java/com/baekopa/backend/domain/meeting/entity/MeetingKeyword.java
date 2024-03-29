@@ -11,7 +11,7 @@ import org.hibernate.annotations.SQLDelete;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE meeting_keyword SET delete_at = NOW() WHERE group_keyword_id = ?")
+@SQLDelete(sql = "UPDATE meeting_keyword SET deleted_at = CURRENT_TIMESTAMP WHERE group_keyword_id = ?")
 public class MeetingKeyword extends BaseBy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,9 +31,12 @@ public class MeetingKeyword extends BaseBy {
         this.keyword = keyword;
     }
 
-    private static MeetingKeyword of(Meeting meeting, String keyword){
+    public static MeetingKeyword of(Meeting meeting, String keyword){
         return builder().meeting(meeting)
                 .keyword(keyword)
                 .build();
+    }
+    public void updateMeetingKeyword(String keyword){
+        this.keyword=keyword;
     }
 }
