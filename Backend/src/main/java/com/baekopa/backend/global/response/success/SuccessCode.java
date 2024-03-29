@@ -34,7 +34,7 @@ public enum SuccessCode {
     LOGOUT_SUCCESS(200, "로그아웃에 성공하였습니다."),
     MEMBER_ID_EXIST(200, "회원 id가 이미 존재합니다."),
     MEMBER_ID_NOT_EXIST(200, "회원 id가 존재하지 않습니다."),
-    MEMBER_FIND_SUCCESS(200, "회원정보 조회에 성공하였습니다."),
+    MEMBER_GET_SUCCESS(200, "회원정보 조회에 성공하였습니다."),
     MEMBER_UPDATE_SUCCESS(200, "회원정보 수정에 성공하였습니다."),
     MEMBER_DELETE_SUCCESS(200, "회원 탈퇴에 성공하였습니다."),
     CHECK_MEMBER_OF_JWT(200, "JWT토큰의 멤버 정보조회에 성공했습니다."),
@@ -61,8 +61,13 @@ public enum SuccessCode {
 
     // Meeting
     STUDY_MEETING_GET_SUCCESS(200, "스터디 미팅 일정 목록 조회에 성공했습니다."),
-    MEETING_GET_SUCCESS(200, "내 주간 미팅 일정 조회에 성공했습니다."); // End
+    MEETING_GET_SUCCESS(200, "내 주간 미팅 일정 조회에 성공했습니다."), // End
 
+    // Notification
+    NOTIFICATION_CREATE_SUCCESS(201, "알림 구독에 성공했습니다."),
+    NOTIFICATION_GET_SUCCESS(201, "알림 리스트 조회에 성공했습니다."),
+    NEW_NOTIFICATION_GET_SUCCESS(201, "새로운 알림 조회에 성공했습니다."),
+    NOTIFICATION_UPDATE_SUCCESS(201, "알림 생성에 성공했습니다.");
 
     /**
      * ******************************* Success Code Field ***************************************

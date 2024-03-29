@@ -30,8 +30,7 @@ public class MemberController {
     public ApiResponse<MyInfoResponseDto> getMyInfo(@AuthenticationPrincipal Member member) {
 
         log.info(" 내 정보 조회 : {}", member.getEmail());
-
-        return ApiResponse.of(SuccessCode.MEMBER_FIND_SUCCESS, memberService.getMyInfo(member));
+        return ApiResponse.of(SuccessCode.MEMBER_GET_SUCCESS, memberService.getMyInfo(member));
     }
 
     @Operation(summary = "내 정보 수정", description = "사용자의 프로필 사진, 이름을 수정합니다.")
@@ -47,7 +46,6 @@ public class MemberController {
     public ApiResponse<List<StudyMeetingListDto>> getStudyMeetings(@AuthenticationPrincipal Member member) {
 
         log.info("내 스터디 미팅 조회 : {}", member.getName());
-
         return ApiResponse.of(SuccessCode.STUDY_MEETING_GET_SUCCESS, memberService.getStudyMeetings(member));
     }
 
