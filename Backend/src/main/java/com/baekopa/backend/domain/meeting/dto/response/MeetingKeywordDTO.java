@@ -6,26 +6,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
-public class MeetingKeywordListDTO {
-    private List<MeetingKeywordDTO> keyword;
+public class MeetingKeywordDTO {
+    private Long keywordId;
+    private String keyword;
 
     @Builder
-    public MeetingKeywordListDTO(List<MeetingKeywordDTO> keyword) {
+    private MeetingKeywordDTO(Long keywordId, String keyword) {
+        this.keywordId = keywordId;
         this.keyword = keyword;
     }
 
-
-    public static MeetingKeywordListDTO from(List<MeetingKeywordDTO> meetingKeywordList){
+    public static MeetingKeywordDTO from(MeetingKeyword meetingKeyword) {
         return builder()
-                .keyword(meetingKeywordList)
+                .keywordId(meetingKeyword.getId())
+                .keyword(meetingKeyword.getKeyword())
                 .build();
     }
-
-
-
 }
