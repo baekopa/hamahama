@@ -50,4 +50,17 @@ public class RemindQuizService {
         return response;
     }
 
+    public RemindQuizResponseDto getRemindQuiz(Long studyId, Long remindQuizId) {
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
+
+        RemindQuiz remindQuiz = remindQuizRepository.findById(remindQuizId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
+
+        Meeting meeting = remindQuiz.getMeeting();
+
+        return RemindQuizResponseDto.of(study, meeting, remindQuiz);
+
+    }
+
 }
