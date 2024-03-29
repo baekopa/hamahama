@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 
@@ -36,14 +37,14 @@ public class RemindQuiz extends BaseTime {
         this.content = content;
     }
 
-    public static RemindQuiz of(Meeting meeting, LocalDateTime openDate, String content){
+    public static RemindQuiz of(Meeting meeting, LocalDateTime openDate, String content) {
         return builder().meeting(meeting)
                 .openDate(openDate)
                 .content(content)
                 .build();
     }
 
-    public static RemindQuiz from(Meeting meeting, RemindQuizDTO remindQuizDTO){
+    public static RemindQuiz from(Meeting meeting, RemindQuizDTO remindQuizDTO) {
         return builder()
                 .meeting(meeting)
                 .openDate(remindQuizDTO.getOpenDate())
@@ -51,7 +52,7 @@ public class RemindQuiz extends BaseTime {
                 .build();
     }
 
-    public void updateRemindQuiz(String content){
-        this.content=content;
+    public void updateRemindQuiz(String content) {
+        this.content = content;
     }
 }

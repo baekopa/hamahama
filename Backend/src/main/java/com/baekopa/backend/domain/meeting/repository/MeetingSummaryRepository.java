@@ -12,4 +12,5 @@ public interface MeetingSummaryRepository extends JpaRepository<MeetingSummary, 
     @Query("SELECT ms FROM MeetingSummary ms WHERE ms.meeting.id = :meetingId")
     Optional<MeetingSummary> findByIdAndDeletedAtIsNull(@Param("meetingId") Long meetingId);
 
+
 }
