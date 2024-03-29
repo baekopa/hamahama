@@ -1,0 +1,272 @@
+package com.baekopa.backend.domain.meeting.service;
+
+import com.baekopa.backend.domain.meeting.dto.RemindQuizDTO;
+import com.baekopa.backend.domain.meeting.dto.request.*;
+import com.baekopa.backend.domain.meeting.dto.response.MeetingKeywordListDTO;
+import com.baekopa.backend.domain.meeting.dto.response.MeetingRemindQuizResponseDTO;
+import com.baekopa.backend.domain.meeting.dto.response.MeetingSummaryDTO;
+import com.baekopa.backend.domain.meeting.dto.response.MeetingSummaryResponseDTO;
+import com.baekopa.backend.domain.meeting.entity.*;
+import com.baekopa.backend.domain.meeting.repository.*;
+import com.baekopa.backend.global.response.error.ErrorCode;
+import com.baekopa.backend.global.response.error.exception.BusinessException;
+import com.baekopa.backend.global.service.S3UploadService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.util.ArrayList;
+import java.util.List;
+
+@Slf4j
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class MeetingService {
+    private final MeetingRepository meetingRepository;
+    private final MeetingSummaryRepository meetingSummaryRepository;
+    private final MeetingScriptRepository meetingScriptRepository;
+    private final RemindQuizRepository remindQuizRepository;
+    private final MeetingKeywordRepository meetingKeywordRepository;
+    private final S3UploadService s3UploadService;
+
+    @Value("${BASE_URL_AI}")
+    private String fastUrl;
+    private final RestTemplate restTemplate;
+
+    public MeetingSummaryResponseDTO createSummary(Long meetingId) {
+        String summaryUrl = fastUrl + "/studies/summary";
+
+        String originalText = meetingScriptRepository.findByMeetingAndDeletedAtIsNull(meetingRepository.findById(meetingId)
+                        .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage())))
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()))
+                .getScriptContent();
+
+        originalText = originalText.replace(".", ".\n");
+
+        // Json 변환
+        MeetingSummaryRequestDTO meetingSummaryRequestDTO = MeetingSummaryRequestDTO.of(originalText);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Object jsonText;
+        try {
+            jsonText = objectMapper.writeValueAsString(meetingSummaryRequestDTO);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        // fast api 통신
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(jsonText, headers);
+
+        // db 저장
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+        MeetingSummaryDTO meetingSummaryDTO = restTemplate.postForObject(summaryUrl, requestEntity, MeetingSummaryDTO.class);
+        MeetingSummary meetingSummary = MeetingSummary.of(meeting, meetingSummaryDTO.getSummaryText());
+        meetingSummaryRepository.save(meetingSummary);
+        MeetingSummaryResponseDTO meetingSummaryResponseDTO = MeetingSummaryResponseDTO.from(meetingSummaryDTO);
+
+        return meetingSummaryResponseDTO;
+    }
+
+    public MeetingSummaryResponseDTO getMeetingSummary(Long meetingId) {
+        MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+        return MeetingSummaryResponseDTO.getMeetingSummary(meetingSummary);
+    }
+
+    public MeetingSummaryResponseDTO updateCreateSummary(Long meetingId) {
+        String summaryUrl = fastUrl + "/studies/summary";
+
+        String originalText = meetingScriptRepository.findByMeetingAndDeletedAtIsNull(meetingRepository.findById(meetingId)
+                        .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage())))
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()))
+                .getScriptContent();
+        originalText = originalText.replace(".", ".\n");
+
+        // Json 변환
+        MeetingSummaryRequestDTO meetingSummaryRequestDTO = MeetingSummaryRequestDTO.of(originalText);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Object jsonText;
+        try {
+            jsonText = objectMapper.writeValueAsString(meetingSummaryRequestDTO);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        // fast api 통신
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(jsonText, headers);
+        MeetingSummaryDTO meetingSummaryDTO = restTemplate.postForObject(summaryUrl, requestEntity, MeetingSummaryDTO.class);
+
+        // db 저장
+        MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+        meetingSummary.updateMeetingSummary(meetingSummaryDTO.getSummaryText());
+
+        return MeetingSummaryResponseDTO.from(meetingSummaryDTO);
+    }
+
+    public MeetingSummaryResponseDTO updateMeetingSummary(MeetingSummaryUpdateDTO meetingSummaryUpdateDTO, Long meetingId) {
+        MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+        meetingSummary.updateMeetingSummary(meetingSummaryUpdateDTO.getSummaryText());
+
+        return MeetingSummaryResponseDTO.getMeetingSummary(meetingSummary);
+    }
+
+    public MeetingRemindQuizResponseDTO createMeetingRemindQuiz(Long meetingId) {
+        String remindQuizUrl = fastUrl + "/studies/quiz";
+
+        MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+
+        CreateMeetingRemindQuizDTO createMeetingRemindQuizDTO = CreateMeetingRemindQuizDTO.from(meetingSummary);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Object jsonText;
+
+        try {
+            jsonText = objectMapper.writeValueAsString(createMeetingRemindQuizDTO);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        // fast api 통신
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(jsonText, headers);
+
+        MeetingRemindQuizResponseDTO meetingRemindQuizResponseDTO = restTemplate.postForObject(remindQuizUrl, requestEntity, MeetingRemindQuizResponseDTO.class);
+
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+        // db 저장
+        RemindQuizDTO remindQuizDTO = RemindQuizDTO.of(meetingRemindQuizResponseDTO.getQuiz());
+        remindQuizRepository.save(RemindQuiz.from(meeting, remindQuizDTO));
+
+        return meetingRemindQuizResponseDTO;
+    }
+
+    public MeetingRemindQuizResponseDTO reCreateMeetingRemindQuiz(Long meetingId) {
+        String remindQuizUrl = fastUrl + "/studies/quiz";
+
+        MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+
+        CreateMeetingRemindQuizDTO createMeetingRemindQuizDTO = CreateMeetingRemindQuizDTO.from(meetingSummary);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Object jsonText;
+
+        try {
+            jsonText = objectMapper.writeValueAsString(createMeetingRemindQuizDTO);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        // fast api 통신
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(jsonText, headers);
+
+        MeetingRemindQuizResponseDTO meetingRemindQuizResponseDTO = restTemplate.postForObject(remindQuizUrl, requestEntity, MeetingRemindQuizResponseDTO.class);
+
+        // db 저장
+        RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meetingRepository.findById(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage())))
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
+
+        assert meetingRemindQuizResponseDTO != null;
+        remindQuiz.updateRemindQuiz(meetingRemindQuizResponseDTO.getQuiz());
+
+        return meetingRemindQuizResponseDTO;
+    }
+
+    public MeetingKeywordListDTO createMeetingKeyword(Long meetingId) {
+        Meeting meeting=meetingRepository.findById(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+        //이미 기존의 키워드가 존재 한다면?
+        if(meetingKeywordRepository.existsByMeetingAndDeletedAtIsNull(meeting)){
+            List<MeetingKeyword> meetingKeywordList=meetingKeywordRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
+
+            for(MeetingKeyword meetingKeyword : meetingKeywordList){
+                meetingKeywordRepository.delete(meetingKeyword);
+            }
+        }
+
+        String keywordUrl = fastUrl + "/studies/keyword";
+
+        String originalText = meetingScriptRepository.findByMeetingAndDeletedAtIsNull(meetingRepository.findById(meetingId)
+                        .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage())))
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SCRIPT_NOT_FOUND, ErrorCode.MEETING_SCRIPT_NOT_FOUND.getMessage()))
+                .getScriptContent();
+
+        //originalText = originalText.replace(".", ".\n");
+
+        MeetingSummaryRequestDTO meetingSummaryRequestDTO = MeetingSummaryRequestDTO.of(originalText);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Object jsonText;
+
+        try {
+            jsonText = objectMapper.writeValueAsString(meetingSummaryRequestDTO);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        // fast api 통신
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(jsonText, headers);
+
+        MeetingKeywordListDTO meetingKeywordListDTO = restTemplate.postForObject(keywordUrl, requestEntity, MeetingKeywordListDTO.class);
+
+
+        // db 저장
+
+        for (int i = 0; i < meetingKeywordListDTO.getKeyword().size(); i++) {
+            meetingKeywordRepository.save(MeetingKeyword.of(meeting, meetingKeywordListDTO.getKeyword().get(i)));
+        }
+
+        return meetingKeywordListDTO;
+    }
+
+    public MeetingKeywordListDTO getMeetingKeyword(Long meetingId){
+        Meeting meeting=meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+        List<MeetingKeyword> meetingKeywordList= meetingKeywordRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
+        List<String> result=new ArrayList<>();
+
+        for(MeetingKeyword meetingKeyword : meetingKeywordList){
+            result.add(meetingKeyword.getKeyword());
+        }
+        return MeetingKeywordListDTO.from(result);
+    }
+
+    public MeetingKeywordListDTO updateMeetingKeyword(Long meetingId, UpdateMeetingKeywordListDTO updateMeetingKeywordListDTO){
+        for(UpdateMeetingKeywordDTO updateMeetingKeywordDTO : updateMeetingKeywordListDTO.getUpdateMeetingKeywordList()){
+            MeetingKeyword meetingKeyword=meetingKeywordRepository.findByIdAndDeletedAtIsNull(updateMeetingKeywordDTO.getGroupKeywordId())
+                    .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_KEYWORD_NOT_FOUND, ErrorCode.MEETING_KEYWORD_NOT_FOUND.getMessage()));
+
+            meetingKeyword.updateMeetingKeyword(updateMeetingKeywordDTO.getKeyword());
+        }
+
+        Meeting meeting=meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+        List<MeetingKeyword> meetingKeywordList= meetingKeywordRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
+        List<String> result=new ArrayList<>();
+
+        for(MeetingKeyword meetingKeyword : meetingKeywordList){
+            result.add(meetingKeyword.getKeyword());
+        }
+        return MeetingKeywordListDTO.from(result);
+    }
+}

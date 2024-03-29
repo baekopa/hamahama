@@ -5,8 +5,8 @@ import com.baekopa.backend.domain.meeting.dto.response.SharedMeetingDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
 import com.baekopa.backend.domain.note.dto.request.CreateNoteSummaryRequestDto;
-import com.baekopa.backend.domain.note.dto.request.CreateNoteSummaryResponseDto;
 import com.baekopa.backend.domain.note.dto.request.CreateSubmittedNoteRequestDto;
+import com.baekopa.backend.domain.note.dto.response.CreateNoteSummaryResponseDto;
 import com.baekopa.backend.domain.note.entity.Note;
 import com.baekopa.backend.domain.note.entity.SubmittedNote;
 import com.baekopa.backend.domain.note.repository.NoteRepository;
@@ -50,12 +50,12 @@ public class SubmittedNoteService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
 
         // 이미 내보내기 된 노트와 스터디인지 확인한다.
-        if(submittedNoteRepository.existsByNoteAndMeeting(note, meeting)) {
+        if (submittedNoteRepository.existsByNoteAndMeeting(note, meeting)) {
             throw new BusinessException(ErrorCode.NOTE_DUPLICATE_MEETING, ErrorCode.NOTE_DUPLICATE_MEETING.getMessage());
         }
 
         // 요약이 없다면 요약 생성
-        if(note.getSummary() == null) {
+        if (note.getSummary() == null) {
 
             String summaryUrl = aiUrl + "/studies/summary";
 
@@ -79,11 +79,11 @@ public class SubmittedNoteService {
         }
 
         // DB 저장
-        SubmittedNote submittedNote = SubmittedNote.createSubmittedNote( null, note, meeting);
+        SubmittedNote submittedNote = SubmittedNote.createSubmittedNote(null, note, meeting);
         submittedNoteRepository.save(submittedNote);
 
         return submittedNoteRepository.findMeetingByNote(note).stream()
-                .map((m) -> SharedMeetingDto.of(m.getMeeting().getId(),
+                .map(m -> SharedMeetingDto.of(m.getMeeting().getId(),
                         m.getMeeting().getTopic(),
                         m.getMeeting().getStudyAt(),
                         m.getMeeting().getStudy().getId(),

@@ -31,6 +31,9 @@ public class Meeting extends BaseBy {
     @Column(name = "record_file")
     private String recordFile;
 
+    @Column(name = "note_summary", columnDefinition = "TEXT")
+    private String noteSummary;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id", nullable = false)
     private Study study;
@@ -43,13 +46,16 @@ public class Meeting extends BaseBy {
         this.study = study;
     }
 
-    public static Meeting of(String topic, LocalDateTime studyAt, String recordFile, Study study) {
+    public static Meeting of(String topic, LocalDateTime studyAt, Study study) {
         return builder()
                 .topic(topic)
                 .studyAt(studyAt)
-                .recordFile(recordFile)
                 .study(study)
                 .build();
+    }
+
+    public void updateNoteSummary(String noteSummary) {
+        this.noteSummary = noteSummary;
     }
 
 }

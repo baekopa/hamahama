@@ -1,11 +1,11 @@
 package com.baekopa.backend.domain.note.dto.response;
 
+import com.baekopa.backend.domain.note.entity.Note;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,6 +35,15 @@ public class NoteListResponseDto {
 
     public static NoteListResponseDto of(Long id, String title, LocalDateTime createAt, LocalDateTime modifiedAt) {
         return builder().id(id).title(title).createAt(createAt).modifiedAt(modifiedAt).build();
+    }
+
+    public static NoteListResponseDto from(Note note) {
+        return builder()
+                .id(note.getId())
+                .title(note.getTitle())
+                .createAt(note.getCreatedAt())
+                .modifiedAt(note.getModifiedAt())
+                .build();
     }
 
 }

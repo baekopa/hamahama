@@ -10,6 +10,12 @@ spring:
       - s3
       - jwt
       - security
+  mvc:
+    log-request-details: true
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
 
   datasource:
     driver-class-name: ${DATABASE_DRIVER}
@@ -89,3 +95,8 @@ cloud:
 
 jwt:
   secret-key: ${JWT_SECRET_KEY}
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG

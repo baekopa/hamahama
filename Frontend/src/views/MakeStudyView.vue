@@ -1,176 +1,108 @@
 <template>
-  <v-container class="page">
-    <div class="d-flex align-center">
-      <img src="@/assets/image/study/rocketIcon.svg" alt="로켓" width="73px" />
-      <span class="text-h4 font-weight-black ml-4">스터디 만들기</span>
-    </div>
-    <v-form fast-fail @submit.prevent>
-      <v-sheet
-        elevation="3"
-        rounded="lg"
-        class="basic-form mt-10 d-flex flex-column"
-        style="height: 552px"
-      >
-        <div class="pa-10">
-          <span class="text-h5 font-weight-black">스터디 기본 정보</span>
+  <v-form fast-fail @submit.prevent>
+  <div class="mb-32">
+  <div class="bg-white d-flex flex-column items-center mt-15">
+    <div class="d-flex flex-column" style="width: 1300px">    
+      <div class="text-gray-500 point-font">
+        <span class="text-xl mr-2"><</span><span class="tossface text-xl">👨‍👨‍👧‍👧</span> 스터디 생성
+      </div>  
+      <div class="note-title point-font mt-14"> 스터디 기본 정보 <span class="text-red-300">*</span></div>
+      <div class="d-flex mt-3">
+        <v-card @click="openFileInput" width="300" height="300" class="rounded-lg d-flex text-center justify-center text-xl mr-14" variant="outlined" color="blue">
+          <input
+            type="file"
+            @change="previewImage"
+            accept="image/png, image/jpeg, image/bmp"
+            style="display: none"
+            ref="fileInput"
+          />
+          <img
+            v-if="imageUrl"
+            :src="imageUrl"
+            alt="이미지 미리보기"
+            style="width: 300px; height: 300px"
+          />
+          <button v-else>이미지 선택</button>
+        </v-card>
+        <div class="d-flex flex-column justify-center">
+          <input v-model="studyName" :rules="studyNameRules" variant="plain" placeholder="스터디 이름을 작성해주세요" class="note-title"/>
+          <textarea v-model="studyDescription" variant="plain" placeholder="스터디 설명을 작성해주세요." class="note-content" rows="7" style="width: 900px;"></textarea>
         </div>
-
-        <v-col class="pa-10 d-flex">
-          <v-sheet @click="openFileInput" border width="300" height="300" class="mr-10">
-            <input
-              type="file"
-              @change="previewImage"
-              accept="image/png, image/jpeg, image/bmp"
-              style="display: none"
-              ref="fileInput"
-            />
-            <img
-              v-if="imageUrl"
-              :src="imageUrl"
-              alt="이미지 미리보기"
-              style="width: 400px; height: 300px"
-            />
-            <button>이미지 선택</button>
-          </v-sheet>
-
-          <div class="ml-10" style="width: 500px">
-            <div class="">
-              <span class="text-h5">스터디 제목</span>
-              <v-text-field
-                class="mt-5"
-                v-model="studyName"
-                :rules="studyNameRules"
-                variant="outlined"
-                label="스터디 제목"
-              ></v-text-field>
-            </div>
-            <div class="">
-              <span class="text-h5">스터디 분류</span>
-              <v-text-field
-                class="mt-5"
-                variant="outlined"
-                v-model="studyCategory"
-                label="스터디 종류"
-              ></v-text-field>
-            </div>
-            <div>
-              <div>
-                <label for="memberName">멤버 이름:</label>
-                <input
-                  class="border"
-                  type="text"
-                  id="memberName"
-                  v-model="memberName"
-                  @input="searchMembers"
-                />
-              </div>
-
-              <div v-if="members.length > 0" class="mt-5">
-                <span>검색 결과:</span>
-                <ul>
-                  <li v-for="(member, index) in members" :key="index" @click="selectMember(member)">
-                    {{ member.name }}
-                  </li>
-                </ul>
-              </div>
-
-              <div class="mt-5">
-                <span>선택된 멤버:</span>
-                <ul>
-                  <li
-                    v-for="(member, index) in selectedMembersName"
-                    :key="index"
-                    @click="toggleMemberSelection(member)"
-                  >
-                    {{ member.name }}
-                  </li>
-                </ul>
-              </div>
-            </div>
+      </div>
+    </div>
+    <div class="d-flex flex-column mt-20" style="width: 1300px">
+      <div class="note-title point-font"> 
+        스터디원 초대
+        <span class="italic text-gray-500 font-light text-base ml-2"></span>
+        <div></div>
+      </div>
+      <v-row>
+        <v-col cols="5">
+          <div class="text-gray-500 font-light text-base ml-2 mb-2 text-xl">스터디원 검색</div>
+          <input type="text" id="memberName" v-model="memberName" @input="searchMembers" variant="plain" placeholder=" 함께할 스터디원의 이메일을 입력해주세요." class="border note-content px-2 py-2 rounded-lg w-full" />
+          <div class="mt-4 overflow-y-auto h-80 p-4 bg-gray-100 rounded-lg">
+            <ul v-if="members.length > 0" class="text-xl">
+              <li v-for="(member, index) in members" :key="index" @click="selectMember(member)" class="mb-4">
+                <img :src="member.profileImage" class="w-8 inline rounded-full mr-2"/> {{ member.name }} <span class="text-gray-700 ml-2">{{ member.email }}</span>
+              </li>
+            </ul>
           </div>
         </v-col>
-      </v-sheet>
-
-      <v-sheet rounded="lg" class="detail-schedule mt-10 pa-10 d-flex flex-column">
-        <div class="d-flex align-center">
-          <img src="@/assets/image/study/calendar.svg" alt="" width="68px" height="68px" />
-          <span class="text-h4 ml-4 font-weight-black">상세일정</span>
-        </div>
-        <div class="d-flex align-center ml-10">
-          <span class="ml-16 text-h6 font-weight-black">스터디 요일</span>
-          <v-row class="ml-16">
-            <v-col class="ml-12">
-              <v-sheet class="py-4 px-1">
-                <v-chip-group
-                  @click="convertTagsToBinaryString"
-                  v-model="selectedDay"
-                  selected-class="text-primary"
-                  multiple
-                >
-                  <v-chip v-for="tag in tags" :key="tag" :value="tag" size="x-large" class="mx-10">
-                    {{ tag }}
-                  </v-chip>
-                </v-chip-group>
-              </v-sheet>
-            </v-col>
-          </v-row>
-        </div>
-
-        <div class="d-flex align-center mt-10 ml-10">
-          <span class="ml-16 text-h6 font-weight-black">스터디 시작일</span>
-          <v-row class="ml-16">
-            <v-col class="ml-16" cols="auto">
-              <input id="date" type="date" v-model="startDate" />
-            </v-col>
-          </v-row>
-          <span class="text-h6 font-weight-black">스터디 종료일</span>
-          <v-row class="ml-16">
-            <v-col cols="auto">
-              <input id="date" type="date" v-model="endDate" />
-            </v-col>
-          </v-row>
-        </div>
-
-        <div class="d-flex align-center mt-10 ml-10">
-          <span class="ml-16 text-h6 font-weight-black">스터디 시작시간</span>
-          <v-row class="ml-11">
-            <v-col class="ml-16" cols="auto">
-              <input id="time" type="time" v-model="startTime" />
-            </v-col>
-          </v-row>
-          <span class="text-h6 font-weight-black">스터디 종료시간</span>
-          <v-row class="ml-11">
-            <v-col cols="auto">
-              <input id="time" type="time" v-model="endTime" />
-            </v-col>
-          </v-row>
-        </div>
-      </v-sheet>
-
-      <v-sheet class="study-description mt-10 pa-10 d-flex flex-column">
-        <div class="d-flex align-center">
-          <img src="@/assets/image/study/pinIcon.svg" alt="" width="68px" />
-          <span class="text-h4 ml-4 font-weight-black">스터디 설명</span>
-        </div>
-        <div></div>
-        <div class="pa-10 d-flex align-center">
-          <v-textarea
-            rounded="lg"
-            v-model="studyDescription"
-            no-resize
-            label="스터디에 대한 정보를 적어주세요"
-            variant="outlined"
-            class="mt-5"
-          ></v-textarea>
-        </div>
-      </v-sheet>
-
-      <v-sheet class="d-flex justify-end mt-5">
-        <v-btn @click="checkForm" class="m-btn mr-5" rounded="lg" type="submit">스터디 생성</v-btn>
-        <v-btn class="c-btn" rounded="lg">취소</v-btn>
-      </v-sheet>
-    </v-form>
-  </v-container>
+        <v-col cols="2" class="d-flex flex-column justify-center items-center text-2xl ">
+          <div>></div>
+          <div><</div>
+        </v-col>
+        <v-col cols="5">
+          <div class="text-gray-500 font-light text-base ml-2  text-xl">초대 요청 대상</div>
+          <div class="mt-2 overflow-y-auto p-4 h-96 bg-gray-100 rounded-lg">
+            <ul v-if="members.length > 0" class="text-xl">
+              <li v-for="(member, index) in selectedMembersName" :key="index" @click="toggleMemberSelection(member)" class="mb-2">
+                <img :src="member.profileImage" class="w-8 inline rounded-full mr-2"/> {{ member.name }} <span class="text-gray-700 ml-2">{{ member.email }}</span>
+              </li>
+            </ul>
+          </div>
+        </v-col>
+      </v-row>
+    </div>
+    <div class="d-flex flex-column mt-24" style="width: 1300px">     
+      <div class="note-title point-font">스터디 날짜</div>
+      <div class="d-flex mt-8 items-center text-xl">
+        <div class="w-36 mr-7">스터디 진행 기간</div>
+        <input id="date" type="date" v-model="startDate" class="border text-gray-500"/>
+        <div class="mx-6">~</div>
+        <input id="date" type="date" v-model="endDate" class="border text-gray-500" />
+      </div>
+      <div class="d-flex mt-7 items-center text-xl">
+        <div class="w-36 mr-7">스터디 요일</div>
+        <v-chip-group
+          @click="convertTagsToBinaryString"
+          v-model="selectedDay"
+          selected-class="text-primary"
+          multiple
+        >
+          <v-chip v-for="tag in tags" :key="tag" :value="tag" size="x-large" class="mx-4">
+            {{ tag }}
+          </v-chip>
+        </v-chip-group>
+      </div>
+      <div class="d-flex mt-7 items-center text-xl">
+        <div class="w-36 mr-7">스터디 시간</div>
+        <input id="time" type="time" v-model="startTime" class="border text-gray-500" />
+        <div class="mx-6">~</div>
+        <input id="time" type="time" v-model="endTime" class="border text-gray-500" />
+      </div>
+    </div>
+    <div class="d-flex flex-column mt-20" style="width: 1300px">
+      <div class="note-title point-font mt-14"> 스터디 추가 정보</div>
+      <input v-model="studyCategory" variant="plain" placeholder="스터디 주제를 작성해주세요." class="my-3 note-content" />
+    </div>
+    <div class="d-flex justify-end mt-40" style="width: 1300px">
+      <v-btn @click="checkForm" size="large" class="" variant="flat" color="#3fb1fa" rounded="xl">스터디 생성</v-btn>
+      <v-btn size="large" class="mx-5" variant="flat" color="#FF6B74" rounded="xl">취소</v-btn>
+    </div>
+  </div>
+</div>
+</v-form>
 </template>
 
 <script setup>
@@ -342,7 +274,7 @@ function createStudy() {
   }
 
   instance
-    .post('api/studies/new', formData, {
+    .post('api/studies', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -401,5 +333,63 @@ function createStudy() {
   border: 1px solid #8d9299;
   border-radius: 10px;
   padding: 10px;
+}
+
+.text-area {
+  border-radius: 10px;
+  padding: 4px;
+  margin: 20px;
+  overflow-y: auto;
+  max-height: 600px;
+}
+.study-select {
+  margin-top: 50px;
+}
+
+.summary-content {
+  width: 1300px;
+  height: 400px;
+  border: solid 1px black;
+}
+
+.note-title {
+  font-size: x-large;
+  outline: none;
+  margin: 20px 0px;
+  font-weight: bold;
+}
+
+.note-content {
+  font-size: large;
+  outline: none;
+  /* line-height: 30px; */
+}
+
+.profile-img {
+  width: 40px;
+  border-radius: 50%;
+}
+
+.search-input {
+  border: 1px;
+  border-bottom:#3fb1fa;
+}
+::-webkit-scrollbar {
+  border-radius: 30px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: white;
+  border-radius: 30px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #dbdbdb;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #afafaf;
 }
 </style>
