@@ -11,7 +11,7 @@ from service.text_processing import process_text, process_for_remind_quiz
 from service.summary_pre_service import do_summary
 from service.keyword_quiz_pre_service import do_keyword, do_quiz
 from service.tail_question_service import do_tail_question
-from service.audio_to_text_service import load_models, set_pipeline, convert_audio_ffmpeg, millisec, remove_time_from_text, clean_up_files
+from service.audio_to_text_service import load_models, set_pipeline, convert_audio_ffmpeg, millisec, remove_time_from_text, clean_up_files, convert_audio_sample_rate
 
 
 router=APIRouter(
@@ -61,16 +61,18 @@ async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...
     # 임시 파일에 오디오 저장
     with NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
         content = await file.read()
+        print(tmp)
         tmp.write(content)
         tmp_filename = tmp.name
 
-    # ffmpeg로 wav 변환
+    # # ffmpeg로 wav 변환
     converted_filename = tmp_filename.replace(".wav", "_converted.wav")
     convert_audio_ffmpeg(tmp_filename, converted_filename)
-
+    # convert_audio_sample_rate(tmp_filename, converted_filename, new_sample_rate=16000)
 
     # 화자 분할
     diarization = diarization_pipeline(converted_filename)
+    # diarization = diarization_pipeline(tmp_filename)
     
     with open("diarization.txt", "w") as text_file:
         text_file.write(str(diarization))
@@ -89,8 +91,6 @@ async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...
             g = []
 
         g.append(d)
-        # logger.info(d)
-        # logger.info(g)
         end = re.findall('[0-9]+:[0-9]+:[0-9]+\.[0-9]+', string=d)[1]
         end = millisec(end)
         if (lastend > end):       #segment engulfed by a previous segment
@@ -133,35 +133,20 @@ async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...
     for i in range(gidx+1):
         # 오디오 파일 이름 구성
         audio_file = f"{i}.wav"
-        
-        # Whisper 명령 구성
-        whisper_command = [
-            "whisper", 
-            audio_file, 
-            "--language", "ko", 
-            "--model", "small"
-        ]
-        
-        # Whisper 명령 실행
-        result = subprocess.run(whisper_command, capture_output=True, text=True, encoding='utf-8')
-        # try:
-        #     result = model.transcribe(audio_file, language="ko")
-        #     transcribed_text = result["text"]
-        # finally:
-        #     # 사용이 끝난 임시 파일 삭제
-        #     os.remove(tmp_filename)
-        
-        cleaned_text = remove_time_from_text(result.stdout)
+    
+        result = transcribe(model=model, audio=audio_file)
+        transcribed_text = result["text"]
+
+        print("result 나옴 : ", result)
+        # cleaned_text = remove_time_from_text(result.stdout)
+        cleaned_text = remove_time_from_text(transcribed_text)
+        print("remove text 성공")
         transcription_data["transcriptions"].append({"speaker": speaker[i], "text": cleaned_text})
-        print(result)
+
         # 결과 출력
         print(speaker[i]," : ", cleaned_text)
 
         clean_up_files(f"{i}.*")
-
-        # 에러 메시지가 있는 경우 출력
-        if result.stderr:
-            print(result.stderr)
             
     clean_up_files("diarization.txt")
     print(transcription_data)

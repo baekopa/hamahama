@@ -2,6 +2,8 @@ import torch
 from whisper import load_model
 from pyannote.audio import Pipeline
 # import soundfile as sf
+import torchaudio
+from torchaudio.transforms import Resample
 import ffmpeg
 import re, glob, os
 
@@ -17,6 +19,16 @@ def set_pipeline(token):
 
 def convert_audio_ffmpeg(input_path, output_path, sample_rate=16000):
     ffmpeg.input(input_path).output(output_path, ar=sample_rate, ac=1).run()
+
+def convert_audio_sample_rate(input_path, output_path, new_sample_rate):
+    # 오디오 파일 로드
+    waveform, original_sample_rate = torchaudio.load(input_path)
+    # Resample transform 생성
+    resampler = Resample(original_sample_rate, new_sample_rate)
+    # 오디오 데이터를 새로운 샘플링 레이트로 리샘플링
+    resampled_waveform = resampler(waveform)
+    # 변환된 오디오 데이터를 파일로 저장
+    torchaudio.save(output_path, resampled_waveform, new_sample_rate)
 
 def millisec(timeStr):
   spl = timeStr.split(":")
