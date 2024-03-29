@@ -1,4 +1,4 @@
-package com.baekopa.backend.domain.meeting.dto.request;
+package com.baekopa.backend.domain.meeting.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MyRemindQuizResponseDto {
+public class RemindQuizResponseDto {
 
     private Long remindQuizId;
     private String topic; // meeting topic
@@ -22,7 +22,7 @@ public class MyRemindQuizResponseDto {
     private LocalDateTime lastModifiedAt;
 
     @Builder
-    private MyRemindQuizResponseDto(Long remindQuizId, String topic, String studyName, LocalDateTime studyAt, LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
+    private RemindQuizResponseDto(Long remindQuizId, String topic, String studyName, LocalDateTime studyAt, LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
         this.remindQuizId = remindQuizId;
         this.topic = topic;
         this.studyAt = studyAt;
@@ -32,7 +32,7 @@ public class MyRemindQuizResponseDto {
         this.lastModifiedAt = lastModifiedAt;
     }
 
-    public static MyRemindQuizResponseDto of(Long remindQuizId, String topic, String studyName, LocalDateTime studyAt, LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
+    public static RemindQuizResponseDto of(Long remindQuizId, String topic, String studyName, LocalDateTime studyAt, LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
 
         return builder().remindQuizId(remindQuizId)
                 .topic(topic)
