@@ -43,13 +43,17 @@ public class Member extends BaseTime implements UserDetails {
     @Enumerated(EnumType.STRING)
     private OAuthProvider provider;
 
+    @Column(name = "last_notification_event_id")
+    private String lastNotificationEventId;
+
     @Builder
-    private Member(String name, String providerCode, String email, String image, String role, OAuthProvider provider) {
+    private Member(String name, String providerCode, String email, String image, String role, OAuthProvider provider, String lastNotificationEventId) {
         this.name = name;
         this.email = email;
         this.image = image;
         this.provider = provider;
         this.providerCode = providerCode;
+        this.lastNotificationEventId = lastNotificationEventId;
         this.role = role;
     }
 
@@ -61,6 +65,7 @@ public class Member extends BaseTime implements UserDetails {
                 .image(image)
                 .role(role)
                 .provider(provider)
+                .lastNotificationEventId(initLastNotificationEventId(email, provider))
                 .build();
     }
 
@@ -75,6 +80,14 @@ public class Member extends BaseTime implements UserDetails {
     public void updateImage(String image) {
         this.image = image;
     }
+
+    public static String initLastNotificationEventId(String email, OAuthProvider provider) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        return stringBuilder.append(email).append("_").append(provider.name()).append("_").append(System.currentTimeMillis()).toString();
+    }
+
+    public void updateLastNotificationEventId(String lastNotificationEventId) { this.lastNotificationEventId = lastNotificationEventId;}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
