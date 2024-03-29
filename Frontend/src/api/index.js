@@ -5,7 +5,7 @@ const isTwice = ref(false)
 const router = useRouter()
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
-  timeout: 100000000,
+  timeout: 10000,
   withCredentials: true
 })
 
@@ -27,8 +27,10 @@ const tokenRefresh = async () => {
     router.push({ name: 'login' })
   }
   try {
+    console.log('reissue보냄')
     const response = await instance.post('/reissue', { withCredentials: true })
-    console.log(response)
+    console.log('res_data', response.data)
+    console.log('res', response)
     const newAccessToken = document.cookie.match(/Authorization=([^;]+)/)
     localStorage.setItem('accessToken', newAccessToken[1]) // 로컬 스토리지에 액세스 토큰 저장
     document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
