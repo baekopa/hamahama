@@ -1,5 +1,6 @@
 package com.baekopa.backend.domain.study.dto.response;
 
+import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.domain.study.entity.StudyType;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +37,15 @@ public class StudyListResponseDto {
                 .scheduledTime(scheduledTime)
                 .category(category)
                 .type(type)
+                .build();
+    }
+
+    public static StudyListResponseDto from(Study study) {
+        return builder().id(study.getId())
+                .title(study.getTitle())
+                .backgroundImage(study.getBackgroundImage())
+                .category(study.getCategory())
+                .type(study.getType())
                 .build();
     }
 
