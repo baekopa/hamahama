@@ -162,6 +162,7 @@ onMounted(LoadStudyData)
     timer.value = setInterval(updateElapsedTime, 1000)
     if (navigator.mediaDevices.getUserMedia) {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // const options = { mimeType: 'audio/wav' };
       mediaRecorder.value = new MediaRecorder(stream);
       audioChunks.value = [];
       mediaRecorder.value.ondataavailable = event => {
