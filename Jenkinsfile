@@ -36,6 +36,28 @@ pipeline {
             }
         }
 
+        stage("fastapi .env download") {
+            steps {
+                withCredentials([file(credentialsId: 'secret-env-ai', variable: 'envConfigfile')]) {
+                    script {
+                        sh 'cp -rf $envConfigfile ./AI/app/.env'
+                    }
+                }
+
+                withCredentials([file(credentialsId: 'secret-jwt', variable: 'jwtConfigFile')]) {
+                    script {
+                        sh 'cp -rf $jwtConfigFile ./Backend/src/main/resources/application-jwt.yml'
+                    }
+                }
+
+                withCredentials([file(credentialsId: 'secret-oauth', variable: 'oauthConfigFile')]) {
+                    script {
+                        sh 'cp -rf $oauthConfigFile ./Backend/src/main/resources/application-oauth.yml'
+                    }
+                }
+
+            }
+        }
         stage("Push to Docker Hub-FastAPI") {
             steps {
                 echo 'FastAPI 도커 이미지를 Docker Hub에 푸시 시작!'
