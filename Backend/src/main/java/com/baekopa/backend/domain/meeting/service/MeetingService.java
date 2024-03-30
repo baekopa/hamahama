@@ -48,20 +48,70 @@ public class MeetingService {
     private String fastUrl;
     private final RestTemplate restTemplate;
 
-    public StudyMeetingListDto getMeetingList(Long studyId) {
+    public InStudyMeetingListDTO getMeetingList(Long studyId) {
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
 
         List<Meeting> meetingList = meetingRepository.findAllByStudyAndDeletedAtIsNullAndRecordFileIsNotNullOrderByStudyAtDesc(study);
-        List<MeetingListDto> meetingListDtoList = new ArrayList<>();
+        List<MeetingStudyDTO> meetingStudyDTOList = new ArrayList<>();
+        List<MeetingKeywordDTO> meetingKeywordDTOList = new ArrayList<>();
+        List<MeetingMemberInfoDTO> meetingMemberInfoDTOList = new ArrayList<>();
 
         for (Meeting meeting : meetingList) {
-            MeetingListDto meetingListDto = MeetingListDto.from(meeting);
-            meetingListDtoList.add(meetingListDto);
+            //미팅 키워드
+            List<MeetingKeyword> meetingKeywordList = meetingKeywordRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
+
+            for (MeetingKeyword meetingKeyword : meetingKeywordList) {
+                MeetingKeywordDTO meetingKeywordDTO = MeetingKeywordDTO.from(meetingKeyword);
+                meetingKeywordDTOList.add(meetingKeywordDTO);
+            }
+
+            // 미팅 참여자
+            List<SubmittedNote> submittedNoteList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
+            List<Note> noteList = new ArrayList<>();
+            for (SubmittedNote submittedNote : submittedNoteList) {
+                noteList.add(submittedNote.getNote());
+            }
+            for (Note note : noteList) {
+                meetingMemberInfoDTOList.add(MeetingMemberInfoDTO.from(note.getMember()));
+            }
+
+            meetingStudyDTOList.add(MeetingStudyDTO.of(meeting, meetingKeywordDTOList, meetingMemberInfoDTOList));
         }
 
-        return StudyMeetingListDto.of(study.getTitle(), meetingListDtoList);
+        return InStudyMeetingListDTO.of(study, meetingStudyDTOList);
+    }
 
+    public MeetingResponseDTO getMeetingResultAll(Long meetingId) {
+        // 미팅 정보
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+        // 미팅 전문
+        MeetingScript meetingScript = meetingScriptRepository.findByMeetingAndDeletedAtIsNull(meeting)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SCRIPT_NOT_FOUND, ErrorCode.MEETING_SCRIPT_NOT_FOUND.getMessage()));
+        // 미팅 요약
+        MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+        // 미팅 키워드
+        List<MeetingKeyword> meetingKeywordList = meetingKeywordRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
+        List<MeetingKeywordDTO> meetingKeywordDTOList = new ArrayList<>();
+        for (MeetingKeyword meetingKeyword : meetingKeywordList) {
+            MeetingKeywordDTO meetingKeywordDTO = MeetingKeywordDTO.from(meetingKeyword);
+            meetingKeywordDTOList.add(meetingKeywordDTO);
+        }
+
+        // 미팅 참여자
+        List<SubmittedNote> submittedNoteList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
+        List<Note> noteList = new ArrayList<>();
+        for (SubmittedNote submittedNote : submittedNoteList) {
+            noteList.add(submittedNote.getNote());
+        }
+        List<MeetingMemberInfoDTO> meetingMemberInfoDTOList = new ArrayList<>();
+        for (Note note : noteList) {
+            meetingMemberInfoDTOList.add(MeetingMemberInfoDTO.from(note.getMember()));
+        }
+
+        return MeetingResponseDTO.of(meeting, meetingScript, meetingSummary, meetingKeywordDTOList, meetingMemberInfoDTOList);
     }
 
     @Transactional
@@ -305,35 +355,5 @@ public class MeetingService {
         return MeetingKeywordListDTO.from(meetingKeywordDTOList);
     }
 
-    public MeetingResponseDTO getMeetingResultAll(Long meetingId) {
-        // 미팅 정보
-        Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
-        // 미팅 전문
-        MeetingScript meetingScript = meetingScriptRepository.findByMeetingAndDeletedAtIsNull(meeting)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SCRIPT_NOT_FOUND, ErrorCode.MEETING_SCRIPT_NOT_FOUND.getMessage()));
-        // 미팅 요약
-        MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
-        // 미팅 키워드
-        List<MeetingKeyword> meetingKeywordList = meetingKeywordRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
-        List<MeetingKeywordDTO> meetingKeywordDTOList = new ArrayList<>();
-        for (MeetingKeyword meetingKeyword : meetingKeywordList) {
-            MeetingKeywordDTO meetingKeywordDTO = MeetingKeywordDTO.from(meetingKeyword);
-            meetingKeywordDTOList.add(meetingKeywordDTO);
-        }
 
-        // 미팅 참여자
-        List<SubmittedNote> submittedNoteList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
-        List<Note> noteList = new ArrayList<>();
-        for (SubmittedNote submittedNote : submittedNoteList) {
-            noteList.add(submittedNote.getNote());
-        }
-        List<MeetingMemberInfoDTO> meetingMemberInfoDTOList = new ArrayList<>();
-        for (Note note : noteList) {
-            meetingMemberInfoDTOList.add(MeetingMemberInfoDTO.from(note.getMember()));
-        }
-
-        return MeetingResponseDTO.of(meeting, meetingScript, meetingSummary, meetingKeywordDTOList, meetingMemberInfoDTOList);
-    }
 }
