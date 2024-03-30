@@ -283,7 +283,7 @@ function ShareNote() {
 
 const MakeSummary = () => {
   instance
-    .post(`api/notes/${noteId}/summary`)
+    .post(`api/notes/${noteId}/summary`, {}, { timeout: 1000000 })
     .then((res) => {
       if (res.data.status == 201) {
         noteSummary.value = res.data.data.noteSummary

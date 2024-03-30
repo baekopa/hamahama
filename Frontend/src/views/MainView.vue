@@ -9,7 +9,7 @@
           class="create-note ml-5"
           prepend-icon="mdi-plus"
           @click="mainPageStore.GoCreateNote()"
-          >노트 생성</v-chip
+          >노트 작성</v-chip
         >
       </v-row>
       <v-row justify="center">
@@ -38,7 +38,11 @@
           <v-row justify="center">
             <v-col cols="12" md="2" v-for="study in studyList" :key="study.id">
               <v-card class="mb-4" @click="GoStudyPage(study.id)" hover>
-                <v-card-title>{{ study.scheduledTime }}</v-card-title>
+                <v-card-title v-if="study.type == 'PERSONAL'">개인스터디</v-card-title>
+                <v-card-title v-else-if="study.scheduledTime"
+                  >일정 :{{ study.scheduledTime }}</v-card-title
+                >
+                <v-card-title v-else>예정된 일정 없음</v-card-title>
                 <v-img :src="study.backgroundImage" height="150px"></v-img>
                 <v-card-title>{{ study.title }}</v-card-title>
                 <!-- <v-card-actions>
@@ -81,6 +85,7 @@ async function GetPersonalData() {
     .get('api/members/me/main')
     .then((res) => {
       const personalData = res.data
+      console.log(res)
       if (personalData.status === 200) {
         noteList.value = personalData.data.notes
         studyList.value.push(personalData.data.personalStudy)
