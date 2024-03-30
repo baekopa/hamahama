@@ -1,22 +1,32 @@
 package com.baekopa.backend.domain.member.dto.response;
 
-import com.baekopa.backend.domain.meeting.dto.response.MeetingResponseDTO;
-import com.baekopa.backend.domain.notification.dto.response.NotificationListResponseDto;
+import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
 import com.baekopa.backend.domain.notification.dto.response.NotificationResponseDto;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 public class MyDashboardResponseDto {
 
-    List<NotificationResponseDto> notifications; // 알림 목록
+    private List<NotificationResponseDto> notifications; // 알림 목록
 
-    List<WeekStudyResponseDto> weekStudies;
+    private List<StudyMeetingListDto> weekStudies;
 
-    List<MeetingResponseDTO> meetings; // 예정된 미팅 일정 조회
+    @Builder
+    private MyDashboardResponseDto(List<NotificationResponseDto> notifications, List<StudyMeetingListDto> weekStudies) {
+        this.notifications = notifications;
+        this.weekStudies = weekStudies;
+    }
+
+    public static MyDashboardResponseDto of(List<NotificationResponseDto> notifications, List<StudyMeetingListDto> weekStudies) {
+        return builder()
+                .notifications(notifications)
+                .weekStudies(weekStudies)
+                .build();
+    }
+
 }
