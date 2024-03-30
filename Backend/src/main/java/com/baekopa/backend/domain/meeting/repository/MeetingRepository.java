@@ -33,4 +33,5 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
     List<Meeting> findAllByStudyAndDeletedAtIsNullAndRecordFileIsNotNullOrderByStudyAtDesc(Study study);
 
+    List<Meeting> findAllByStudyAndDeletedAtIsNullAndStudyAtBetweenOrderByStudyAtAsc(Study study, LocalDateTime startDate, LocalDateTime endDate);
 }
