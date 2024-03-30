@@ -1,30 +1,57 @@
 <template>
-  <v-card>
-    <v-layout>
-      <v-navigation-drawer floating permanent>
-        <v-list density="compact" nav>
-          <v-list-item
-            @click="GoHome"
-            prepend-icon="mdi-view-dashboard"
-            title="홈"
-            value="home"
-          ></v-list-item>
-          <v-list-item
-            @click="GoSummary"
-            prepend-icon="mdi-forum"
-            title="요약"
-            value="summary"
-          ></v-list-item>
-          <v-list-item
-            @click="GoQuiz"
-            prepend-icon="mdi-forum"
-            title="리마인드 퀴즈"
-            value="quiz"
-          ></v-list-item>
-          <v-list-item prepend-icon="mdi-forum" title="스터디 관리" value="setting"></v-list-item>
+  <v-container>
+    <v-layout style="max-height: 800px">
+      <v-navigation-drawer style="width: 323px; height: 800px">
+        <p class="text-3xl text-center mt-10 point-font text-stone-900">같이하마</p>
+        <v-list lines="two" density="compact" nav>
+          <v-list-item three-line>
+            <v-list-item-content class="align-self-center">
+              <v-list-item-title class="ml-14 mt-10"><div class="text-2xl font-bold">하마하마스터디</div></v-list-item-title>
+              <v-list-item-subtitle class="ml-14 mt-1"
+                ><div class="text-base">CS면접</div></v-list-item-subtitle
+              >
+            </v-list-item-content>
+          </v-list-item>
+
+          <div class="ml-8 mt-8">
+            <v-list-item
+              @click="GoHome()"
+              prepend-icon="mdi-view-dashboard"
+              value="home"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+            >스터디 홈</v-list-item>
+            <v-list-item
+              @click="GoSummary()"
+              prepend-icon="mdi-forum"
+             value="summary"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+            >요약</v-list-item>
+            <v-list-item
+              @click="GoQuiz()"
+              prepend-icon="mdi-help-box"
+              value="quiz"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+            >리마인드 퀴즈</v-list-item>
+            <v-list-item
+              @click="GoSetting()"
+              prepend-icon="mdi-account-key"
+              value="setting"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+            >스터디 관리</v-list-item>
+          </div>
         </v-list>
       </v-navigation-drawer>
-      <v-main>
+      <v-divider style="height: 900px" class="mr-10" vertical></v-divider>
+      <v-main class="ml-10 mt-5" style="min-height: 800px">
+        <v-container>
         <div>
           <div>
             <p>{{ studyStore.studyTitle }}</p>
@@ -111,9 +138,10 @@
             </div>
           </div>
         </div>
+      </v-container>
       </v-main>
     </v-layout>
-  </v-card>
+  </v-container>
 </template>
 
 <script setup>
