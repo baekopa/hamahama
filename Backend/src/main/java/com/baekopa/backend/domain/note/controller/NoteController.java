@@ -2,6 +2,7 @@ package com.baekopa.backend.domain.note.controller;
 
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.note.dto.request.CreateNoteRequestDto;
+import com.baekopa.backend.domain.note.dto.request.UpdateNoteRequestDto;
 import com.baekopa.backend.domain.note.dto.response.NoteResponseDto;
 import com.baekopa.backend.domain.note.service.NoteService;
 import com.baekopa.backend.global.response.success.ApiResponse;
@@ -60,11 +61,11 @@ public class NoteController {
         return ApiResponse.of(SuccessCode.NOTE_GET_SUCCESS, noteService.getNote(noteId, member));
     }
 
-//    @Operation(summary = "노트 수정", description = "공부하마 노트를 수정합니다.")
-//    @PutMapping("/{note-id}")
-//    public ApiResponse<NoteResponseDto> updateNote(@PathVariable(name = "note-id") Long noteId, @AuthenticationPrincipal Member member) {
-//
-//        log.info("노트 수정 : {}", noteId);
-//        return ApiResponse.of(SuccessCode.NOTE_UPDATE_SUCCESS, noteService.updateNote(noteId, member));
-//    }
+    @Operation(summary = "노트 수정", description = "공부하마 노트를 수정합니다.")
+    @PutMapping("/{note-id}")
+    public ApiResponse<Long> updateNote(@PathVariable(name = "note-id") Long noteId, @RequestBody UpdateNoteRequestDto requestDto) {
+
+        log.info("노트 수정 : {}", noteId);
+        return ApiResponse.of(SuccessCode.NOTE_UPDATE_SUCCESS, noteService.updateNote(noteId, requestDto));
+    }
 }

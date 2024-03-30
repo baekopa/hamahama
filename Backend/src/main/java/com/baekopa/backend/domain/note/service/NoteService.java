@@ -6,6 +6,7 @@ import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.member.repository.MemberRepository;
 import com.baekopa.backend.domain.note.dto.request.CreateNoteRequestDto;
 import com.baekopa.backend.domain.note.dto.request.CreateNoteSummaryRequestDto;
+import com.baekopa.backend.domain.note.dto.request.UpdateNoteRequestDto;
 import com.baekopa.backend.domain.note.dto.response.CreateNoteSummaryResponseDto;
 import com.baekopa.backend.domain.note.dto.response.NoteResponseDto;
 import com.baekopa.backend.domain.note.entity.Note;
@@ -88,6 +89,7 @@ public class NoteService {
         return responseDto.getSummaryText();
     }
 
+    // 노드 조회
     public NoteResponseDto getNote(Long noteId, Member member) {
 
         Note note = noteRepository.findById(noteId)
@@ -113,6 +115,24 @@ public class NoteService {
                 study.getTitle(),
                 study.getBackgroundImage());
 
+    }
+
+
+    // 노트 수정
+    public Long updateNote(Long noteId, UpdateNoteRequestDto requestDto) {
+
+        Note note = noteRepository.findByIdAndDeletedAtIsNull(noteId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_FOUND, ErrorCode.NOTE_NOT_FOUND.getMessage()));
+
+        if (requestDto.getTitle() != null) {
+            note.updateTitle(requestDto.getTitle());
+        }
+
+        if (requestDto.getContent() != null) {
+            note.updateContent(requestDto.getContent());
+        }
+
+        return note.getId();
     }
 }
 

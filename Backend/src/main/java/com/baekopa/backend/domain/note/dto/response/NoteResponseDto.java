@@ -26,6 +26,7 @@ public class NoteResponseDto {
     private String writerImage;
     private String summary;
     private List<SharedMeetingDto> meetings;
+
     @Builder
     private NoteResponseDto(Long id, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt, String writerName, String writerImage, String summary, List<SharedMeetingDto> meetings) {
         this.id = id;
