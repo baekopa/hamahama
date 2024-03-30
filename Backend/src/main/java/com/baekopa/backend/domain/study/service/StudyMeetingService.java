@@ -41,7 +41,6 @@ public class StudyMeetingService {
         Meeting meeting = meetingRepository.save(Meeting.of(requestDto.getTopic(), requestDto.getStudyAt(), study));
 
         return CreateMeetingResponseDto.of(meeting.getId(), meeting.getTopic(), meeting.getStudyAt());
-
     }
 
     // 스터디 미팅 목록 조회
@@ -62,7 +61,7 @@ public class StudyMeetingService {
     }
 
 
-    // 스터디 예정 일정 조회 , 없다면 null 반환
+    // 스터디 예정 일정 조회, 없다면 null 반환
     public StudyMeetingResponseDto getStudyMeeting(Long studyId) {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));

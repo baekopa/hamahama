@@ -54,7 +54,6 @@ public class MemberController {
         return ApiResponse.of(SuccessCode.STUDY_MEETING_GET_SUCCESS, memberService.getStudyMeetings(member));
     }
 
-    // TODO: 마이페이지 대시보드 정보 조회
     @Operation(summary = "내 대시보드 조회", description = "나의 알림, 주간 스터디 반복 일정, 주간 미팅 일정을 조회합니다.")
     @GetMapping("/dashboard")
     public ApiResponse<MyDashboardResponseDto> getMyDashboard(@AuthenticationPrincipal Member member) {

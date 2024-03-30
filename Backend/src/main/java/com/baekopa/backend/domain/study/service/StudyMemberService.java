@@ -3,6 +3,8 @@ package com.baekopa.backend.domain.study.service;
 import com.baekopa.backend.domain.member.dto.response.MemberResponseDto;
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.member.repository.MemberRepository;
+import com.baekopa.backend.domain.notification.entity.NotificationType;
+import com.baekopa.backend.domain.notification.service.EmitterService;
 import com.baekopa.backend.domain.study.dto.StudyMemberDto;
 import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.domain.study.entity.StudyMember;
@@ -24,6 +26,7 @@ public class StudyMemberService {
     private final StudyMemberRepository studyMemberRepository;
     private final MemberRepository memberRepository;
     private final StudyRepository studyRepository;
+    private final EmitterService emitterService;
 
     // 전체 멤버(사용자) 리스트 조회
     @Transactional(readOnly = true)
@@ -50,6 +53,8 @@ public class StudyMemberService {
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "올바르지 않은 studyId."));
 
         studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));
+
+        emitterService.send(member, NotificationType.INVITE, study.getTitle() + " 스터디에 초대됐습니다.", study.getId());
     }
 
     // 스터디 멤버 초대 - 여러 명
@@ -62,6 +67,8 @@ public class StudyMemberService {
 
         members.forEach(member -> {
             studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));
+
+            emitterService.send(member, NotificationType.INVITE, study.getTitle() + " 스터디에 초대됐습니다.", study.getId());
         });
     }
 
@@ -76,6 +83,8 @@ public class StudyMemberService {
         }
 
         studyMember.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_MEMBER);
+
+        emitterService.send(member, NotificationType.ENTER, member.getName() + "님이 " + studyMember.getStudy().getTitle() + " 스터디에 참가했습니다.", studyMember.getStudy().getId());
     }
 
     // 스터디 초대 거절
@@ -98,7 +107,7 @@ public class StudyMemberService {
 
         // member가 스터디장인지 확인
         studyMemberRepository.findByStudyAndMemberAndTypeAndDeletedAtIsNull(studyMember.getStudy(), member, StudyMember.StudyMemberType.STUDY_LEADER)
-                                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_FORBIDDEN_ERROR, "스터디장만 보낼 수 있는 요청입니다"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_FORBIDDEN_ERROR, "스터디장만 보낼 수 있는 요청입니다"));
 
         studyMemberRepository.delete(studyMember);
     }
@@ -115,6 +124,7 @@ public class StudyMemberService {
         newLeader.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_LEADER);
         curLeader.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_MEMBER);
 
+        emitterService.send(newLeader.getMember(), NotificationType.DELEGATE, newLeader.getStudy().getTitle() + " 스터디장으로 위임되었습니다.", newLeader.getStudy().getId());
     }
 
     // 스터디 나가기
@@ -140,5 +150,7 @@ public class StudyMemberService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_FORBIDDEN_ERROR, "스터디장만 보낼 수 있는 요청입니다"));
 
         studyMemberRepository.delete(studyMember);
+
+        emitterService.send(studyMember.getMember(), NotificationType.RESIGN, studyMember.getStudy().getTitle() + " 스터디에서 강퇴되었습니다.", studyMember.getStudy().getId());
     }
 }
