@@ -12,4 +12,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     List<Notification> findAllByReceiverAndIsCheckedIsFalseAndDeletedAtIsNullOrderByCreatedAtDesc(Member receiver);
 
     Optional<Notification> findByIdAndReceiver(Long id, Member receiver);
+
+    List<Notification> findAllByReceiverAndDeletedAtIsNullOrderByCreatedAtDesc(Member member);
 }
