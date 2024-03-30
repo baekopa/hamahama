@@ -103,7 +103,7 @@ public class MemberService {
 
     }
 
-    // TODO: 마이페이지 대시보드 정보 조회
+    // 마이페이지 대시보드 정보 조회
     @Transactional(readOnly = true)
     public MyDashboardResponseDto getMyDashboard(Member member) {
 
