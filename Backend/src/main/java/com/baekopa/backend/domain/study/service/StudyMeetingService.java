@@ -66,13 +66,13 @@ public class StudyMeetingService {
         }
 
         List<SubmittedNoteDto> submittedNoteDtoList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
-                .stream().map(submittedNote -> SubmittedNoteDto.of(submittedNote.getId(), submittedNote.getNote().getContent(),
-                        submittedNote.getNote().getSummary(),
-                        submittedNote.getNote().getMember().getId(),
-                        submittedNote.getNote().getMember().getName(),
-                        submittedNote.getNote().getMember().getImage())).toList();
+                .stream().map(SubmittedNoteDto::of).toList();
 
-        return StudyMeetingResponseDto.of(meeting.getId(), meeting.getTopic(), meeting.getStudyAt(), submittedNoteDtoList);
+        return StudyMeetingResponseDto.of(meeting.getId(),
+                meeting.getTopic(),
+                meeting.getStudyAt(),
+                submittedNoteDtoList,
+                meeting.getNoteSummary());
     }
 
     private MeetingListDto convertToDto(Meeting meeting) {

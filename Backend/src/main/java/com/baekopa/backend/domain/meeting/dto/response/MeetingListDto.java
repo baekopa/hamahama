@@ -31,13 +31,12 @@ public class MeetingListDto {
                 .build();
     }
 
-    public static MeetingListDto from(Meeting meeting){
+    public static MeetingListDto from(Meeting meeting) {
         return builder()
                 .id(meeting.getId())
                 .topic(meeting.getTopic())
                 .studyAt(meeting.getStudyAt())
                 .build();
     }
-
 }
 
