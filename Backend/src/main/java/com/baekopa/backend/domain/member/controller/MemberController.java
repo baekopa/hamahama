@@ -4,6 +4,7 @@ import com.baekopa.backend.domain.meeting.dto.response.RemindQuizResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
 import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
 import com.baekopa.backend.domain.member.dto.response.MemberMainResponseDto;
+import com.baekopa.backend.domain.member.dto.response.MyDashboardResponseDto;
 import com.baekopa.backend.domain.member.dto.response.MyInfoResponseDto;
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.member.service.MemberService;
@@ -53,6 +54,17 @@ public class MemberController {
         return ApiResponse.of(SuccessCode.STUDY_MEETING_GET_SUCCESS, memberService.getStudyMeetings(member));
     }
 
+    // TODO: 마이페이지 대시보드 정보 조회
+    @Operation(summary = "내 대시보드 조회", description = "나의 알림, 주간 스터디 반복 일정, 주간 미팅 일정을 조회합니다.")
+    @GetMapping("/dashboard")
+    public ApiResponse<MyDashboardResponseDto> getMyDashboard(@AuthenticationPrincipal Member member) {
+
+        log.info("{}님의 대시보드 조회", member.getName());
+        return ApiResponse.of(SuccessCode.MEMBER_DASHBOARD_GET_SUCCESS, memberService.getMyDashboard(member));
+
+    }
+
+
     // TODO: 일정 로직 작성
 //    @Operation(summary = "내 일정 조회", description = "나의 주간 일정을 조회합니다. 마이페이지 대시보드에서 사용합니다.")
 //    @GetMapping("/study-timeline")
@@ -91,11 +103,15 @@ public class MemberController {
         return ApiResponse.of(SuccessCode.REMIND_QUIZ_GET_SUCCESS, memberService.getMyRemindQuiz(member));
     }
 
+    //TODO: 리마인드 퀴즈 조회
+
+
     @Operation(summary = "메인 페이지 조회", description = "메인 페이지 개인 데이터 조회")
     @GetMapping("/main")
     public ApiResponse<MemberMainResponseDto> getMemberMainInfo(@AuthenticationPrincipal Member member) {
 
         return ApiResponse.of(SuccessCode.MEMBER_MAIN_GET_SUCCESS, memberService.getMemberMainInfo(member));
     }
+
 
 }
