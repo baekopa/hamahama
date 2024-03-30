@@ -53,7 +53,7 @@
       <v-main class="ml-10 mt-5" style="min-height: 800px">
         <v-container>
         <div class="title">
-          <p class="text-2xl ml-5 font-bold"><span class="tossface text-3xl">📝</span><span class="point-color font-bold">{{studyStore.studyTitle}}</span> 미팅 요약 리스트</p>
+          <p class="text-2xl ml-5 font-bold"><span class="tossface text-3xl">📝 </span><span class="point-color font-bold">{{studyStore.studyTitle}}</span> 미팅 요약 리스트</p>
           <p class="text-base ml-5 mt-2 italic text-gray-500">
             <span>{{ studyStore.studyTitle }}</span>에서 함께 공부한 내용
           </p>
