@@ -10,11 +10,14 @@ import com.baekopa.backend.domain.meeting.repository.RemindQuizRepository;
 import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
 import com.baekopa.backend.domain.member.dto.response.MemberMainResponseDto;
 import com.baekopa.backend.domain.member.dto.response.MyInfoResponseDto;
+import com.baekopa.backend.domain.member.dto.response.MyDashboardResponseDto;
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.member.repository.MemberRepository;
 import com.baekopa.backend.domain.note.dto.response.NoteListResponseDto;
 import com.baekopa.backend.domain.note.entity.Note;
 import com.baekopa.backend.domain.note.repository.NoteRepository;
+import com.baekopa.backend.domain.notification.dto.response.NotificationResponseDto;
+import com.baekopa.backend.domain.notification.repository.NotificationRepository;
 import com.baekopa.backend.domain.study.dto.response.StudyListResponseDto;
 import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.domain.study.entity.StudyMember;
@@ -51,6 +54,7 @@ public class MemberService {
     private final StudyMemberRepository studyMemberRepository;
     private final NoteRepository noteRepository;
     private final RemindQuizRepository remindQuizRepository;
+    private final NotificationRepository notificationRepository;
 
     @Transactional(readOnly = true)
     public MyInfoResponseDto getMyInfo(Member currentMember) {
@@ -93,6 +97,25 @@ public class MemberService {
         }
 
         throw new BusinessException(ErrorCode.NOT_VALID_ERROR, ErrorCode.NOT_VALID_ERROR.getMessage());
+
+    }
+
+    // TODO: 마이페이지 대시보드 정보 조회
+    @Transactional(readOnly = true)
+    public List<MyDashboardResponseDto> getMyDashboard(Member member) {
+
+        // 알림 목록 조회 ( 전체 )
+        List<NotificationResponseDto> notificationList = notificationRepository.findAllByReceiverAndDeletedAtIsNullOrderByCreatedAtDesc(member)
+                .stream().map(NotificationResponseDto::of).toList();
+
+        // 주간 반복 일정 조회
+
+
+        // 예정된 미팅 일정 조회
+
+        // dto 만들기
+
+        return null;
 
     }
 
