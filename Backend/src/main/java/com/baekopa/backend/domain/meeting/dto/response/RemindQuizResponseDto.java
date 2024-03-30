@@ -1,5 +1,8 @@
 package com.baekopa.backend.domain.meeting.dto.response;
 
+import com.baekopa.backend.domain.meeting.entity.Meeting;
+import com.baekopa.backend.domain.meeting.entity.RemindQuiz;
+import com.baekopa.backend.domain.study.entity.Study;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
@@ -41,6 +44,18 @@ public class RemindQuizResponseDto {
                 .openAt(openAt)
                 .isOpened(isOpened)
                 .lastModifiedAt(lastModifiedAt)
+                .build();
+    }
+
+    public static RemindQuizResponseDto of(Study study, Meeting meeting, RemindQuiz remindQuiz) {
+        return builder()
+                .remindQuizId(remindQuiz.getId())
+                .topic(meeting.getTopic())
+                .studyAt(meeting.getStudyAt())
+                .studyName(study.getTitle())
+                .openAt(remindQuiz.getOpenDate())
+                .isOpened(remindQuiz.getOpenDate().compareTo(LocalDateTime.now()) < 0 ? true : false)
+                .lastModifiedAt(remindQuiz.getModifiedAt())
                 .build();
     }
 
