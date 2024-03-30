@@ -124,7 +124,7 @@ public class StudyMemberService {
         newLeader.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_LEADER);
         curLeader.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_MEMBER);
 
-        emitterService.send(member, NotificationType.DELEGATE, newLeader.getStudy().getTitle() + " 스터디장으로 위임되었습니다.", newLeader.getStudy().getId());
+        emitterService.send(newLeader.getMember(), NotificationType.DELEGATE, newLeader.getStudy().getTitle() + " 스터디장으로 위임되었습니다.", newLeader.getStudy().getId());
     }
 
     // 스터디 나가기
