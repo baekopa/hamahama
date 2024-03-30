@@ -81,6 +81,7 @@ public enum SuccessCode {
     // My Information
     MY_STUDY_GET_SUCCESS(200, "내가 속한 스터디 조회에 성공했습니다."),
     MEMBER_MAIN_GET_SUCCESS(200, "스터디 메인 정보 조회에 성공했습니다."),
+    MEMBER_DASHBOARD_GET_SUCCESS(200, "대시보드 조회에 성공했습니다."),
 
     // Remind Quiz
     REMIND_QUIZ_GET_SUCCESS(200, "리마인드 퀴즈 조회에 성공했습니다."),
@@ -89,7 +90,7 @@ public enum SuccessCode {
     NOTIFICATION_CREATE_SUCCESS(201, "알림 구독에 성공했습니다."),
     NOTIFICATION_GET_SUCCESS(201, "알림 리스트 조회에 성공했습니다."),
     NEW_NOTIFICATION_GET_SUCCESS(201, "새로운 알림 조회에 성공했습니다."),
-    NOTIFICATION_UPDATE_SUCCESS(201, "알림 생성에 성공했습니다.");
+    NOTIFICATION_UPDATE_SUCCESS(201, "알림 생성에 성공했습니다."),;
 
     /**
      * ******************************* Success Code Field ***************************************
