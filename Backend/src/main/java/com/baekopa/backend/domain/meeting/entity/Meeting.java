@@ -54,6 +54,10 @@ public class Meeting extends BaseBy {
                 .build();
     }
 
+    public void updateRecordFile(String recordFile) {
+        this.recordFile = recordFile;
+    }
+
     public void updateNoteSummary(String noteSummary) {
         this.noteSummary = noteSummary;
     }

@@ -60,7 +60,7 @@ public class StudyMemberController {
 
     @Operation(summary = "스터디 초대하기 취소", description = "초대 요청을 취소합니다.")
     @DeleteMapping("/studies/{study-id}/invitations/{invitation-id}")
-    public ApiResponse<Void> deleteStudyInvitation(@PathVariable(value="study-id") Long studyId, @PathVariable(value = "invitation-id") Long invitationId, @AuthenticationPrincipal Member member) {
+    public ApiResponse<Void> deleteStudyInvitation(@PathVariable(value = "study-id") Long studyId, @PathVariable(value = "invitation-id") Long invitationId, @AuthenticationPrincipal Member member) {
 
         studyMemberService.deleteStudyInvitation(studyId, invitationId, member);
 

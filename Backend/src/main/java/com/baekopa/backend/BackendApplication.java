@@ -9,10 +9,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@EnableScheduling // 스케줄링 기능을 enable 함
-@SpringBootApplication
 @RestController
+@EnableScheduling // 스케줄링 기능을 enable 함
 @EnableJpaAuditing
+@SpringBootApplication
 public class BackendApplication {
 
     // 연결 테스트

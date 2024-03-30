@@ -34,7 +34,7 @@ public enum SuccessCode {
     LOGOUT_SUCCESS(200, "로그아웃에 성공하였습니다."),
     MEMBER_ID_EXIST(200, "회원 id가 이미 존재합니다."),
     MEMBER_ID_NOT_EXIST(200, "회원 id가 존재하지 않습니다."),
-    MEMBER_FIND_SUCCESS(200, "회원정보 조회에 성공하였습니다."),
+    MEMBER_GET_SUCCESS(200, "회원정보 조회에 성공하였습니다."),
     MEMBER_UPDATE_SUCCESS(200, "회원정보 수정에 성공하였습니다."),
     MEMBER_DELETE_SUCCESS(200, "회원 탈퇴에 성공하였습니다."),
     CHECK_MEMBER_OF_JWT(200, "JWT토큰의 멤버 정보조회에 성공했습니다."),
@@ -71,10 +71,11 @@ public enum SuccessCode {
     MEETING_CREATE_SUCCESS(201, "새로운 미팅 생성에 성공했습니다."),
     MEETING_REMIND_QUIZ_SUCCESS(201,"새로운 리마인드 퀴즈 생성에 성공했습니다."),
     MEETING_RESULT_GET_SUCCESS(200,"미팅 산출물에 대한 조회가 성공했습니다."),
-
+    MEETING_SCRIPT_GET_SUCCESS(200,"미팅 전문 조회 성공했습니다."),
     MEETING_KEYWORD_CREATE_SUCCESS(201,"새로운 키워드 생성에 성공했습니다."),
     MEETING_KEYWORD_UPDATE_SUCCESS(201, "키워드 수정에 성공했습니다."),
     MEETING_LIST_GET_SUCCESS(200,"스터디의 미팅 리스트 조회에 성공했습니다."),
+    MEETING_SCRIPT_UPDATE_SUCCESS(201, "미팅 스크립트 수정에 성공하였습니다."),
 
 
     // My Information
@@ -83,7 +84,12 @@ public enum SuccessCode {
 
     // Remind Quiz
     REMIND_QUIZ_GET_SUCCESS(200, "리마인드 퀴즈 조회에 성공했습니다."),
-    ; // End
+
+    // Notification
+    NOTIFICATION_CREATE_SUCCESS(201, "알림 구독에 성공했습니다."),
+    NOTIFICATION_GET_SUCCESS(201, "알림 리스트 조회에 성공했습니다."),
+    NEW_NOTIFICATION_GET_SUCCESS(201, "새로운 알림 조회에 성공했습니다."),
+    NOTIFICATION_UPDATE_SUCCESS(201, "알림 생성에 성공했습니다.");
 
     /**
      * ******************************* Success Code Field ***************************************

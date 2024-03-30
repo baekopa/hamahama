@@ -186,7 +186,7 @@ const toggleMemberSelection = (member) => {
 
 function InviteStudy() {
   instance
-    .post(`api/studies/${studyId}/members`, {
+    .post(`/api/studies/${studyId}/members`, {
       memberId: selectedMembers.value[0]
     })
     .then((res) => {
