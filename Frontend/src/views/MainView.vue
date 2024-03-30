@@ -84,6 +84,7 @@ async function GetPersonalData() {
   await instance
     .get('api/members/me/main')
     .then((res) => {
+      console.log(res)
       const personalData = res.data
       console.log(res)
       if (personalData.status === 200) {

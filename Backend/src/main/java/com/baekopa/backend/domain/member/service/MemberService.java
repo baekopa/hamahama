@@ -1,6 +1,6 @@
 package com.baekopa.backend.domain.member.service;
 
-import com.baekopa.backend.domain.meeting.dto.request.MyRemindQuizResponseDto;
+import com.baekopa.backend.domain.meeting.dto.response.RemindQuizResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
 import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
@@ -191,21 +191,20 @@ public class MemberService {
 
     // 내 리마인드 퀴즈 조회
     @Transactional(readOnly = true)
-    public List<MyRemindQuizResponseDto> getMyRemindQuiz(Member member) {
+    public List<RemindQuizResponseDto> getMyRemindQuiz(Member member) {
 
         List<StudyMember> studyMemberList = studyMemberRepository.findAllByMemberAndDeletedAtIsNull(member);
 
-        List<MyRemindQuizResponseDto> responseDtoList = new ArrayList<>();
+        List<RemindQuizResponseDto> responseDtoList = new ArrayList<>();
 
         // 내가 속한 스터디의 일정 목록 조회
         for (StudyMember st : studyMemberList) {
 
             List<Meeting> meetingList = meetingRepository.findAllByStudyAndDeletedAtIsNull(st.getStudy());
 
-            // TODO: 최적화 하고 싶다 그거 어떻게 하는 건데...
             for(Meeting meeting : meetingList) {
 
-                log.warn(" 미팅 번호 : {}, 스터디 번호 : {}", meeting.getId(), meeting.getStudy().getId());
+                log.info(" 미팅 번호 : {}, 스터디 번호 : {}", meeting.getId(), meeting.getStudy().getId());
 
                RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meeting)
                        .orElseThrow(()-> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
@@ -213,7 +212,7 @@ public class MemberService {
                 // 현재 시간이 openDate 이전인지 확인
                 boolean isOpened = LocalDateTime.now().isAfter(remindQuiz.getOpenDate()) || LocalDateTime.now().isEqual(remindQuiz.getOpenDate());
 
-               responseDtoList.add(MyRemindQuizResponseDto.of(remindQuiz.getId(), meeting.getTopic(), st.getStudy().getTitle(), meeting.getStudyAt(),
+               responseDtoList.add(RemindQuizResponseDto.of(remindQuiz.getId(), meeting.getTopic(), st.getStudy().getTitle(), meeting.getStudyAt(),
                        remindQuiz.getOpenDate(), isOpened,remindQuiz.getModifiedAt()));
 
 
@@ -250,6 +249,4 @@ public class MemberService {
 
         return meetingRepository.findAllStudyOrderByMeeting(studies, PageRequest.of(0, n)).stream().map(StudyListResponseDto::from).toList();
     }
-
-
 }
