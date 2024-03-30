@@ -26,11 +26,9 @@ public class SubmittedNoteSummaryService {
 
     // TODO: 20분 마다 검사로 변경해야합니당
     // test를 위해서 10초로 설정해둠 (1초 == 1000ms)
-    @Scheduled(fixedRate = 10000, zone = "Asia/Seoul") // fixedRate = 20분 = 20 * 60 * 1000
+    @Scheduled(fixedRate = 1200000, zone = "Asia/Seoul") // fixedRate = 20분 = 20 * 60 * 1000
     @Transactional
     public void createSubmittedNoteSummary() {
-
-        log.info("[스케쥴링 테스트] 10초 후 실행 => time : " + LocalDateTime.now());
 
         // TODO: 요약을 생성할 시간이 되었는 지 확인
         // 요약 해야하는 미팅 조회
