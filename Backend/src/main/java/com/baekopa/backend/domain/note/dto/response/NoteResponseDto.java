@@ -1,6 +1,8 @@
 package com.baekopa.backend.domain.note.dto.response;
 
 import com.baekopa.backend.domain.meeting.dto.response.SharedMeetingDto;
+import com.baekopa.backend.domain.member.entity.Member;
+import com.baekopa.backend.domain.note.entity.Note;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,15 +39,15 @@ public class NoteResponseDto {
         this.meetings = meetings;
     }
 
-    public static NoteResponseDto of(Long id, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt, String writerName, String writerImage, String summary, List<SharedMeetingDto> meetings) {
-        return builder().id(id)
-                .title(title)
-                .content(content)
-                .createdAt(createdAt)
-                .modifiedAt(modifiedAt)
-                .writerName(writerName)
-                .writerImage(writerImage)
-                .summary(summary)
+    public static NoteResponseDto of(Note note, Member member, List<SharedMeetingDto> meetings) {
+        return builder().id(note.getId())
+                .title(note.getTitle())
+                .content(note.getContent())
+                .createdAt(note.getCreatedAt())
+                .modifiedAt(note.getModifiedAt())
+                .writerName(note.getCreatedBy())
+                .writerImage(member.getImage())
+                .summary(note.getSummary())
                 .meetings(meetings)
                 .build();
     }

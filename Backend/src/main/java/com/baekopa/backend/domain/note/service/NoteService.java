@@ -98,11 +98,11 @@ public class NoteService {
         // convert entity to dto
         List<SharedMeetingDto> sharedMeetingDtoList = meetingList.stream().map(this::convertToDto).toList();
 
-        return NoteResponseDto.of(noteId, note.getTitle(), note.getContent(), note.getCreatedAt(), note.getModifiedAt(), note.getCreatedBy(), member.getImage(), note.getSummary(), sharedMeetingDtoList);
+        return NoteResponseDto.of(note, member, sharedMeetingDtoList);
 
     }
 
-    public SharedMeetingDto convertToDto(SubmittedNote submittedNote) {
+    private SharedMeetingDto convertToDto(SubmittedNote submittedNote) {
 
         Meeting meeting = submittedNote.getMeeting();
         Study study = meeting.getStudy();

@@ -38,7 +38,7 @@ public class NoteController {
 
     }
 
-    @Operation(summary = "새 요약 생성", description = "공부하마 노트 요약 생성")
+    @Operation(summary = "새 요약 생성", description = "공부하마 노트 요약 생성합니다.")
     @PostMapping("/{note-id}/summary")
     public ApiResponse<Map<String, String>> createSummary(@PathVariable(name = "note-id") Long noteId) throws JsonProcessingException {
 
@@ -51,7 +51,7 @@ public class NoteController {
 
     }
 
-    @Operation(summary = "노트 조회", description = "공부하마 노트 조회")
+    @Operation(summary = "노트 조회", description = "공부하마 노트 조회합니다.")
     @GetMapping("/{note-id}")
     public ApiResponse<NoteResponseDto> getNote(@PathVariable(name = "note-id") Long noteId, @AuthenticationPrincipal Member member) {
 
@@ -59,4 +59,12 @@ public class NoteController {
 
         return ApiResponse.of(SuccessCode.NOTE_GET_SUCCESS, noteService.getNote(noteId, member));
     }
+
+//    @Operation(summary = "노트 수정", description = "공부하마 노트를 수정합니다.")
+//    @PutMapping("/{note-id}")
+//    public ApiResponse<NoteResponseDto> updateNote(@PathVariable(name = "note-id") Long noteId, @AuthenticationPrincipal Member member) {
+//
+//        log.info("노트 수정 : {}", noteId);
+//        return ApiResponse.of(SuccessCode.NOTE_UPDATE_SUCCESS, noteService.updateNote(noteId, member));
+//    }
 }
