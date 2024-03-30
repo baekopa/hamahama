@@ -56,7 +56,7 @@
             <div class="d-flex justify-between">
               <div class="title d-flex flex-column">
                 <span class="text-2xl ml-5 font-bold">
-                  <span class="tossface text-3xl">🗂 </span><span class="point-color font-bold">{{"하마하마스터디"}}</span> 리마인드 퀴즈</span>
+                  <span class="tossface text-3xl">📭 </span><span class="point-color font-bold">{{"하마하마스터디"}}</span>의 리마인드 퀴즈</span>
                   <p class="text-base ml-5 mt-2 italic text-gray-500"><span>{{"스터디에서 학습한 내용을 복습해보세요."}}</span></p>
               </div>
             </div>
@@ -67,21 +67,24 @@
                 <v-row class="pt-10 pl-10" v-for="study in studyList" :key="study.id">
                   <v-card
                     @click="GoQuizDetail(study.id)"
-                    width="810"
-                    height="70"
+                    width="950"
+                    height="72"
                     variant="tonal"
-                    class="d-flex"
+                    class="d-flex items-center justify-between px-6"
                     color=""
                   >
-                    <div class="quiz-data d-flex align-center">
-                      <span class="truncate-text">{{ study.subject }}</span>
-                      <span>{{ study.studyName }}</span>
-                      <span>미팅 일시 : {{ study.meetingDate }}</span>
+                    <div class="truncate-text">
+                      <span>{{ study.subject }}</span>
+                    </div>
+                    <div class="d-flex items-center">
+                      <div>{{ study.studyName }}</div>
+                      <v-divider :thickness="2" class="border-opacity-100 mx-3" style="height:50px" vertical color="info"></v-divider>
+                      <div>미팅: {{ study.meetingDate }}</div>
                     </div>
                   </v-card>
-                  <div class="date d-flex flex-column">
+                  <div class="date d-flex flex-column ml-5 justify-center">
                     <span>공개일: {{ study.openDate }}</span>
-                    <span>최종 수정 일시:{{ study.lastUpdate }}</span>
+                    <span>최종 수정 일시: {{ study.lastUpdate }}</span>
                   </div>
                 </v-row>
               </div>
@@ -89,8 +92,15 @@
           </div>
 
           <div v-else class="quiz-detail">
-            <v-btn @click="TogglePage">돌아가기</v-btn>
-            <h1 class="title my-4">{{ quizSubject }}</h1>
+            <div class="d-flex justify-between">
+              <div class="title d-flex flex-column">
+                <span class="text-2xl ml-5 font-bold">
+                  <span class="text-2xl font-normal" @click="TogglePage">< </span><span class="tossface text-3xl">📌 </span><span class="point-color font-bold">{{studyList[0].subject}}</span>에 대한 리마인드 퀴즈</span>
+                  <p class="text-base ml-5 mt-2 italic text-gray-500"><span>{{studyList[0].openDate}} 에 공개된 {{studyList[0].studyName}}의 퀴즈입니다.</span></p>
+              </div>
+            </div>
+            <v-divider :thickness="2" class="border-opacity-50 my-3" style="width:1300px" color="info"></v-divider>
+
             <div class="keyword-section">
               <div class="d-flex py-6 pl-12 align-center">
                 <h2>키워드</h2>
@@ -182,7 +192,7 @@ const studyList = ref([
   {
     id: 2,
     subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당2',
-    studyName: '스터디 명',
+    studyName: '스터디 명수는 열두살',
     meetingDate: '2024.03.09',
     openDate: '2024.03.11',
     lastUpdate: '2024.03.22'
@@ -286,7 +296,7 @@ onMounted(LoadQuizList)
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 310px;
+  max-width: 320px;
 }
 
 .v-card {
@@ -302,7 +312,6 @@ onMounted(LoadQuizList)
 }
 
 .keyword-section {
-  border: 1px solid #d9d9d9;
   width: 1300px;
   height: 200px;
 }
@@ -314,7 +323,6 @@ onMounted(LoadQuizList)
 .quiz-section {
   width: 1300px;
   height: 330px;
-  border: 1px solid #d9d9d9;
 }
 
 ::-webkit-scrollbar {

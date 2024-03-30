@@ -56,7 +56,7 @@
           <div class="d-flex">
             <div class="title">
               <span class="text-2xl ml-5 font-bold">
-                <span class="tossface text-3xl">📖</span> 다음 미팅</span>
+                <span class="tossface text-3xl">📖 </span> 다음 미팅</span>
                 <p class="text-base ml-5 mt-2 italic text-gray-500"><span>{{"하마하마스터디"}}</span>의 다음 미팅 일정입니다.</p>
             </div>
           </div>
