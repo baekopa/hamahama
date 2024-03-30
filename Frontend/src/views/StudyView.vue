@@ -1,108 +1,178 @@
 <template>
-  <v-card>
-    <v-layout>
-      <v-navigation-drawer floating permanent>
-        <v-list density="compact" nav>
-          <v-list-item prepend-icon="mdi-view-dashboard" title="홈" value="home"></v-list-item>
-          <v-list-item
-            @click="GoSummary"
-            prepend-icon="mdi-forum"
-            title="요약"
-            value="summary"
-          ></v-list-item>
-          <v-list-item
-            @click="GoQuiz"
-            prepend-icon="mdi-forum"
-            title="리마인드 퀴즈"
-            value="quiz"
-          ></v-list-item>
-          <v-list-item
-            @click="GoSetting"
-            prepend-icon="mdi-forum"
-            title="스터디 관리"
-            value="setting"
-          ></v-list-item>
+  <v-container>
+    <v-layout style="max-height: 857px">
+      <v-navigation-drawer style="width: 323px; height: 800px">
+        <p class="text-3xl text-center mt-10 point-font text-stone-900">같이하마</p>
+        <v-list lines="two" density="compact" nav>
+          <v-list-item three-line>
+            <v-list-item-content class="align-self-center">
+              <v-list-item-title class="ml-14 mt-10"
+                ><div class="text-2xl font-bold">하마하마스터디</div></v-list-item-title
+              >
+              <v-list-item-subtitle class="ml-14 mt-1"
+                ><div class="text-base">CS면접</div></v-list-item-subtitle
+              >
+            </v-list-item-content>
+          </v-list-item>
+
+          <div class="ml-8 mt-8">
+            <v-list-item
+              @click="GoHome()"
+              prepend-icon="mdi-view-dashboard"
+              value="home"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+              >스터디 홈</v-list-item
+            >
+            <v-list-item
+              @click="GoSummary()"
+              prepend-icon="mdi-forum"
+              value="summary"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+              >요약</v-list-item
+            >
+            <v-list-item
+              @click="GoQuiz()"
+              prepend-icon="mdi-help-box"
+              value="quiz"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+              >리마인드 퀴즈</v-list-item
+            >
+            <v-list-item
+              @click="GoSetting()"
+              prepend-icon="mdi-account-key"
+              value="setting"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+              >스터디 관리</v-list-item
+            >
+          </div>
         </v-list>
         <div v-if="false">영역</div>
       </v-navigation-drawer>
-      <v-main>
-        <div v-if="isNextMeetingExist">
-          <p>{{ studyStore.studyTitle }}</p>
+      <v-divider style="height: 900px" class="mr-10" vertical></v-divider>
 
-          <div>
-            <h1>다음 스터디 일정</h1>
-            <p>스터디까지 시작 시간 : {{ studyAt }}</p>
-            <v-row>
-              <v-col cols="5">
-                <v-img
-                  :width="300"
-                  aspect-ratio="16/9"
-                  :src="studyStore.studyBackgroundImage"
-                  cover
-                ></v-img>
-              </v-col>
-
-              <v-col cols="7">
-                <p>스터디 주제 : {{ topic }}</p>
-              </v-col>
-
-              <v-col cols="11" v-if="!recording">
-                <v-btn class="gradient-btn" block rounded="xl" size="large" @click="startRecording"
-                  >스터디 시작</v-btn
-                >
-              </v-col>
-
-              <v-col cols="11" v-if="recording && !paused">
-                <v-btn class="gradient-btn" rounded="xl" size="large" block @click="pauseRecording"
-                  >녹음 일시정지</v-btn
-                >
-              </v-col>
-
-              <v-col cols="11" v-if="recording && paused">
-                <v-btn class="gradient-btn" rounded="xl" size="large" block @click="resumeRecording"
-                  >녹음 재개</v-btn
-                >
-              </v-col>
-
-              <v-col cols="11" v-if="recording">
-                <v-btn class="gradient-btn" rounded="xl" size="large" block @click="stopRecording"
-                  >녹음 중지</v-btn
-                >
-              </v-col>
-            </v-row>
-            <!-- 녹음 시간 표시 -->
-            <div v-if="recording">녹음 시간: {{ elapsedTime }}</div>
+      <v-main class="ml-10 mt-5" style="min-height: 800px">
+        <div class="content ml-4 mt-4">
+          <div class="d-flex">
+            <div class="title">
+              <span class="text-2xl ml-5 font-bold">
+                <span class="tossface text-3xl">📖 </span> 다음 미팅</span
+              >
+              <p class="text-base ml-5 mt-2 italic text-gray-500">
+                <span>{{ '하마하마스터디' }}</span
+                >의 다음 미팅 일정입니다.
+              </p>
+            </div>
           </div>
-          <br />
-          <div>
-            <h1>오늘의 노트</h1>
-            <v-col>
-              <div class="submitted-note">
-                <div class="p-4">
-                  <h4 class="mb-4">스터디원 요약</h4>
-                  <div class="m-4" v-for="note in submittedNotes" :key="note.id">
-                    <p>{{ note.writerName }}</p>
-                    <p>{{ note.summaryText }}</p>
-                  </div>
+          <v-divider
+            :thickness="2"
+            class="border-opacity-50 my-3"
+            style="width: 1300px"
+            color="info"
+          ></v-divider>
+          <div class="d-flex">
+            <div class="d-flex flex-column">
+              <div class="mt-10 ml-5 text-2xl font-semibold">
+                <span class="tossface mr-2">💬</span>
+                {{ 'CS 면접 스터디 3회차 - 네트워크와 OSI 7계층' }}
+              </div>
+              <div class="mt-5 ml-5 text-2xl font-bold">
+                <span class="tossface mr-2">📅</span>
+                {{ '2024-03-30 13:00' }}
+              </div>
+            </div>
+            <div></div>
+          </div>
+          <div class="mt-10">
+            <div>
+              <div v-if="!recording">
+                <button
+                  class="gradient-btn rounded-lg"
+                  @click="startRecording"
+                  style="width: 1300px; height: 80px"
+                >
+                  <span class="text-xl point-font"
+                    ><v-icon icon="mdi-account-voice" class="mr-4"></v-icon>스터디 시작</span
+                  >
+                </button>
+              </div>
+              <div
+                v-else
+                class="gradient-btn rounded-lg d-flex flex-column items-center justify-center"
+                style="width: 1300px; height: 170px"
+              >
+                <div class="mb-5">
+                  <span class="text-2xl font-bold"
+                    ><v-icon icon="mdi-waveform"></v-icon> {{ elapsedTime }}</span
+                  >
+                </div>
+                <div class="d-flex">
+                  <v-card v-if="recording && !paused" variant="text" hover class="rounded-lg">
+                    <button class="rounded-lg p-3" @click="pauseRecording" style="width: 150px">
+                      <span class="text-xl point-font">일시정지</span>
+                    </button>
+                  </v-card>
+                  <v-card v-if="recording && paused" variant="text" hover class="rounded-lg">
+                    <button class="rounded-lg p-3" @click="resumeRecording" style="width: 150px">
+                      <span class="text-xl point-font">재개</span>
+                    </button>
+                  </v-card>
+                  <v-divider
+                    :thickness="3"
+                    class="border-opacity-75"
+                    style="height: 50px"
+                    vertical
+                  ></v-divider>
+                  <v-card v-if="recording" variant="text" hover class="rounded-lg">
+                    <button class="rounded-lg py-3" @click="stopRecording" style="width: 150px">
+                      <span class="text-xl point-font">중지</span>
+                    </button>
+                  </v-card>
                 </div>
               </div>
-            </v-col>
-            <v-col>
-              <div class="question">
-                <div class="p-4">
-                  <h4 class="mb-4">꼬리 질문</h4>
-                  <div class="m-4" v-for="note in submittedNotes" :key="note.id">
-                    <p>{{ note.writerName }}</p>
-                    <p>{{ note.summaryText }}</p>
-                  </div>
+            </div>
+          </div>
+
+          <div class="d-flex pr-2 mt-20" style="width: 1300px">
+            <div class="">
+              <div class="d-flex align-center h-10 text-lg font-bold">
+                <p class="text-lg font-bold mr-4">제출된 노트</p>
+                <v-chip-group v-model="noteToggle" variant="text" mandatory>
+                  <v-chip class="h-10" @click="console.log('dd')" value="-1">전체요약</v-chip>
+                  <v-chip
+                    class="h-10"
+                    @click="console.log('dd')"
+                    v-for="(note, index) in submittedNotes.submittedNotes"
+                    :key="note.id"
+                    :value="index"
+                    >{{ note.writerName }}</v-chip
+                  >
+                </v-chip-group>
+              </div>
+              <div class="d-flex mt-5 mb-">
+                <div v-if="noteToggle == -1">
+                  {{ submittedNotes.noteSummary }}
+                </div>
+                <div v-else>
+                  <p class="font-bold">노트</p>
+                  <div>{{ submittedNotes.submittedNotes[noteToggle].originText }}</div>
+                  <p class="font-bold mt-5">요약</p>
+                  <div>{{ submittedNotes.submittedNotes[noteToggle].summaryText }}</div>
                 </div>
               </div>
-            </v-col>
+            </div>
           </div>
         </div>
       </v-main>
     </v-layout>
-  </v-card>
+  </v-container>
 </template>
 
 <script setup>
@@ -121,10 +191,51 @@ const route = useRoute()
 const router = useRouter()
 const meetingID = ref()
 const studyId = route.params.id
+const noteToggle = ref(-1)
+
+const submittedNotes = ref({
+  id: 1,
+  topic: '스터디 주제',
+  studyAt: '2024-03-22 14:00',
+  submittedNotes: [
+    {
+      id: 1,
+      originText:
+        '김이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. ',
+      summaryText:
+        '이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. ',
+      writerName: '김수민',
+      writerImage:
+        'https://isplus.com/data/isp/image/2020/08/20/isp95ee4006-d53b-4d8c-8205-cb7d81752b07.jpg'
+    },
+    {
+      id: 2,
+      originText:
+        '이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. ',
+      summaryText:
+        '이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. ',
+      writerName: '이수민',
+      writerImage:
+        'https://isplus.com/data/isp/image/2020/08/20/isp95ee4006-d53b-4d8c-8205-cb7d81752b07.jpg'
+    },
+    {
+      id: 3,
+      originText:
+        '여 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. ',
+      summaryText:
+        '이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. ',
+      writerName: '여아정',
+      writerImage:
+        'https://isplus.com/data/isp/image/2020/08/20/isp95ee4006-d53b-4d8c-8205-cb7d81752b07.jpg'
+    }
+  ],
+  noteSummary:
+    '전체 노트 요약과 꼬리 질문이 여기에 기록됩니다. 전전체 노트 요약과 꼬리 질문이 여기에 기록됩니다.'
+})
 
 const studyAt = ref('')
 const topic = ref('')
-const submittedNotes = ref([])
+// const submittedNotes = ref([])
 
 const isNextMeetingExist = ref(false)
 
@@ -291,8 +402,13 @@ const uploadAudio = async (audioBlob) => {
 
 <style scoped>
 .gradient-btn {
-  background: linear-gradient(to right, rgb(19, 143, 214), rgb(3, 240, 229));
+  background: linear-gradient(to right, #3fb1fa, #05d4c0);
   color: white;
+  padding: 20px 20px;
+}
+.content {
+  height: 840px;
+  overflow-y: auto;
 }
 
 .submitted-note,
