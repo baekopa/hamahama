@@ -64,15 +64,12 @@ public class StudyController {
         return ApiResponse.of(SuccessCode.REMIND_QUIZ_GET_SUCCESS, remindQuizService.getStudyRemindQuiz(studyId));
     }
 
-    // TODO: 스터디 리마인드 퀴즈 상세 조회
-//    @Operation(summary = "스터디 리마인드 퀴즈 상세 조회", description = "리마인드 퀴즈 상세 조회")
-//    @GetMapping("/studies/{study-id}/remind-quiz/{remind-quiz-id}")
-//    public ApiResponse<RemindQuizResponseDto> getRemindQuiz(@PathVariable(value = "study-id")Long studyId, @PathVariable(value = "remind-quiz-id") Long remindQuizId) {
-//
-//        log.info();
-//
-//        return ApiResponse.of(SuccessCode.REMIND_QUIZ_GET_SUCCESS, )
-//    }
+    @Operation(summary = "스터디 리마인드 퀴즈 상세 조회", description = "리마인드 퀴즈 상세 조회")
+    @GetMapping("/studies/{study-id}/remind-quiz/{remind-quiz-id}")
+    public ApiResponse<RemindQuizResponseDto> getRemindQuiz(@PathVariable(value = "study-id") Long studyId, @PathVariable(value = "remind-quiz-id") Long remindQuizId) {
+
+        return ApiResponse.of(SuccessCode.REMIND_QUIZ_GET_SUCCESS, remindQuizService.getRemindQuiz(studyId, remindQuizId));
+    }
 
 
 }
