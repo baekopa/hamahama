@@ -1,5 +1,6 @@
 package com.baekopa.backend.domain.member.service;
 
+import com.baekopa.backend.domain.meeting.dto.NearMeetingStudyDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
 import com.baekopa.backend.domain.meeting.dto.response.RemindQuizResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
@@ -279,7 +280,7 @@ public class MemberService {
         StudyListResponseDto personalStudy = StudyListResponseDto.from(studyMemberRepository.findPersonalStudy(member, StudyType.PERSONAL).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "개인 스터디 조회에 실패했습니다")));
 
         List<NoteListResponseDto> noteList = getRecentNotes(member);
-        List<StudyListResponseDto> studyList = getRecentStudy(member, 5);
+        List<NearMeetingStudyDto> studyList = getRecentStudy(member, 5);
 
         return MemberMainResponseDto.of(personalStudy, noteList, studyList);
 
@@ -294,9 +295,9 @@ public class MemberService {
 
     // 내 스터디 최근 몇 개 조회
     @Transactional(readOnly = true)
-    public List<StudyListResponseDto> getRecentStudy(Member member, int n) {
-        List<Study> studies = studyMemberRepository.findStudyAllByMemberAndTypeIsNot(member, StudyMember.StudyMemberType.INVITATION);
+    public List<NearMeetingStudyDto> getRecentStudy(Member member, int n) {
+        List<Long> studies = studyMemberRepository.findStudyAllByMemberAndTypeIsNot(member, StudyMember.StudyMemberType.INVITATION).stream().map(Study::getId).toList();
 
-        return meetingRepository.findAllStudyOrderByMeeting(studies, PageRequest.of(0, n)).stream().map(StudyListResponseDto::from).toList();
+        return meetingRepository.findAllStudyOrderByMeeting(studies, PageRequest.of(0, n));
     }
 }
