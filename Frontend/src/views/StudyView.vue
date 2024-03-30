@@ -23,15 +23,15 @@
             value="setting"
           ></v-list-item>
         </v-list>
+        <div v-if="false">영역</div>
       </v-navigation-drawer>
       <v-main>
-        <div>
+        <div v-if="isNextMeetingExist">
           <p>{{ studyStore.studyTitle }}</p>
 
-          <br />
           <div>
             <h1>다음 스터디 일정</h1>
-            <p>스터디까지 남은 시간</p>
+            <p>스터디까지 시작 시간 : {{ studyAt }}</p>
             <v-row>
               <v-col cols="5">
                 <v-img
@@ -43,7 +43,7 @@
               </v-col>
 
               <v-col cols="7">
-                <p>다음 일정의 제목</p>
+                <p>스터디 주제 : {{ topic }}</p>
               </v-col>
 
               <v-col cols="11" v-if="!recording">
@@ -77,12 +77,26 @@
           <div>
             <h1>오늘의 노트</h1>
             <v-col>
-              <h4>전체 요약</h4>
-              <p>요약입니하마</p>
+              <div class="submitted-note">
+                <div class="p-4">
+                  <h4 class="mb-4">스터디원 요약</h4>
+                  <div class="m-4" v-for="note in submittedNotes" :key="note.id">
+                    <p>{{ note.writerName }}</p>
+                    <p>{{ note.summaryText }}</p>
+                  </div>
+                </div>
+              </div>
             </v-col>
             <v-col>
-              <h4>응용 문제</h4>
-              <p>문제입니하마</p>
+              <div class="question">
+                <div class="p-4">
+                  <h4 class="mb-4">꼬리 질문</h4>
+                  <div class="m-4" v-for="note in submittedNotes" :key="note.id">
+                    <p>{{ note.writerName }}</p>
+                    <p>{{ note.summaryText }}</p>
+                  </div>
+                </div>
+              </div>
             </v-col>
           </div>
         </div>
@@ -105,8 +119,14 @@ const audioStore = useAudioStore()
 
 const route = useRoute()
 const router = useRouter()
-const meeting_id = ref(5)
+const meetingID = ref()
 const studyId = route.params.id
+
+const studyAt = ref('')
+const topic = ref('')
+const submittedNotes = ref([])
+
+const isNextMeetingExist = ref(false)
 
 function GoSetting() {
   router.push({ name: 'studySetting', params: { id: studyId } })
@@ -118,7 +138,7 @@ function GoQuiz() {
   router.push({ name: 'studyQuiz', params: { id: studyId } })
 }
 
-const LoadStudyData = () => {
+function LoadStudyData() {
   instance.get(`api/studies/${studyId}/settings`).then((res) => {
     const data = res.data.data
     if (res.data.status == 200) {
@@ -133,12 +153,26 @@ const LoadStudyData = () => {
 
 function LoadNextSchedule() {
   instance
-    .get()
-    .then((res) => {})
-    .catch((err) => {})
+    .get(`/api/studies/${studyId}`)
+    .then((res) => {
+      console.log(res)
+      if (res.data.status == 200 && res.data.data != null) {
+        isNextMeetingExist.value = true
+        meetingID.value = res.data.data.id
+        studyAt.value = res.data.data.studyAt
+        topic.value = res.data.data.topic
+        submittedNotes.value = res.data.data.submittedNotes
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 
-onMounted(LoadStudyData)
+onMounted(() => {
+  LoadStudyData()
+  LoadNextSchedule()
+})
 
 // ------------------------------------ //
 
@@ -237,7 +271,7 @@ const uploadAudio = async (audioBlob) => {
   try {
     console.log('post 간다!')
     await instance.post(
-      `http://localhost:8080/api/studies/${studyId}/meetings/${meeting_id.value}/record`,
+      `http://localhost:8080/api/studies/${studyId}/meetings/${meetingID.value}/record`,
       formData,
       {
         headers: {
@@ -263,5 +297,11 @@ const uploadAudio = async (audioBlob) => {
 .gradient-btn {
   background: linear-gradient(to right, rgb(19, 143, 214), rgb(3, 240, 229));
   color: white;
+}
+
+.submitted-note,
+.question {
+  border: 1px rgba(242, 242, 242, 1) solid;
+  width: 1300px;
 }
 </style>

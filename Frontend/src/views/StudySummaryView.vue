@@ -65,10 +65,12 @@
 
                   <v-card-item class="grid content-between">
                     <v-card-subtitle class="my-1">
-                      <span class="me-1"><span class="tossface">⏲</span> {{ summary.time }} </span>
+                      <span class="me-1"
+                        ><span class="tossface">⏲</span> {{ summary.studyAt }}
+                      </span>
                     </v-card-subtitle>
                     <div class="ml-2 mt-2 mb-1 text-3xl leading-normal font-bold note-card">
-                      {{ summary.title }}
+                      {{ summary.topic }}
                     </div>
                     <div class="grid justify-items-start">
                       <v-card-subtitle class="my-1">
@@ -109,51 +111,51 @@ const studyId = route.params.id
 const summaryList = ref([
   {
     id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
+    topic: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
     members: ['김가네수민', '이가네수민'],
-    time: '2024/03/08 PM 3:00'
+    studyAt: '2024/03/08 PM 3:00'
   },
   {
-    id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
+    id: 2,
+    topic: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
     members: ['김가네수민', '이가네수민'],
-    time: '2024/03/08 PM 3:00'
+    studyAt: '2024/03/08 PM 3:00'
   },
   {
-    id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
+    id: 3,
+    topic: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
     members: ['김가네수민', '이가네수민'],
-    time: '2024/03/08 PM 3:00'
+    studyAt: '2024/03/08 PM 3:00'
   },
   {
-    id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
+    id: 4,
+    topic: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
     members: ['김가네수민', '이가네수민'],
-    time: '2024/03/08 PM 3:00'
+    studyAt: '2024/03/08 PM 3:00'
   },
   {
-    id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
+    id: 5,
+    topic: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
     members: ['김가네수민', '이가네수민'],
-    time: '2024/03/08 PM 3:00'
+    studyAt: '2024/03/08 PM 3:00'
   },
   {
-    id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
+    id: 6,
+    topic: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
     members: ['김가네수민', '이가네수민'],
-    time: '2024/03/08 PM 3:00'
+    studyAt: '2024/03/08 PM 3:00'
   },
   {
-    id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
+    id: 7,
+    topic: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
     members: ['김가네수민', '이가네수민'],
-    time: '2024/03/08 PM 3:00'
+    studyAt: '2024/03/08 PM 3:00'
   },
   {
-    id: 1,
-    title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
+    id: 8,
+    topic: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀뚜라미어캣타워',
     members: ['김가네수민', '이가네수민'],
-    time: '2024/03/08 PM 3:00'
+    studyAt: '2024/03/08 PM 3:00'
   }
 ])
 
@@ -172,8 +174,11 @@ function GoSummaryDetail(id) {
 
 function LoadSummaryList() {
   instance
-    .get(`api/studies/${studyId}/summary`)
+    .get(`/api/studies/${studyId}/meetings/end`)
     .then((res) => {
+      if (res.data.status == 200) {
+        // summaryList.value = res.data.data.meetings
+      }
       console.log(res)
     })
     .catch((err) => {
@@ -181,7 +186,9 @@ function LoadSummaryList() {
     })
 }
 
-onMounted(LoadSummaryList)
+onMounted(() => {
+  LoadSummaryList()
+})
 </script>
 
 <style scoped>
