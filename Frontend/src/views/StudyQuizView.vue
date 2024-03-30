@@ -1,92 +1,127 @@
 <template>
-  <v-card>
-    <v-layout>
-      <v-navigation-drawer floating permanent>
-        <v-list density="compact" nav>
-          <v-list-item
-            @click="GoHome"
-            prepend-icon="mdi-view-dashboard"
-            title="홈"
-            value="home"
-          ></v-list-item>
-          <v-list-item
-            @click="GoSummary"
-            prepend-icon="mdi-forum"
-            title="요약"
-            value="summary"
-          ></v-list-item>
-          <v-list-item prepend-icon="mdi-forum" title="리마인드 퀴즈" value="quiz"></v-list-item>
-          <v-list-item
-            @click="GoSetting"
-            prepend-icon="mdi-forum"
-            title="스터디 관리"
-            value="setting"
-          ></v-list-item>
+  <v-container>
+    <v-layout style="max-height: 800px">
+      <v-navigation-drawer style="width: 323px; height: 800px">
+        <p class="text-3xl text-center mt-10 point-font text-stone-900">같이하마</p>
+        <v-list lines="two" density="compact" nav>
+          <v-list-item three-line>
+            <v-list-item-content class="align-self-center">
+              <v-list-item-title class="ml-14 mt-10"><div class="text-2xl font-bold">하마하마스터디</div></v-list-item-title>
+              <v-list-item-subtitle class="ml-14 mt-1"
+                ><div class="text-base">CS면접</div></v-list-item-subtitle
+              >
+            </v-list-item-content>
+          </v-list-item>
+
+          <div class="ml-8 mt-8">
+            <v-list-item
+              @click="GoHome()"
+              prepend-icon="mdi-view-dashboard"
+              value="home"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+            >스터디 홈</v-list-item>
+            <v-list-item
+              @click="GoSummary()"
+              prepend-icon="mdi-forum"
+             value="summary"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+            >요약</v-list-item>
+            <v-list-item
+              @click="GoQuiz()"
+              prepend-icon="mdi-help-box"
+              value="quiz"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+            >리마인드 퀴즈</v-list-item>
+            <v-list-item
+              @click="GoSetting()"
+              prepend-icon="mdi-account-key"
+              value="setting"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+            >스터디 관리</v-list-item>
+          </div>
         </v-list>
       </v-navigation-drawer>
-      <v-main>
-        <div v-if="isList" class="remind-quiz">
-          <span class="title text-h6">리마인드 퀴즈</span>
+      <v-divider style="height: 900px" class="mr-10" vertical></v-divider>
+      <v-main class="ml-10 mt-5" style="min-height: 800px">
+        <v-container>
+          <div v-if="isList" class="remind-quiz">
+            <div class="d-flex justify-between">
+              <div class="title d-flex flex-column">
+                <span class="text-2xl ml-5 font-bold">
+                  <span class="tossface text-3xl">🗂 </span><span class="point-color font-bold">{{"하마하마스터디"}}</span> 리마인드 퀴즈</span>
+                  <p class="text-base ml-5 mt-2 italic text-gray-500"><span>{{"스터디에서 학습한 내용을 복습해보세요."}}</span></p>
+              </div>
+            </div>
+            <v-divider :thickness="2" class="border-opacity-50 my-3" style="width:1300px" color="info"></v-divider>
 
-          <v-card rounded="0" elevation="3" class="study-list">
-            <div class="study-section">
-              <v-row class="pt-10 pl-10" v-for="study in studyList" :key="study.id">
-                <v-card
-                  @click="GoQuizDetail(study.id)"
-                  elevation="4"
-                  width="810"
-                  height="70"
-                  variant="outlined"
-                  class="d-flex"
-                >
-                  <div class="quiz-data d-flex align-center">
-                    <span class="truncate-text">{{ study.subject }}</span>
-                    <span>{{ study.studyName }}</span>
-                    <span>미팅 일시 : {{ study.meetingDate }}</span>
+            <v-card rounded="0" style="width:1300px" variant="flat" class="study-list">
+              <div class="study-section">
+                <v-row class="pt-10 pl-10" v-for="study in studyList" :key="study.id">
+                  <v-card
+                    @click="GoQuizDetail(study.id)"
+                    width="810"
+                    height="70"
+                    variant="tonal"
+                    class="d-flex"
+                    color=""
+                  >
+                    <div class="quiz-data d-flex align-center">
+                      <span class="truncate-text">{{ study.subject }}</span>
+                      <span>{{ study.studyName }}</span>
+                      <span>미팅 일시 : {{ study.meetingDate }}</span>
+                    </div>
+                  </v-card>
+                  <div class="date d-flex flex-column">
+                    <span>공개일: {{ study.openDate }}</span>
+                    <span>최종 수정 일시:{{ study.lastUpdate }}</span>
                   </div>
-                </v-card>
-                <div class="date d-flex flex-column">
-                  <span>공개일: {{ study.openDate }}</span>
-                  <span>최종 수정 일시:{{ study.lastUpdate }}</span>
-                </div>
-              </v-row>
-            </div>
-          </v-card>
-        </div>
-
-        <div v-else class="quiz-detail">
-          <v-btn @click="TogglePage">돌아가기</v-btn>
-          <h1 class="title my-4">{{ quizSubject }}</h1>
-          <div class="keyword-section">
-            <div class="d-flex py-6 pl-12 align-center">
-              <h2>키워드</h2>
-              <v-btn @click="regenKeyword()" icon="mdi-refresh" variant="text"></v-btn>
-              <v-btn @click="editKeyWord()" icon="mdi-pencil-outline" variant="text"></v-btn>
-            </div>
-            <div class="d-flex justify-space-around">
-              <v-chip
-                class="keyword justify-center"
-                v-for="keyword in keyWordList"
-                :key="keyword.id"
-                @click="searchOnGoogle(keyword.keyword)"
-              >
-                <p class="text-center">#{{ keyword.keyword }}</p>
-              </v-chip>
-            </div>
+                </v-row>
+              </div>
+            </v-card>
           </div>
 
-          <div class="quiz-section mt-16">
-            <h3>리마인드 퀴즈</h3>
-            <v-list>
-              <v-list-item v-for="(quiz, index) in remindQuizList" :key="quiz.id"
-                ><p>Q{{ index + 1 }}.{{ quiz.quiz }}</p>
-              </v-list-item>
-            </v-list>
+          <div v-else class="quiz-detail">
+            <v-btn @click="TogglePage">돌아가기</v-btn>
+            <h1 class="title my-4">{{ quizSubject }}</h1>
+            <div class="keyword-section">
+              <div class="d-flex py-6 pl-12 align-center">
+                <h2>키워드</h2>
+                <v-btn @click="regenKeyword()" icon="mdi-refresh" variant="text"></v-btn>
+                <v-btn @click="editKeyWord()" icon="mdi-pencil-outline" variant="text"></v-btn>
+              </div>
+              <div class="d-flex justify-space-around">
+                <v-chip
+                  class="keyword justify-center"
+                  v-for="keyword in keyWordList"
+                  :key="keyword.id"
+                  @click="searchOnGoogle(keyword.keyword)"
+                >
+                  <p class="text-center">#{{ keyword.keyword }}</p>
+                </v-chip>
+              </div>
+            </div>
+
+            <div class="quiz-section mt-16">
+              <h3>리마인드 퀴즈</h3>
+              <v-list>
+                <v-list-item v-for="(quiz, index) in remindQuizList" :key="quiz.id"
+                  ><p>Q{{ index + 1 }}.{{ quiz.quiz }}</p>
+                </v-list-item>
+              </v-list>
+            </div>
           </div>
-        </div>
+        </v-container>
       </v-main>
     </v-layout>
-  </v-card>
+  </v-container>
 </template>
 
 <script setup>
