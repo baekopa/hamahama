@@ -27,7 +27,6 @@ import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.domain.study.entity.StudyMember;
 import com.baekopa.backend.domain.study.entity.StudyType;
 import com.baekopa.backend.domain.study.repository.StudyMemberRepository;
-import com.baekopa.backend.domain.study.repository.StudyRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
 import com.baekopa.backend.global.response.error.exception.BusinessException;
 import com.baekopa.backend.global.service.S3UploadService;
@@ -239,11 +238,8 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<NoteListResponseDto> getMyNotes(Member member) {
 
-        return noteRepository.findAllByMember(member).stream().map(this::convertToDto).toList();
-    }
-
-    private NoteListResponseDto convertToDto(Note note) {
-        return NoteListResponseDto.of(note.getId(), note.getTitle(), note.getCreatedAt(), note.getModifiedAt());
+        return noteRepository.findAllByMember(member).stream()
+                .map(note -> NoteListResponseDto.of(note, submittedNoteRepository.existsByNoteAndDeletedAtIsNull(note))).toList();
     }
 
     // 내 리마인드 퀴즈 목록 조회
