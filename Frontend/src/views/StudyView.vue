@@ -340,14 +340,23 @@ const uploadAudio = async (audioBlob) => {
   }
   // FastAPI 서버로 오디오 파일 전송
   try {
-    console.log('post 간다!')
-    await instance.post(`api/studies/${studyId}/meetings/${meetingID.value}/record`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      },
-      timeout: 99999999999
-    })
-    console.log('post끝')
+    console.log('녹음파일 전송')
+    const res1 = await instance.post(
+      `api/studies/${studyId}/meetings/${meetingID.value}/record`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        timeout: 99999999999
+      }
+    )
+    console.log(res1)
+    console.log('리마인드 퀴즈 생성 요청')
+    const res2 = await instance.post(
+      `api/studies/${studyId}/meetings/${meetingID.value}/remind-quiz`
+    )
+    console.log(res2)
 
     // const data = response.data;
     // console.log("Transcription result:", data);
