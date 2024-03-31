@@ -77,6 +77,7 @@ public enum SuccessCode {
     MEETING_LIST_GET_SUCCESS(200,"스터디의 미팅 리스트 조회에 성공했습니다."),
     MEETING_SCRIPT_UPDATE_SUCCESS(204, "미팅 스크립트 수정에 성공하였습니다."),
     MEETING_DIFFERENCE_CREATE_SUCCESS(201, "요약본 차이 생성에 성공하였습니다."),
+    MEETING_UPDATE_SUCCESS(204, "스터디의 미팅 일정 수정에 송공했습니다."),
 
 
     // My Information

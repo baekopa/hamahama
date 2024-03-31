@@ -12,8 +12,10 @@ class QuizDTO(BaseModel):
     quiz:str
 
 class TailQuestionDTO(BaseModel):
-    original_text:str
-    tail_question:str
+    tailQuestion:str
+
+class UniquificationDTO(BaseModel):
+    uniquification:str
 
 class DifferenceDTO(BaseModel):
     difference:str
