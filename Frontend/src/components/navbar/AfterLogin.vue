@@ -94,10 +94,11 @@ const menu = ref(false)
 
 // sse 추후 변경 예정
 const baseURL = import.meta.env.VITE_BASE_URL
-const notiSource = new EventSource(`${baseURL}/sse`, {
+const notiSource = new EventSource(`${baseURL}/api/sse/subscribe`, {
   withCredentials: true,
   headers: {
-    Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+    Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+    'Content-Type': 'text/event-stream;charset=utf-8'
   }
 })
 

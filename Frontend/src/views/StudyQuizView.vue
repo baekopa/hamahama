@@ -66,7 +66,7 @@
               <div class="title d-flex flex-column">
                 <span class="text-2xl ml-5 font-bold">
                   <span class="tossface text-3xl">📭 </span
-                  ><span class="point-color font-bold">{{ '하마하마스터디' }}</span
+                  ><span class="point-color font-bold">{{ studyStore.studyTitle }}</span
                   >의 리마인드 퀴즈</span
                 >
                 <p class="text-base ml-5 mt-2 italic text-gray-500">
@@ -83,9 +83,9 @@
 
             <v-card rounded="0" style="width: 1300px" variant="flat" class="study-list">
               <div class="study-section">
-                <v-row class="pt-10 pl-10" v-for="study in studyList" :key="study.id">
+                <v-row class="pt-10 pl-10" v-for="study in studyList" :key="study.remindQuizId">
                   <v-card
-                    @click="GoQuizDetail(study.id)"
+                    @click="GoQuizDetail(study.remindQuizId)"
                     width="950"
                     height="72"
                     variant="tonal"
@@ -93,7 +93,7 @@
                     color=""
                   >
                     <div class="truncate-text">
-                      <span>{{ study.subject }}</span>
+                      <span>{{ study.topic }}</span>
                     </div>
                     <div class="d-flex items-center">
                       <div>{{ study.studyName }}</div>
@@ -104,18 +104,19 @@
                         vertical
                         color="info"
                       ></v-divider>
-                      <div>미팅: {{ study.meetingDate }}</div>
+                      <div>미팅: {{ study.studyAt }}</div>
                     </div>
                   </v-card>
                   <div class="date d-flex flex-column ml-5 justify-center">
-                    <span>공개일: {{ study.openDate }}</span>
-                    <span>최종 수정 일시: {{ study.lastUpdate }}</span>
+                    <span>공개일: {{ study.openAt }}</span>
+                    <span>최종 수정 일시: {{ study.lastModifiedAt }}</span>
                   </div>
                 </v-row>
               </div>
             </v-card>
           </div>
 
+          <!-- 선택한 퀴즈  -->
           <div v-else class="quiz-detail">
             <div class="d-flex justify-between">
               <div class="title d-flex flex-column">
@@ -225,67 +226,76 @@ const selectedStudyId = ref()
 
 const studyList = ref([
   {
-    id: 1,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당1',
+    remindQuizId: 1,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당1',
     studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.04.01',
+    lastModifiedAt: '2024.03.22',
+    opened: false
   },
   {
-    id: 2,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당2',
+    remindQuizId: 2,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당2',
     studyName: '스터디 명수는 열두살',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
   },
   {
-    id: 3,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당3',
+    remindQuizId: 3,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당3',
     studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
   },
   {
-    id: 4,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
+    remindQuizId: 4,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
     studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
   },
   {
-    id: 5,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
+    remindQuizId: 5,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
     studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
   },
   {
-    id: 6,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
+    remindQuizId: 6,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
     studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
   },
   {
-    id: 7,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
+    remindQuizId: 7,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
     studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
   }
 ])
 
 const LoadQuizList = () => {
-  instance.get(`api/studies/${studyId}/settings`).then((res) => {
+  instance.get(`api/studies/${studyId}/remind-quiz`).then((res) => {
     const data = res.data.data
+    console.log(res)
     if (res.data.status == 200) {
+      studyList.value = res.data.data
     }
   })
 }

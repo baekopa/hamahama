@@ -26,7 +26,7 @@
                 src="@/assets/image/note/edit.svg"
                 alt="pencil"
               />
-              <v-btn @click="EditNote" v-else
+              <v-btn @click="EditNote()" v-else
                 ><img src="@/assets/image/note/edit.svg" alt="" />수정</v-btn
               >
             </div>
@@ -42,7 +42,7 @@
         ></textarea>
         <textarea
           v-else
-          v-model="content"
+          v-model="editContent"
           variant="plain"
           placeholder="공부한 내용을 작성해주세요. ( •̀ ω •́ )✧"
           class="note-content mt-5"
@@ -141,9 +141,9 @@ const noteId = route.params.id
 // 원본 제목, 내용
 const title = ref('제목')
 const content = ref('')
+
 // 수정 할 내용 (초기값은 원본 내용임)
 const editContent = ref('')
-
 watch(content, (newValue) => {
   editContent.value = newValue
 })
@@ -237,8 +237,8 @@ onMounted(() => {
 function EditNote() {
   instance
     .put(`api/notes/${noteId}`, {
-      title,
-      editContent
+      title: title.value,
+      content: editContent.value
     })
     .then((res) => {
       console.log(res)
