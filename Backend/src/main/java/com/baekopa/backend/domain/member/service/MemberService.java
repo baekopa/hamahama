@@ -3,11 +3,13 @@ package com.baekopa.backend.domain.member.service;
 import com.baekopa.backend.domain.meeting.dto.NearMeetingStudyDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
 import com.baekopa.backend.domain.meeting.dto.response.RemindQuizListResponseDto;
+import com.baekopa.backend.domain.meeting.dto.response.RemindQuizResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.entity.RemindQuiz;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
 import com.baekopa.backend.domain.meeting.repository.RemindQuizRepository;
+import com.baekopa.backend.domain.meeting.service.RemindQuizService;
 import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
 import com.baekopa.backend.domain.member.dto.response.MemberMainResponseDto;
 import com.baekopa.backend.domain.member.dto.response.MyDashboardResponseDto;
@@ -17,6 +19,7 @@ import com.baekopa.backend.domain.member.repository.MemberRepository;
 import com.baekopa.backend.domain.note.dto.response.NoteListResponseDto;
 import com.baekopa.backend.domain.note.entity.Note;
 import com.baekopa.backend.domain.note.repository.NoteRepository;
+import com.baekopa.backend.domain.note.repository.SubmittedNoteRepository;
 import com.baekopa.backend.domain.notification.dto.response.NotificationResponseDto;
 import com.baekopa.backend.domain.notification.repository.NotificationRepository;
 import com.baekopa.backend.domain.study.dto.response.StudyListResponseDto;
@@ -24,7 +27,6 @@ import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.domain.study.entity.StudyMember;
 import com.baekopa.backend.domain.study.entity.StudyType;
 import com.baekopa.backend.domain.study.repository.StudyMemberRepository;
-import com.baekopa.backend.domain.study.repository.StudyRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
 import com.baekopa.backend.global.response.error.exception.BusinessException;
 import com.baekopa.backend.global.service.S3UploadService;
@@ -38,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +61,9 @@ public class MemberService {
     private final NoteRepository noteRepository;
     private final RemindQuizRepository remindQuizRepository;
     private final NotificationRepository notificationRepository;
-    private final StudyRepository studyRepository;
+    private final SubmittedNoteRepository submittedNoteRepository;
+
+    private final RemindQuizService remindQuizService;
 
     @Transactional(readOnly = true)
     public MyInfoResponseDto getMyInfo(Member currentMember) {
@@ -112,9 +117,9 @@ public class MemberService {
         List<NotificationResponseDto> notificationList = notificationRepository.findAllByReceiverAndDeletedAtIsNullOrderByCreatedAtDesc(member)
                 .stream().map(NotificationResponseDto::of).toList();
 
-        LocalDateTime weekStartDate = LocalDateTime.now().with(DayOfWeek.MONDAY).minusDays(1)
+        LocalDateTime weekStartDate = LocalDateTime.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
                 .withHour(0).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime weekEndDate = LocalDateTime.now().with(DayOfWeek.SUNDAY).minusDays(1)
+        LocalDateTime weekEndDate = weekStartDate.plusDays(6)
                 .withHour(23).withMinute(59).withSecond(59).withNano(0);
 
 
@@ -129,7 +134,7 @@ public class MemberService {
             List<MeetingListDto> meetingList = meetingRepository.findAllByStudyAndDeletedAtIsNullAndStudyAtBetweenOrderByStudyAtAsc(st.getStudy(), weekStartDate, weekEndDate)
                     .stream().map(MeetingListDto::from).toList();
 
-            if (meetingList == null) {
+            if (meetingList.size() == 0) {
                 continue;
             }
 
@@ -233,14 +238,11 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<NoteListResponseDto> getMyNotes(Member member) {
 
-        return noteRepository.findAllByMember(member).stream().map(this::convertToDto).toList();
+        return noteRepository.findAllByMember(member).stream()
+                .map(note -> NoteListResponseDto.of(note, submittedNoteRepository.existsByNoteAndDeletedAtIsNull(note))).toList();
     }
 
-    private NoteListResponseDto convertToDto(Note note) {
-        return NoteListResponseDto.of(note.getId(), note.getTitle(), note.getCreatedAt(), note.getModifiedAt());
-    }
-
-    // 내 리마인드 퀴즈 조회
+    // 내 리마인드 퀴즈 목록 조회
     @Transactional(readOnly = true)
     public List<RemindQuizListResponseDto> getMyRemindQuiz(Member member) {
 
@@ -257,13 +259,16 @@ public class MemberService {
 
                 log.info(" 미팅 번호 : {}, 스터디 번호 : {}", meeting.getId(), meeting.getStudy().getId());
 
-                RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meeting)
-                        .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
+                RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meeting).orElse(null);
+
+                if (remindQuiz == null) {
+                    continue;
+                }
 
                 // 현재 시간이 openDate 이전인지 확인
                 boolean isOpened = LocalDateTime.now().isAfter(remindQuiz.getOpenDate()) || LocalDateTime.now().isEqual(remindQuiz.getOpenDate());
 
-                responseDtoList.add(RemindQuizListResponseDto.of(remindQuiz.getId(), meeting.getTopic(), st.getStudy().getTitle(), meeting.getStudyAt(),
+                responseDtoList.add(RemindQuizListResponseDto.of(remindQuiz.getId(), meeting.getTopic(), meeting.getStudy().getId(), st.getStudy().getTitle(), meeting.getStudyAt(),
                         remindQuiz.getOpenDate(), isOpened, remindQuiz.getModifiedAt()));
 
 
@@ -274,13 +279,24 @@ public class MemberService {
         return responseDtoList;
     }
 
+    // 리마인드 퀴즈 상세 조회
+    public RemindQuizResponseDto getRemindQuiz(Long remindQuizId) {
+
+        RemindQuiz remindQuiz = remindQuizRepository.findByIdAndDeletedAtIsNull(remindQuizId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
+
+        return RemindQuizResponseDto.of(remindQuiz.getMeeting().getStudy(), remindQuiz.getMeeting(), remindQuiz);
+
+    }
+
+
     // 메인 화면 조회용
     public MemberMainResponseDto getMemberMainInfo(Member member) {
 
         StudyListResponseDto personalStudy = StudyListResponseDto.from(studyMemberRepository.findPersonalStudy(member, StudyType.PERSONAL).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "개인 스터디 조회에 실패했습니다")));
 
         List<NoteListResponseDto> noteList = getRecentNotes(member);
-        List<NearMeetingStudyDto> studyList = getRecentStudy(member, 5);
+        List<NearMeetingStudyDto> studyList = getRecentStudy(member, 4);
 
         return MemberMainResponseDto.of(personalStudy, noteList, studyList);
 
@@ -290,7 +306,9 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<NoteListResponseDto> getRecentNotes(Member member) {
 
-        return noteRepository.findTop5ByMemberAndDeletedAtIsNullOrderByModifiedAtDesc(member).stream().map(NoteListResponseDto::from).toList();
+        List<Note> noteList = noteRepository.findTop5ByMemberAndDeletedAtIsNullOrderByModifiedAtDesc(member);
+
+        return noteList.stream().map((note) -> NoteListResponseDto.of(note, submittedNoteRepository.existsByNoteAndDeletedAtIsNull(note))).toList();
     }
 
     // 내 스터디 최근 몇 개 조회
