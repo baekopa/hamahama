@@ -4,18 +4,14 @@ import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.entity.RemindQuiz;
 import com.baekopa.backend.domain.study.entity.Study;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
-public class RemindQuizResponseDto {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class RemindQuizListResponseDto {
 
     private Long remindQuizId;
     private String topic; // meeting topic
@@ -27,12 +23,9 @@ public class RemindQuizResponseDto {
     private boolean isOpened;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime lastModifiedAt;
-    private String content;
 
     @Builder
-    private RemindQuizResponseDto(Long remindQuizId, String topic, String studyName, LocalDateTime studyAt,
-                                  LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt, String content) {
-
+    private RemindQuizListResponseDto(Long remindQuizId, String topic, String studyName, LocalDateTime studyAt, LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
         this.remindQuizId = remindQuizId;
         this.topic = topic;
         this.studyAt = studyAt;
@@ -40,20 +33,30 @@ public class RemindQuizResponseDto {
         this.openAt = openAt;
         this.isOpened = isOpened;
         this.lastModifiedAt = lastModifiedAt;
-        this.content = content;
-
     }
 
-    public static RemindQuizResponseDto of(Study study, Meeting meeting, RemindQuiz remindQuiz) {
+    public static RemindQuizListResponseDto of(Long remindQuizId, String topic, String studyName, LocalDateTime studyAt, LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
 
-        return builder().remindQuizId(remindQuiz.getId())
+        return builder().remindQuizId(remindQuizId)
+                .topic(topic)
+                .studyName(studyName)
+                .studyAt(studyAt)
+                .openAt(openAt)
+                .isOpened(isOpened)
+                .lastModifiedAt(lastModifiedAt)
+                .build();
+    }
+
+    public static RemindQuizListResponseDto of(Study study, Meeting meeting, RemindQuiz remindQuiz) {
+        return builder()
+                .remindQuizId(remindQuiz.getId())
                 .topic(meeting.getTopic())
-                .studyName(study.getTitle())
                 .studyAt(meeting.getStudyAt())
+                .studyName(study.getTitle())
                 .openAt(remindQuiz.getOpenDate())
                 .isOpened(remindQuiz.getOpenDate().compareTo(LocalDateTime.now()) < 0 ? true : false)
                 .lastModifiedAt(remindQuiz.getModifiedAt())
-                .content(remindQuiz.getContent())
                 .build();
     }
+
 }
