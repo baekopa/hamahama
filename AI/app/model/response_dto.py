@@ -14,3 +14,6 @@ class QuizDTO(BaseModel):
 class TailQuestionDTO(BaseModel):
     original_text:str
     tail_question:str
+
+class DifferenceDTO(BaseModel):
+    difference:str

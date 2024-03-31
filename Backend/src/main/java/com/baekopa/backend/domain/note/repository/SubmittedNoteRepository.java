@@ -15,4 +15,5 @@ public interface SubmittedNoteRepository extends JpaRepository<SubmittedNote, Lo
 
     List<SubmittedNote> findAllByMeetingAndDeletedAtIsNull(Meeting meeting);
 
+    List<SubmittedNote> findNoteByMeeting(Meeting meeting);
 }
