@@ -14,4 +14,6 @@ public interface SubmittedNoteRepository extends JpaRepository<SubmittedNote, Lo
     boolean existsByNoteAndMeeting(Note existNote, Meeting existMeeting);
 
     List<SubmittedNote> findAllByMeetingAndDeletedAtIsNull(Meeting meeting);
+
+    boolean existsByNoteAndDeletedAtIsNull(Note note);
 }
