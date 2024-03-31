@@ -3,7 +3,8 @@
     <div class="title">
       <span class="text-2xl">
         <span class="text-2xl point-font point-color">{{ authStore.userName }}</span>
-        님 반가워요! 오늘도 파이팅 <span class="tossface text-3xl">👏</span></span>
+        님 반가워요! 오늘도 파이팅 <span class="tossface text-3xl">👏</span></span
+      >
     </div>
 
     <div class="mt-10 d-flex justify-start">
@@ -101,7 +102,7 @@ import { useRouter } from 'vue-router'
 
 import instance from '@/api'
 import MyCalendar from '@/components/mypage/MyCalendar.vue'
-
+import Swal from 'sweetalert2'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -167,17 +168,33 @@ const GetDashBoardInfo = () => {
       console.log(err)
     })
 }
-
-const GetWeeklySchedule = () => {
+const GetMyInfo = () => {
   instance
-    .get('members/me/study-timeline')
+    .get('/api/members/me')
     .then((res) => {
-      console.log(res)
+      if (res.data.status == 200) {
+        authStore.userName = res.data.data.name
+        authStore.userEmail = res.data.data.email
+        authStore.userImgUrl = res.data.data.image_url
+      } else {
+        // Swal.fire()
+      }
     })
     .catch((err) => {
       console.log(err)
     })
 }
+
+// const GetWeeklySchedule = () => {
+//   instance
+//     .get('members/me/study-timeline')
+//     .then((res) => {
+//       console.log(res)
+//     })
+//     .catch((err) => {
+//       console.log(err)
+//     })
+// }
 
 const EditMyInfo = () => {
   instance
@@ -209,8 +226,8 @@ const goUserGuide = () => {
 }
 
 onMounted(() => {
+  GetMyInfo()
   GetDashBoardInfo()
-  GetWeeklySchedule()
 })
 </script>
 
