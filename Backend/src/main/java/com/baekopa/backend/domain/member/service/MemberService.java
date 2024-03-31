@@ -296,7 +296,7 @@ public class MemberService {
     // 내 스터디 최근 몇 개 조회
     @Transactional(readOnly = true)
     public List<NearMeetingStudyDto> getRecentStudy(Member member, int n) {
-        List<Long> studies = studyMemberRepository.findStudyAllByMemberAndTypeIsNot(member, StudyMember.StudyMemberType.INVITATION).stream().map(Study::getId).toList();
+        List<Long> studies = studyMemberRepository.findStudyAllByMemberAndTypeIsNot(member, StudyMember.StudyMemberType.INVITATION, StudyType.GROUP).stream().map(Study::getId).toList();
 
         return meetingRepository.findAllStudyOrderByMeeting(studies, PageRequest.of(0, n));
     }
