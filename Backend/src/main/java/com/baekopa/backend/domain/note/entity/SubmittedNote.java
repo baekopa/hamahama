@@ -47,4 +47,9 @@ public class SubmittedNote extends BaseBy {
                 .build();
     }
 
+    public void updateDifferenceContent(String differenceContent) {
+        this.differenceContent = differenceContent;
+    }
+
+
 }

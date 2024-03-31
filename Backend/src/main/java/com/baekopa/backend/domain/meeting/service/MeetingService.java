@@ -359,8 +359,12 @@ public class MeetingService {
 
 
     public MeetingDifferenceResponseDTO createDifference(Long meetingId, Member member) {
+
+        // SubmittedNote 조회
+        SubmittedNote submittedNote = getSubmittedNote(meetingId, member);
+
         // 내 요약문
-        String myNoteSummary = getNoteSummary(meetingId, member);
+        String myNoteSummary = submittedNote.getNote().getSummary();
 
         // 전체 요약문
         String meetingSummary = meetingRepository.findById(meetingId)
@@ -383,22 +387,22 @@ public class MeetingService {
         MeetingDifferenceResponseDTO meetingDifferenceResponseDTO =
                 restTemplate.postForObject(differenceUrl, requestEntity, MeetingDifferenceResponseDTO.class);
 
+        submittedNote.updateDifferenceContent(meetingDifferenceResponseDTO.getDifference());
+
         return meetingDifferenceResponseDTO;
     }
 
-    private String getNoteSummary(Long meetingId, Member member) {
-
-        // Meeting 조회
+    private SubmittedNote getSubmittedNote(Long meetingId, Member member) {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
 
         // Member와 Meeting을 기준으로 SubmittedNote 조회
-        return submittedNoteRepository.findNoteByMeeting(meeting)
+        return submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
                 .stream()
                 .filter(submittedNote -> submittedNote.getNote().getMember().getId() == member.getId())
-                .map(submittedNote -> submittedNote.getNote().getSummary())
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_FOUND, ErrorCode.NOTE_NOT_FOUND.getMessage()));
+
     }
 
     private String convertObjectToJson(Object object) {
