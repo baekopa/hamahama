@@ -2,7 +2,7 @@ package com.baekopa.backend.domain.member.service;
 
 import com.baekopa.backend.domain.meeting.dto.NearMeetingStudyDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
-import com.baekopa.backend.domain.meeting.dto.response.RemindQuizResponseDto;
+import com.baekopa.backend.domain.meeting.dto.response.RemindQuizListResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.entity.RemindQuiz;
@@ -245,11 +245,11 @@ public class MemberService {
 
     // 내 리마인드 퀴즈 목록 조회
     @Transactional(readOnly = true)
-    public List<RemindQuizResponseDto> getMyRemindQuiz(Member member) {
+    public List<RemindQuizListResponseDto> getMyRemindQuiz(Member member) {
 
         List<StudyMember> studyMemberList = studyMemberRepository.findAllByMemberAndDeletedAtIsNull(member);
 
-        List<RemindQuizResponseDto> responseDtoList = new ArrayList<>();
+        List<RemindQuizListResponseDto> responseDtoList = new ArrayList<>();
 
         // 내가 속한 스터디의 일정 목록 조회
         for (StudyMember st : studyMemberList) {
@@ -266,7 +266,7 @@ public class MemberService {
                 // 현재 시간이 openDate 이전인지 확인
                 boolean isOpened = LocalDateTime.now().isAfter(remindQuiz.getOpenDate()) || LocalDateTime.now().isEqual(remindQuiz.getOpenDate());
 
-                responseDtoList.add(RemindQuizResponseDto.of(remindQuiz.getId(), meeting.getTopic(), st.getStudy().getTitle(), meeting.getStudyAt(),
+                responseDtoList.add(RemindQuizListResponseDto.of(remindQuiz.getId(), meeting.getTopic(), st.getStudy().getTitle(), meeting.getStudyAt(),
                         remindQuiz.getOpenDate(), isOpened, remindQuiz.getModifiedAt()));
 
 

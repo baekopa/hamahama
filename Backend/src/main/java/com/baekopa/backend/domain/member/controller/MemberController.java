@@ -1,6 +1,6 @@
 package com.baekopa.backend.domain.member.controller;
 
-import com.baekopa.backend.domain.meeting.dto.response.RemindQuizResponseDto;
+import com.baekopa.backend.domain.meeting.dto.response.RemindQuizListResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
 import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
 import com.baekopa.backend.domain.member.dto.response.MemberMainResponseDto;
@@ -96,7 +96,7 @@ public class MemberController {
 
     @Operation(summary = "내가 속한 스터디의 리마인드 퀴즈 목록 조회", description = "사용자가 속한 스터디의 리마인드 퀴즈 목록 조회")
     @GetMapping("/remind-quiz")
-    public ApiResponse<List<RemindQuizResponseDto>> getMyRemindQuiz(@AuthenticationPrincipal Member member) {
+    public ApiResponse<List<RemindQuizListResponseDto>> getMyRemindQuiz(@AuthenticationPrincipal Member member) {
 
         log.info("내가 속한 스터디의 리마인드 퀴즈 목록 조회 : {}", member.getName());
         return ApiResponse.of(SuccessCode.REMIND_QUIZ_GET_SUCCESS, memberService.getMyRemindQuiz(member));

@@ -2,6 +2,7 @@ package com.baekopa.backend.domain.study.controller;
 
 
 import com.baekopa.backend.domain.meeting.dto.request.CreateMeetingRequestDto;
+import com.baekopa.backend.domain.meeting.dto.request.UpdateMeetingRequestDto;
 import com.baekopa.backend.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
 import com.baekopa.backend.domain.study.dto.response.StudyMeetingResponseDto;
@@ -49,6 +50,15 @@ public class StudyMeetingController {
 
         return ApiResponse.of(SuccessCode.STUDY_MEETING_GET_SUCCESS, studyMeetingService.getStudyMeeting(studyId));
 
+    }
+
+    @Operation(summary = "스터디의 예정된 미팅 일정 수정", description = "예정된 미팅 일정을 수정합니다.")
+    @PutMapping("/{study-id}/meetings/{meeting-id}")
+    public ApiResponse<List<MeetingListDto>> updateMeeting(@PathVariable(name = "study-id") Long studyId, @PathVariable(name = "meeting-id") Long meetingId, @RequestBody UpdateMeetingRequestDto requestDto) {
+
+        log.info("스터디({})의 예정된 미팅({}) 일정 수정", studyId, meetingId);
+
+        return ApiResponse.of(SuccessCode.MEETING_UPDATE_SUCCESS, studyMeetingService.updateMeeting(studyId, meetingId, requestDto));
     }
 
 }
