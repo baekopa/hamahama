@@ -233,6 +233,7 @@ function LoadNextSchedule() {
         isNextMeetingExist.value = true
         submittedNotes.value = res.data.data
         meetingID.value = res.data.data.id
+        console.log(meetingID.value)
       }
     })
     .catch((err) => {

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 
 @Service
@@ -50,12 +52,27 @@ public class MeetingScriptService {
         }
     }
 
+    @Async
+    public CompletableFuture<Map<String, Long>> saveMeetingScriptAsync(Long studyId, Long meetingId, MultipartFile file) {
+        return CompletableFuture.supplyAsync(() -> saveMeetingScript(studyId, meetingId, file))
+                .thenApply(result -> {
+                    // 성공 로직 처리
+                    log.info("비동기 처리 결과: {}", result);
+                    return result;
+                })
+                .exceptionally(ex -> {
+                    // 예외 처리 로직
+                    log.error("비동기 처리 중 오류 발생: ", ex);
+                    throw new RuntimeException("비동기 처리 중 오류 발생", ex);
+                });
+    }
+
     @Transactional
     public Map<String, Long> saveMeetingScript(Long studyId, Long meetingId, MultipartFile file) {
         Map<String, Long> result = new HashMap<>();
 
-        String s3Url = uploadS3RecordFile(file);//s3에 파일 업로드
-        saveS3Url(meetingId, s3Url); //s3url 저장
+//        String s3Url = uploadS3RecordFile(file);//s3에 파일 업로드
+//        saveS3Url(meetingId, s3Url); //s3url 저장
 
         String text = sendFileToFastAPI(studyId, meetingId, file); //fast api로 통신하여 STT 실행 및 텍스트 추출
         Long meetingScriptId = saveScript(meetingId, text);//추출한 script 저장
