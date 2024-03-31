@@ -7,6 +7,7 @@ public interface NearMeetingStudyDto {
     Long getId();
     String getTitle();
     String getBackgroundImage();
+    String getCategory();
 
     LocalDateTime getFutureMeeting();
     LocalDateTime getPastMeeting();
