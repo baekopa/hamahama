@@ -8,6 +8,7 @@ import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.entity.RemindQuiz;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
 import com.baekopa.backend.domain.meeting.repository.RemindQuizRepository;
+import com.baekopa.backend.domain.meeting.service.RemindQuizService;
 import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
 import com.baekopa.backend.domain.member.dto.response.MemberMainResponseDto;
 import com.baekopa.backend.domain.member.dto.response.MyDashboardResponseDto;
@@ -59,6 +60,8 @@ public class MemberService {
     private final RemindQuizRepository remindQuizRepository;
     private final NotificationRepository notificationRepository;
     private final StudyRepository studyRepository;
+
+    private final RemindQuizService remindQuizService;
 
     @Transactional(readOnly = true)
     public MyInfoResponseDto getMyInfo(Member currentMember) {
@@ -240,7 +243,7 @@ public class MemberService {
         return NoteListResponseDto.of(note.getId(), note.getTitle(), note.getCreatedAt(), note.getModifiedAt());
     }
 
-    // 내 리마인드 퀴즈 조회
+    // 내 리마인드 퀴즈 목록 조회
     @Transactional(readOnly = true)
     public List<RemindQuizResponseDto> getMyRemindQuiz(Member member) {
 
@@ -273,6 +276,17 @@ public class MemberService {
 
         return responseDtoList;
     }
+
+    // 리마인드 퀴즈 상세 조회
+    public RemindQuizResponseDto getRemindQuiz(Long remindQuizId) {
+
+        RemindQuiz remindQuiz = remindQuizRepository.findByIdAndDeletedAtIsNull(remindQuizId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
+
+        return RemindQuizResponseDto.of(remindQuiz.getMeeting().getStudy(), remindQuiz.getMeeting(), remindQuiz);
+
+    }
+
 
     // 메인 화면 조회용
     public MemberMainResponseDto getMemberMainInfo(Member member) {
