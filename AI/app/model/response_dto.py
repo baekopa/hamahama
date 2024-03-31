@@ -16,3 +16,6 @@ class TailQuestionDTO(BaseModel):
 
 class UniquificationDTO(BaseModel):
     uniquification:str
+
+class DifferenceDTO(BaseModel):
+    difference:str
