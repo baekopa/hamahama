@@ -25,8 +25,8 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
 
     List<StudyMember> findAllByMemberAndDeletedAtIsNull(Member member);
 
-    @Query("SELECT sm.study FROM StudyMember sm WHERE sm.member = :member AND sm.type <> :type AND sm.study.deletedAt is null")
-    List<Study> findStudyAllByMemberAndTypeIsNot(@Param(value = "member") Member member, @Param(value = "type") StudyMember.StudyMemberType type);
+    @Query("SELECT sm.study FROM StudyMember sm WHERE sm.member = :member AND sm.type <> :type AND sm.study.type = :studyType AND sm.study.deletedAt is null")
+    List<Study> findStudyAllByMemberAndTypeIsNot(@Param(value = "member") Member member, @Param(value = "type") StudyMember.StudyMemberType type, @Param("studyType") StudyType studyType);
 
     @Query("SELECT sm.study FROM StudyMember sm WHERE sm.member = :member AND sm.study.type = :studyType AND sm.study.deletedAt is null")
     Optional<Study> findPersonalStudy(@Param("member") Member member, @Param("studyType") StudyType studyType);
