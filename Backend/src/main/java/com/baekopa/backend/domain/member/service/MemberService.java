@@ -38,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -112,9 +113,9 @@ public class MemberService {
         List<NotificationResponseDto> notificationList = notificationRepository.findAllByReceiverAndDeletedAtIsNullOrderByCreatedAtDesc(member)
                 .stream().map(NotificationResponseDto::of).toList();
 
-        LocalDateTime weekStartDate = LocalDateTime.now().with(DayOfWeek.MONDAY).minusDays(1)
+        LocalDateTime weekStartDate = LocalDateTime.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
                 .withHour(0).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime weekEndDate = LocalDateTime.now().with(DayOfWeek.SUNDAY).minusDays(1)
+        LocalDateTime weekEndDate = weekStartDate.plusDays(6)
                 .withHour(23).withMinute(59).withSecond(59).withNano(0);
 
 
