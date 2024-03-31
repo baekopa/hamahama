@@ -1,5 +1,6 @@
 package com.baekopa.backend.domain.meeting.service;
 
+import com.baekopa.backend.domain.meeting.dto.response.RemindQuizListResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.RemindQuizResponseDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.entity.RemindQuiz;
@@ -26,12 +27,12 @@ public class RemindQuizService {
     private final MeetingRepository meetingRepository;
     private final StudyRepository studyRepository;
 
-    public List<RemindQuizResponseDto> getStudyRemindQuiz(Long studyId) {
+    public List<RemindQuizListResponseDto> getStudyRemindQuiz(Long studyId) {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
         List<Meeting> meetingList = meetingRepository.findAllByStudyAndDeletedAtIsNullAndRecordFileIsNotNullOrderByStudyAtDesc(study);
 
-        List<RemindQuizResponseDto> response = new ArrayList<>();
+        List<RemindQuizListResponseDto> response = new ArrayList<>();
 
         for (Meeting meeting : meetingList) {
 
@@ -40,7 +41,7 @@ public class RemindQuizService {
             RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meeting)
                     .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
 
-            response.add(RemindQuizResponseDto.of(remindQuiz.getId(), meeting.getTopic(), meeting.getStudy().getTitle(),
+            response.add(RemindQuizListResponseDto.of(remindQuiz.getId(), meeting.getTopic(), meeting.getStudy().getTitle(),
                     meeting.getStudyAt(), remindQuiz.getOpenDate(),
                     LocalDateTime.now().isAfter(remindQuiz.getOpenDate()) || LocalDateTime.now().isEqual(remindQuiz.getOpenDate()),
                     remindQuiz.getModifiedAt()));
@@ -48,6 +49,19 @@ public class RemindQuizService {
         }
 
         return response;
+    }
+
+    public RemindQuizResponseDto getRemindQuiz(Long studyId, Long remindQuizId) {
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
+
+        RemindQuiz remindQuiz = remindQuizRepository.findById(remindQuizId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
+
+        Meeting meeting = remindQuiz.getMeeting();
+
+        return RemindQuizResponseDto.of(study, meeting, remindQuiz);
+
     }
 
 }

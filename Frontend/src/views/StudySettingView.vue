@@ -1,119 +1,157 @@
 <template>
-  <v-card>
-    <v-layout>
-      <v-navigation-drawer floating permanent>
-        <v-list density="compact" nav>
-          <v-list-item
-            @click="GoHome"
-            prepend-icon="mdi-view-dashboard"
-            title="홈"
-            value="home"
-          ></v-list-item>
-          <v-list-item
-            @click="GoSummary"
-            prepend-icon="mdi-forum"
-            title="요약"
-            value="summary"
-          ></v-list-item>
-          <v-list-item
-            @click="GoQuiz"
-            prepend-icon="mdi-forum"
-            title="리마인드 퀴즈"
-            value="quiz"
-          ></v-list-item>
-          <v-list-item prepend-icon="mdi-forum" title="스터디 관리" value="setting"></v-list-item>
+  <v-container>
+    <v-layout style="max-height: 800px">
+      <v-navigation-drawer style="width: 323px; height: 800px">
+        <p class="text-3xl text-center mt-10 point-font text-stone-900">같이하마</p>
+        <v-list lines="two" density="compact" nav>
+          <v-list-item three-line>
+            <v-list-item-content class="align-self-center">
+              <v-list-item-title class="ml-14 mt-10"
+                ><div class="text-2xl font-bold">
+                  {{ studyStore.studyTitle }}
+                </div></v-list-item-title
+              >
+              <v-list-item-subtitle class="ml-14 mt-1"
+                ><div class="text-base">
+                  {{ studyStore.studyDescription }}
+                </div></v-list-item-subtitle
+              >
+            </v-list-item-content>
+          </v-list-item>
+
+          <div class="ml-8 mt-8">
+            <v-list-item
+              @click="GoHome()"
+              prepend-icon="mdi-view-dashboard"
+              value="home"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+              >스터디 홈</v-list-item
+            >
+            <v-list-item
+              @click="GoSummary()"
+              prepend-icon="mdi-forum"
+              value="summary"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+              >요약</v-list-item
+            >
+            <v-list-item
+              @click="GoQuiz()"
+              prepend-icon="mdi-help-box"
+              value="quiz"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+              >리마인드 퀴즈</v-list-item
+            >
+            <v-list-item
+              @click="GoSetting()"
+              prepend-icon="mdi-account-key"
+              value="setting"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+              >스터디 관리</v-list-item
+            >
+          </div>
         </v-list>
       </v-navigation-drawer>
-      <v-main>
-        <div>
+      <v-divider style="height: 900px" class="mr-10" vertical></v-divider>
+      <v-main class="ml-10 mt-5" style="min-height: 800px">
+        <v-container>
           <div>
-            <p>{{ studyStore.studyTitle }}</p>
-          </div>
-          <div class="study-info d-flex">
-            <img :src="studyStore.studyBackgroundImage" alt="스터디이미지" class="study-image" />
-            <div class="ml-10">
-              <v-chip>{{ studyStore.studyCategory }}</v-chip>
-              <p>{{ studyStore.studyDescription }}</p>
+            <div>
+              <p>{{ studyStore.studyTitle }}</p>
             </div>
-          </div>
-          <div class="flex">
-            <div class="mr-16">
-              <div class="d-flex">
-                <p class="mr-3">스터디원</p>
-                <p>{{ studyStore.studyMembers.length }}</p>
+            <div class="study-info d-flex">
+              <img :src="studyStore.studyBackgroundImage" alt="스터디이미지" class="study-image" />
+              <div class="ml-10">
+                <v-chip>{{ studyStore.studyCategory }}</v-chip>
+                <p>{{ studyStore.studyDescription }}</p>
               </div>
-              <div class="invite-user">
-                <div>
+            </div>
+            <div class="flex">
+              <div class="mr-16">
+                <div class="d-flex">
+                  <p class="mr-3">스터디원</p>
+                  <p>{{ studyStore.studyMembers.length }}</p>
+                </div>
+                <div class="invite-user">
                   <div>
-                    <label for="memberName">멤버 이름:</label>
-                    <input
-                      class="border"
-                      type="text"
-                      id="memberName"
-                      v-model="memberName"
-                      @input="searchMembers"
-                    />
-                  </div>
+                    <div>
+                      <label for="memberName">멤버 이름:</label>
+                      <input
+                        class="border"
+                        type="text"
+                        id="memberName"
+                        v-model="memberName"
+                        @input="searchMembers"
+                      />
+                    </div>
 
-                  <div v-if="members.length > 0" class="mt-5">
-                    <span>검색 결과:</span>
-                    <ul>
-                      <li
-                        v-for="(member, index) in members"
-                        :key="index"
-                        @click="selectMember(member)"
-                      >
-                        {{ member.name }}
-                      </li>
-                    </ul>
-                  </div>
+                    <div v-if="members.length > 0" class="mt-5">
+                      <span>검색 결과:</span>
+                      <ul>
+                        <li
+                          v-for="(member, index) in members"
+                          :key="index"
+                          @click="selectMember(member)"
+                        >
+                          {{ member.name }}
+                        </li>
+                      </ul>
+                    </div>
 
-                  <div class="mt-5">
-                    <span>선택된 멤버:</span>
-                    <ul>
-                      <li
-                        v-for="(member, index) in selectedMembersName"
-                        :key="index"
-                        @click="toggleMemberSelection(member)"
-                      >
-                        {{ member.name }}
-                      </li>
-                    </ul>
+                    <div class="mt-5">
+                      <span>선택된 멤버:</span>
+                      <ul>
+                        <li
+                          v-for="(member, index) in selectedMembersName"
+                          :key="index"
+                          @click="toggleMemberSelection(member)"
+                        >
+                          {{ member.name }}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <v-btn @click="InviteStudy()">초대하기</v-btn>
+                </div>
+                <div class="member-list">
+                  <div class="d-flex my-4 align-center" v-for="member in studyStore.studyMembers">
+                    <img class="user-profile mr-4" :src="member.image" alt="profile" width="50px" />
+                    <p class="mr-2" v-if="member.type == 'STUDY_LEADER'">스터디장</p>
+                    <p class="mr-2" v-else>스터디원</p>
+                    <p>{{ member.name }}</p>
                   </div>
                 </div>
-                <v-btn @click="InviteStudy()">초대하기</v-btn>
               </div>
-              <div class="member-list">
-                <div class="d-flex my-4 align-center" v-for="member in studyStore.studyMembers">
-                  <img class="user-profile mr-4" :src="member.image" alt="profile" width="50px" />
-                  <p class="mr-2" v-if="member.type == 'STUDY_LEADER'">스터디장</p>
-                  <p class="mr-2" v-else>스터디원</p>
-                  <p>{{ member.name }}</p>
+              <div class="study-schedule">
+                <div class="d-flex justify-between">
+                  <p class="mr-4">스터디 일정</p>
+                  <div class="study-date mr-4" v-for="(date, index) in studyDate" :key="index">
+                    <p v-if="date === '1'">{{ getDayOfWeek(index) }}</p>
+                  </div>
+                  <p>{{ studyStartTime }} ~ {{ studyEndTime }}</p>
                 </div>
-              </div>
-            </div>
-            <div class="study-schedule">
-              <div class="d-flex justify-between">
-                <p class="mr-4">스터디 일정</p>
-                <div class="study-date mr-4" v-for="(date, index) in studyDate" :key="index">
-                  <p v-if="date === '1'">{{ getDayOfWeek(index) }}</p>
-                </div>
-                <p>{{ studyStartTime }} ~ {{ studyEndTime }}</p>
-              </div>
-              <v-btn @click="CreateMeeting" class="w-full" color="#3FB1FA">일정추가</v-btn>
-              <div class="schedule-list">
-                <div v-for="schedule in scheduleList" :key="schedule.id">
-                  <p>{{ schedule.topic }}</p>
-                  <p>{{ schedule.studyAt }}</p>
-                  <hr />
+                <v-btn @click="CreateMeeting" class="w-full" color="#3FB1FA">일정추가</v-btn>
+                <div class="schedule-list">
+                  <div v-for="schedule in scheduleList" :key="schedule.id">
+                    <p>{{ schedule.topic }}</p>
+                    <p>{{ schedule.studyAt }}</p>
+                    <hr />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </v-container>
       </v-main>
     </v-layout>
-  </v-card>
+  </v-container>
 </template>
 
 <script setup>
@@ -186,7 +224,7 @@ const toggleMemberSelection = (member) => {
 
 function InviteStudy() {
   instance
-    .post(`api/studies/${studyId}/members`, {
+    .post(`/api/studies/${studyId}/members`, {
       memberId: selectedMembers.value[0]
     })
     .then((res) => {

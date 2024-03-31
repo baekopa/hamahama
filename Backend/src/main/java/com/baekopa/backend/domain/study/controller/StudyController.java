@@ -1,5 +1,6 @@
 package com.baekopa.backend.domain.study.controller;
 
+import com.baekopa.backend.domain.meeting.dto.response.RemindQuizListResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.RemindQuizResponseDto;
 import com.baekopa.backend.domain.meeting.service.RemindQuizService;
 import com.baekopa.backend.domain.member.entity.Member;
@@ -57,22 +58,19 @@ public class StudyController {
     // TODO: 스터디 리마인드 퀴즈 목록 조회
     @Operation(summary = "스터디 리마인드 퀴즈 목록", description = "스터디에서 생성됐던 리마인드 퀴즈 리스트")
     @GetMapping("/studies/{study-id}/remind-quiz")
-    public ApiResponse<List<RemindQuizResponseDto>> getStudyRemindQuiz(@PathVariable(value = "study-id") Long studyId) {
+    public ApiResponse<List<RemindQuizListResponseDto>> getStudyRemindQuiz(@PathVariable(value = "study-id") Long studyId) {
 
         log.info("스터디 리마인드 퀴즈 목록 : {}", studyId);
 
         return ApiResponse.of(SuccessCode.REMIND_QUIZ_GET_SUCCESS, remindQuizService.getStudyRemindQuiz(studyId));
     }
 
-    // TODO: 스터디 리마인드 퀴즈 상세 조회
-//    @Operation(summary = "스터디 리마인드 퀴즈 상세 조회", description = "리마인드 퀴즈 상세 조회")
-//    @GetMapping("/studies/{study-id}/remind-quiz/{remind-quiz-id}")
-//    public ApiResponse<RemindQuizResponseDto> getRemindQuiz(@PathVariable(value = "study-id")Long studyId, @PathVariable(value = "remind-quiz-id") Long remindQuizId) {
-//
-//        log.info();
-//
-//        return ApiResponse.of(SuccessCode.REMIND_QUIZ_GET_SUCCESS, )
-//    }
+    @Operation(summary = "스터디 리마인드 퀴즈 상세 조회", description = "리마인드 퀴즈 상세 조회")
+    @GetMapping("/studies/{study-id}/remind-quiz/{remind-quiz-id}")
+    public ApiResponse<RemindQuizResponseDto> getRemindQuiz(@PathVariable(value = "study-id") Long studyId, @PathVariable(value = "remind-quiz-id") Long remindQuizId) {
+
+        return ApiResponse.of(SuccessCode.REMIND_QUIZ_GET_SUCCESS, remindQuizService.getRemindQuiz(studyId, remindQuizId));
+    }
 
 
 }
