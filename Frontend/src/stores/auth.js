@@ -19,8 +19,5 @@ export const useAuthStore = defineStore('auth', () => {
     router.push({ name: 'home' })
   }
 
-  // 만들어야 할 것
-  // 1. 유저 정보 불러오는 함수 (불러와서 userName, userImgUrl, userEmail에 넣기)
-
   return { isLogin, Login, Logout, userName, userImgUrl, userEmail, accessToken }
 })

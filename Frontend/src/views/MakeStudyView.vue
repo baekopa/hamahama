@@ -1,108 +1,159 @@
 <template>
   <v-form fast-fail @submit.prevent>
-  <div class="mb-32">
-  <div class="bg-white d-flex flex-column items-center mt-15">
-    <div class="d-flex flex-column" style="width: 1300px">    
-      <div class="text-gray-500 point-font">
-        <span class="text-xl mr-2"><</span><span class="tossface text-xl">👨‍👨‍👧‍👧</span> 스터디 생성
-      </div>  
-      <div class="note-title point-font mt-14"> 스터디 기본 정보 <span class="text-red-300">*</span></div>
-      <div class="d-flex mt-3">
-        <v-card @click="openFileInput" width="300" height="300" class="rounded-lg d-flex text-center justify-center text-xl mr-14" variant="outlined" color="blue">
+    <div class="mb-32">
+      <div class="bg-white d-flex flex-column items-center mt-15">
+        <div class="d-flex flex-column" style="width: 1300px">
+          <div class="text-gray-500 point-font">
+            <span @click="router.go(-1)" class="text-xl mr-2"><</span
+            ><span class="tossface text-xl">👨‍👨‍👧‍👧</span> 스터디 생성
+          </div>
+          <div class="note-title point-font mt-14">
+            스터디 기본 정보 <span class="text-red-300">*</span>
+          </div>
+          <div class="d-flex mt-3">
+            <v-card
+              @click="openFileInput"
+              width="300"
+              height="300"
+              class="rounded-lg d-flex text-center justify-center text-xl mr-14"
+              variant="outlined"
+              color="blue"
+            >
+              <input
+                type="file"
+                @change="previewImage"
+                accept="image/png, image/jpeg, image/bmp"
+                style="display: none"
+                ref="fileInput"
+              />
+              <img
+                v-if="imageUrl"
+                :src="imageUrl"
+                alt="이미지 미리보기"
+                style="width: 300px; height: 300px"
+              />
+              <button v-else>이미지 선택</button>
+            </v-card>
+            <div class="d-flex flex-column justify-center">
+              <input
+                v-model="studyName"
+                :rules="studyNameRules"
+                variant="plain"
+                placeholder="스터디 이름을 작성해주세요"
+                class="note-title"
+              />
+              <textarea
+                v-model="studyDescription"
+                variant="plain"
+                placeholder="스터디 설명을 작성해주세요."
+                class="note-content"
+                rows="7"
+                style="width: 900px"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex flex-column mt-20" style="width: 1300px">
+          <div class="note-title point-font">
+            스터디원 초대
+            <span class="italic text-gray-500 font-light text-base ml-2"></span>
+            <div></div>
+          </div>
+          <v-row>
+            <v-col cols="5">
+              <div class="text-gray-500 font-light text-base ml-2 mb-2 text-xl">스터디원 검색</div>
+              <input
+                type="text"
+                id="memberName"
+                v-model="memberName"
+                @input="searchMembers"
+                variant="plain"
+                placeholder=" 함께할 스터디원의 이메일을 입력해주세요."
+                class="border note-content px-2 py-2 rounded-lg w-full"
+              />
+              <div class="mt-4 overflow-y-auto h-80 p-4 bg-gray-100 rounded-lg">
+                <ul v-if="members.length > 0" class="text-xl">
+                  <li
+                    v-for="(member, index) in members"
+                    :key="index"
+                    @click="selectMember(member)"
+                    class="mb-4"
+                  >
+                    <img :src="member.profileImage" class="w-8 inline rounded-full mr-2" />
+                    {{ member.name }} <span class="text-gray-700 ml-2">{{ member.email }}</span>
+                  </li>
+                </ul>
+              </div>
+            </v-col>
+            <v-col cols="2" class="d-flex flex-column justify-center items-center text-2xl">
+              <div>></div>
+              <div><</div>
+            </v-col>
+            <v-col cols="5">
+              <div class="text-gray-500 font-light text-base ml-2 text-xl">초대 요청 대상</div>
+              <div class="mt-2 overflow-y-auto p-4 h-96 bg-gray-100 rounded-lg">
+                <ul v-if="selectedMembersName.length > 0" class="text-xl">
+                  <li
+                    v-for="(member, index) in selectedMembersName"
+                    :key="index"
+                    @click="toggleMemberSelection(member)"
+                    class="mb-2"
+                  >
+                    <img :src="member.profileImage" class="w-8 inline rounded-full mr-2" />
+                    {{ member.name }} <span class="text-gray-700 ml-2">{{ member.email }}</span>
+                  </li>
+                </ul>
+              </div>
+            </v-col>
+          </v-row>
+        </div>
+        <div class="d-flex flex-column mt-24" style="width: 1300px">
+          <div class="note-title point-font">스터디 날짜</div>
+          <div class="d-flex mt-8 items-center text-xl">
+            <div class="w-36 mr-7">스터디 진행 기간</div>
+            <input id="date" type="date" v-model="startDate" class="border text-gray-500" />
+            <div class="mx-6">~</div>
+            <input id="date" type="date" v-model="endDate" class="border text-gray-500" />
+          </div>
+          <div class="d-flex mt-7 items-center text-xl">
+            <div class="w-36 mr-7">스터디 요일</div>
+            <v-chip-group v-model="selectedDay" selected-class="text-primary" multiple>
+              <v-chip v-for="tag in tags" :key="tag" :value="tag" size="x-large" class="mx-4">
+                {{ tag }}
+              </v-chip>
+            </v-chip-group>
+          </div>
+          <div class="d-flex mt-7 items-center text-xl">
+            <div class="w-36 mr-7">스터디 시간</div>
+            <input id="time" type="time" v-model="startTime" class="border text-gray-500" />
+            <div class="mx-6">~</div>
+            <input id="time" type="time" v-model="endTime" class="border text-gray-500" />
+          </div>
+        </div>
+        <div class="d-flex flex-column mt-20" style="width: 1300px">
+          <div class="note-title point-font mt-14">스터디 추가 정보</div>
           <input
-            type="file"
-            @change="previewImage"
-            accept="image/png, image/jpeg, image/bmp"
-            style="display: none"
-            ref="fileInput"
+            v-model="studyCategory"
+            variant="plain"
+            placeholder="스터디 주제를 작성해주세요."
+            class="my-3 note-content"
           />
-          <img
-            v-if="imageUrl"
-            :src="imageUrl"
-            alt="이미지 미리보기"
-            style="width: 300px; height: 300px"
-          />
-          <button v-else>이미지 선택</button>
-        </v-card>
-        <div class="d-flex flex-column justify-center">
-          <input v-model="studyName" :rules="studyNameRules" variant="plain" placeholder="스터디 이름을 작성해주세요" class="note-title"/>
-          <textarea v-model="studyDescription" variant="plain" placeholder="스터디 설명을 작성해주세요." class="note-content" rows="7" style="width: 900px;"></textarea>
+        </div>
+        <div class="d-flex justify-end mt-40" style="width: 1300px">
+          <v-btn
+            @click="checkForm"
+            size="large"
+            class=""
+            variant="flat"
+            color="#3fb1fa"
+            rounded="xl"
+            >스터디 생성</v-btn
+          >
+          <v-btn size="large" class="mx-5" variant="flat" color="#FF6B74" rounded="xl">취소</v-btn>
         </div>
       </div>
     </div>
-    <div class="d-flex flex-column mt-20" style="width: 1300px">
-      <div class="note-title point-font"> 
-        스터디원 초대
-        <span class="italic text-gray-500 font-light text-base ml-2"></span>
-        <div></div>
-      </div>
-      <v-row>
-        <v-col cols="5">
-          <div class="text-gray-500 font-light text-base ml-2 mb-2 text-xl">스터디원 검색</div>
-          <input type="text" id="memberName" v-model="memberName" @input="searchMembers" variant="plain" placeholder=" 함께할 스터디원의 이메일을 입력해주세요." class="border note-content px-2 py-2 rounded-lg w-full" />
-          <div class="mt-4 overflow-y-auto h-80 p-4 bg-gray-100 rounded-lg">
-            <ul v-if="members.length > 0" class="text-xl">
-              <li v-for="(member, index) in members" :key="index" @click="selectMember(member)" class="mb-4">
-                <img :src="member.profileImage" class="w-8 inline rounded-full mr-2"/> {{ member.name }} <span class="text-gray-700 ml-2">{{ member.email }}</span>
-              </li>
-            </ul>
-          </div>
-        </v-col>
-        <v-col cols="2" class="d-flex flex-column justify-center items-center text-2xl ">
-          <div>></div>
-          <div><</div>
-        </v-col>
-        <v-col cols="5">
-          <div class="text-gray-500 font-light text-base ml-2  text-xl">초대 요청 대상</div>
-          <div class="mt-2 overflow-y-auto p-4 h-96 bg-gray-100 rounded-lg">
-            <ul v-if="members.length > 0" class="text-xl">
-              <li v-for="(member, index) in selectedMembersName" :key="index" @click="toggleMemberSelection(member)" class="mb-2">
-                <img :src="member.profileImage" class="w-8 inline rounded-full mr-2"/> {{ member.name }} <span class="text-gray-700 ml-2">{{ member.email }}</span>
-              </li>
-            </ul>
-          </div>
-        </v-col>
-      </v-row>
-    </div>
-    <div class="d-flex flex-column mt-24" style="width: 1300px">     
-      <div class="note-title point-font">스터디 날짜</div>
-      <div class="d-flex mt-8 items-center text-xl">
-        <div class="w-36 mr-7">스터디 진행 기간</div>
-        <input id="date" type="date" v-model="startDate" class="border text-gray-500"/>
-        <div class="mx-6">~</div>
-        <input id="date" type="date" v-model="endDate" class="border text-gray-500" />
-      </div>
-      <div class="d-flex mt-7 items-center text-xl">
-        <div class="w-36 mr-7">스터디 요일</div>
-        <v-chip-group
-          @click="convertTagsToBinaryString"
-          v-model="selectedDay"
-          selected-class="text-primary"
-          multiple
-        >
-          <v-chip v-for="tag in tags" :key="tag" :value="tag" size="x-large" class="mx-4">
-            {{ tag }}
-          </v-chip>
-        </v-chip-group>
-      </div>
-      <div class="d-flex mt-7 items-center text-xl">
-        <div class="w-36 mr-7">스터디 시간</div>
-        <input id="time" type="time" v-model="startTime" class="border text-gray-500" />
-        <div class="mx-6">~</div>
-        <input id="time" type="time" v-model="endTime" class="border text-gray-500" />
-      </div>
-    </div>
-    <div class="d-flex flex-column mt-20" style="width: 1300px">
-      <div class="note-title point-font mt-14"> 스터디 추가 정보</div>
-      <input v-model="studyCategory" variant="plain" placeholder="스터디 주제를 작성해주세요." class="my-3 note-content" />
-    </div>
-    <div class="d-flex justify-end mt-40" style="width: 1300px">
-      <v-btn @click="checkForm" size="large" class="" variant="flat" color="#3fb1fa" rounded="xl">스터디 생성</v-btn>
-      <v-btn size="large" class="mx-5" variant="flat" color="#FF6B74" rounded="xl">취소</v-btn>
-    </div>
-  </div>
-</div>
-</v-form>
+  </v-form>
 </template>
 
 <script setup>
@@ -170,7 +221,6 @@ const selectMember = (member) => {
     selectedMembers.value.push(member.memberId)
     selectedMembersName.value.push(member)
   }
-  console.log(selectedMembers.value)
 }
 const toggleMemberSelection = (member) => {
   const index = selectedMembers.value.findIndex((m) => m.id === member.id)
@@ -178,7 +228,6 @@ const toggleMemberSelection = (member) => {
     // 이미 선택된 멤버인 경우 선택 해제
     selectedMembers.value.splice(index, 1)
     selectedMembersName.value.splice(index, 1)
-    console.log(selectedMembers)
   } else {
     // 선택되지 않은 멤버인 경우 선택
     selectedMembers.value.push(member.memberId)
@@ -193,7 +242,6 @@ function convertTagsToBinaryString() {
   for (let tag of tags.value) {
     binaryString += selectedDay.value.includes(tag) ? '1' : '0'
   }
-  console.log(binaryString)
 
   return binaryString
 }
@@ -279,8 +327,8 @@ function createStudy() {
         'Content-Type': 'multipart/form-data'
       }
     })
-    .then((response) => {
-      if (response.data.status === 201) {
+    .then((res) => {
+      if (res.data.status === 201) {
         Swal.fire({
           title: '스터디 생성됨!',
           text: '스터디가 성공적으로 생성되었습니다.',
@@ -289,10 +337,11 @@ function createStudy() {
         }).then((result) => {
           if (result.isConfirmed) {
             // 스터디 페이지로 이동
-            router.push({ name: 'study', params: { id: response.data.data.studyId } })
+            router.push({ name: 'study', params: { id: res.data.data.studyId } })
           }
         })
       } else {
+        console.log(res)
         Swal.fire({
           title: '오류',
           text: '스터디 생성 중 문제가 발생했습니다.',
@@ -372,7 +421,7 @@ function createStudy() {
 
 .search-input {
   border: 1px;
-  border-bottom:#3fb1fa;
+  border-bottom: #3fb1fa;
 }
 ::-webkit-scrollbar {
   border-radius: 30px;
