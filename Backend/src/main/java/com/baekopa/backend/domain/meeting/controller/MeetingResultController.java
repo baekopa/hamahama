@@ -21,7 +21,7 @@ public class MeetingResultController {
 
     @Operation(summary = "미팅 리스트 조회", description = "스터디에 속하는 미팅을 모두 조회합니다. 미팅이 진행된 이후의 미팅들 중 최근에 진행된 것 우선으로 정렬하여 출력하였습니다.")
     @GetMapping("/studies/{study-id}/meetings/end")
-    public ApiResponse<StudyMeetingListDto> getMeetingList(@PathVariable("study-id") Long studyId, @AuthenticationPrincipal Member member){
+    public ApiResponse<InStudyMeetingListDTO> getMeetingList(@PathVariable("study-id") Long studyId, @AuthenticationPrincipal Member member){
         return ApiResponse.of(SuccessCode.MEETING_LIST_GET_SUCCESS, meetingService.getMeetingList(studyId));
     }
 
