@@ -5,6 +5,7 @@ import com.baekopa.backend.domain.meeting.dto.request.*;
 import com.baekopa.backend.domain.meeting.dto.response.*;
 import com.baekopa.backend.domain.meeting.entity.*;
 import com.baekopa.backend.domain.meeting.repository.*;
+import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.note.entity.Note;
 import com.baekopa.backend.domain.note.entity.SubmittedNote;
 import com.baekopa.backend.domain.note.repository.NoteRepository;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -356,4 +358,58 @@ public class MeetingService {
     }
 
 
+    public MeetingDifferenceResponseDTO createDifference(Long meetingId, Member member) {
+
+        // SubmittedNote 조회
+        SubmittedNote submittedNote = getSubmittedNote(meetingId, member);
+
+        // 내 요약문
+        String myNoteSummary = submittedNote.getNote().getSummary();
+
+        // 전체 요약문
+        String meetingSummary = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()))
+                .getNoteSummary();
+
+        // 두 요약문 함께 전달
+        List<String> submittedNoteList = Arrays.asList(myNoteSummary, meetingSummary);
+
+        DifferenceTextListDTO differenceTextListDTO = DifferenceTextListDTO.of(submittedNoteList);
+        String requestBody = convertObjectToJson(differenceTextListDTO);
+
+        String differenceUrl = fastUrl + "/studies/difference";
+
+        // fast api 통신
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        MeetingDifferenceResponseDTO meetingDifferenceResponseDTO =
+                restTemplate.postForObject(differenceUrl, requestEntity, MeetingDifferenceResponseDTO.class);
+
+        submittedNote.updateDifferenceContent(meetingDifferenceResponseDTO.getDifference());
+
+        return meetingDifferenceResponseDTO;
+    }
+
+    private SubmittedNote getSubmittedNote(Long meetingId, Member member) {
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+
+        // Member와 Meeting을 기준으로 SubmittedNote 조회
+        return submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
+                .stream()
+                .filter(submittedNote -> submittedNote.getNote().getMember().getId() == member.getId())
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_FOUND, ErrorCode.NOTE_NOT_FOUND.getMessage()));
+
+    }
+
+    private String convertObjectToJson(Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new BusinessException(ErrorCode.JSON_PARSE_ERROR, ErrorCode.JSON_PARSE_ERROR.getMessage());
+        }
+    }
 }

@@ -5,12 +5,13 @@ from fastapi.responses import JSONResponse
 from pyannote.audio import Pipeline
 from pydub import AudioSegment
 from tempfile import NamedTemporaryFile
-from model.request_dto import OriginalText, QuizRequest, OriginalTextList
-from model.response_dto import SummaryDTO, KeywordDTO, QuizDTO, TailQuestionDTO, UniquificationDTO
+from model.request_dto import OriginalText, QuizRequest, OriginalTextList, DifferenceRequest
+from model.response_dto import SummaryDTO, KeywordDTO, QuizDTO, TailQuestionDTO, UniquificationDTO, DifferenceDTO
 from service.text_processing import process_text, process_for_remind_quiz
 from service.summary_pre_service import do_summary
 from service.keyword_quiz_pre_service import do_keyword, do_quiz
 from service.tail_question_service import do_tail_question
+from service.difference_service import do_difference
 from service.uniquification_service import do_uniquification
 from service.audio_to_text_service import load_models, set_pipeline, convert_audio_ffmpeg, millisec, remove_time_from_text, clean_up_files, convert_audio_sample_rate
 
@@ -53,6 +54,12 @@ async def tail_question_text(origin_dto: OriginalTextList):
     
     uniquification = do_uniquification(origin_dto.submittedNoteList)
     return UniquificationDTO(uniquification=uniquification)
+
+@router.post("/difference", tags=["다른 내용"], response_model=DifferenceDTO)
+async def tail_question_text(origin_dto: DifferenceRequest):
+    
+    difference = do_difference(origin_dto.differenceTextList)
+    return DifferenceDTO(difference=difference)
 
 
 

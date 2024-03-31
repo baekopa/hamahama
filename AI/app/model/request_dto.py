@@ -9,3 +9,7 @@ class QuizRequest(BaseModel):
 
 class OriginalTextList(BaseModel):
     submittedNoteList: List[str]
+
+
+class DifferenceRequest(BaseModel):
+    differenceTextList: List[str]
