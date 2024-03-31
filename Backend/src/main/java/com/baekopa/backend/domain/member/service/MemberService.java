@@ -130,7 +130,7 @@ public class MemberService {
             List<MeetingListDto> meetingList = meetingRepository.findAllByStudyAndDeletedAtIsNullAndStudyAtBetweenOrderByStudyAtAsc(st.getStudy(), weekStartDate, weekEndDate)
                     .stream().map(MeetingListDto::from).toList();
 
-            if (meetingList == null) {
+            if (meetingList.size() == 0) {
                 continue;
             }
 
