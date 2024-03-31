@@ -10,6 +10,7 @@ import com.baekopa.backend.global.response.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +34,12 @@ public class MeetingScriptController {
 
     @Operation(summary = "스터디 내용 STT 추출", description = "STT 텍스트 파일을 저장합니다.")
     @PostMapping("/studies/{studyId}/meetings/{meetingId}/record")
-    public ApiResponse<Map<String, Long>> saveMeetingScript(@PathVariable(value="studyId") Long studyId,
+    public CompletableFuture<ApiResponse<Map<String, Long>>> saveMeetingScript(@PathVariable(value="studyId") Long studyId,
                                                             @PathVariable(value="meetingId") Long meetingId,
                                                             @RequestParam("file") MultipartFile file) {
 
-        return ApiResponse.of(SuccessCode.MEETING_SCRIPT_CREATE_SUCCESS, meetingScriptService.saveMeetingScript(studyId, meetingId, file));
+        CompletableFuture<Map<String, Long>> futureResult = meetingScriptService.saveMeetingScriptAsync(studyId, meetingId, file);
+        return futureResult.thenApply(result -> ApiResponse.of(SuccessCode.MEETING_SCRIPT_CREATE_SUCCESS, result));
     }
 
     @Operation(summary = "스터디 전문 조회", description = "미팅 전문을 조회합니다")
