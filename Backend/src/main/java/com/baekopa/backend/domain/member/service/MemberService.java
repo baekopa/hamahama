@@ -263,13 +263,16 @@ public class MemberService {
 
                 log.info(" 미팅 번호 : {}, 스터디 번호 : {}", meeting.getId(), meeting.getStudy().getId());
 
-                RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meeting)
-                        .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
+                RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meeting).orElse(null);
+
+                if (remindQuiz == null) {
+                    continue;
+                }
 
                 // 현재 시간이 openDate 이전인지 확인
                 boolean isOpened = LocalDateTime.now().isAfter(remindQuiz.getOpenDate()) || LocalDateTime.now().isEqual(remindQuiz.getOpenDate());
 
-                responseDtoList.add(RemindQuizListResponseDto.of(remindQuiz.getId(), meeting.getTopic(), st.getStudy().getTitle(), meeting.getStudyAt(),
+                responseDtoList.add(RemindQuizListResponseDto.of(remindQuiz.getId(), meeting.getTopic(), meeting.getStudy().getId(), st.getStudy().getTitle(), meeting.getStudyAt(),
                         remindQuiz.getOpenDate(), isOpened, remindQuiz.getModifiedAt()));
 
 
