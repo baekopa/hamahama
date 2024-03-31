@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RemindQuizResponseDto {
+public class RemindQuizListResponseDto {
 
     private Long remindQuizId;
     private String topic; // meeting topic
@@ -25,7 +25,7 @@ public class RemindQuizResponseDto {
     private LocalDateTime lastModifiedAt;
 
     @Builder
-    private RemindQuizResponseDto(Long remindQuizId, String topic, String studyName, LocalDateTime studyAt, LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
+    private RemindQuizListResponseDto(Long remindQuizId, String topic, String studyName, LocalDateTime studyAt, LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
         this.remindQuizId = remindQuizId;
         this.topic = topic;
         this.studyAt = studyAt;
@@ -35,7 +35,7 @@ public class RemindQuizResponseDto {
         this.lastModifiedAt = lastModifiedAt;
     }
 
-    public static RemindQuizResponseDto of(Long remindQuizId, String topic, String studyName, LocalDateTime studyAt, LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
+    public static RemindQuizListResponseDto of(Long remindQuizId, String topic, String studyName, LocalDateTime studyAt, LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
 
         return builder().remindQuizId(remindQuizId)
                 .topic(topic)
@@ -47,7 +47,7 @@ public class RemindQuizResponseDto {
                 .build();
     }
 
-    public static RemindQuizResponseDto of(Study study, Meeting meeting, RemindQuiz remindQuiz) {
+    public static RemindQuizListResponseDto of(Study study, Meeting meeting, RemindQuiz remindQuiz) {
         return builder()
                 .remindQuizId(remindQuiz.getId())
                 .topic(meeting.getTopic())
