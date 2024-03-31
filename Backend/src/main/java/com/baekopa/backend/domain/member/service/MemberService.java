@@ -19,6 +19,7 @@ import com.baekopa.backend.domain.member.repository.MemberRepository;
 import com.baekopa.backend.domain.note.dto.response.NoteListResponseDto;
 import com.baekopa.backend.domain.note.entity.Note;
 import com.baekopa.backend.domain.note.repository.NoteRepository;
+import com.baekopa.backend.domain.note.repository.SubmittedNoteRepository;
 import com.baekopa.backend.domain.notification.dto.response.NotificationResponseDto;
 import com.baekopa.backend.domain.notification.repository.NotificationRepository;
 import com.baekopa.backend.domain.study.dto.response.StudyListResponseDto;
@@ -61,7 +62,7 @@ public class MemberService {
     private final NoteRepository noteRepository;
     private final RemindQuizRepository remindQuizRepository;
     private final NotificationRepository notificationRepository;
-    private final StudyRepository studyRepository;
+    private final SubmittedNoteRepository submittedNoteRepository;
 
     private final RemindQuizService remindQuizService;
 
@@ -296,7 +297,7 @@ public class MemberService {
         StudyListResponseDto personalStudy = StudyListResponseDto.from(studyMemberRepository.findPersonalStudy(member, StudyType.PERSONAL).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "개인 스터디 조회에 실패했습니다")));
 
         List<NoteListResponseDto> noteList = getRecentNotes(member);
-        List<NearMeetingStudyDto> studyList = getRecentStudy(member, 5);
+        List<NearMeetingStudyDto> studyList = getRecentStudy(member, 4);
 
         return MemberMainResponseDto.of(personalStudy, noteList, studyList);
 
@@ -306,7 +307,9 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<NoteListResponseDto> getRecentNotes(Member member) {
 
-        return noteRepository.findTop5ByMemberAndDeletedAtIsNullOrderByModifiedAtDesc(member).stream().map(NoteListResponseDto::from).toList();
+        List<Note> noteList = noteRepository.findTop5ByMemberAndDeletedAtIsNullOrderByModifiedAtDesc(member);
+
+        return noteList.stream().map((note) -> NoteListResponseDto.of(note, submittedNoteRepository.existsByNoteAndDeletedAtIsNull(note))).toList();
     }
 
     // 내 스터디 최근 몇 개 조회
