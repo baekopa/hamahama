@@ -1,6 +1,7 @@
 package com.baekopa.backend.domain.study.service;
 
 import com.baekopa.backend.domain.meeting.dto.request.CreateMeetingRequestDto;
+import com.baekopa.backend.domain.meeting.dto.request.UpdateMeetingRequestDto;
 import com.baekopa.backend.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
@@ -52,6 +53,11 @@ public class StudyMeetingService {
 
         return meetingRepository.findAllByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(study, current)
                 .stream().map(this::convertToDto).toList();
+
+    }
+
+    public MeetingListDto convertToDto(Meeting meeting) {
+        return MeetingListDto.of(meeting.getId(), meeting.getTopic(), meeting.getStudyAt());
     }
 
 
@@ -75,8 +81,22 @@ public class StudyMeetingService {
                 meeting.getNoteSummary());
     }
 
-    private MeetingListDto convertToDto(Meeting meeting) {
-        return MeetingListDto.of(meeting.getId(), meeting.getTopic(), meeting.getStudyAt());
-    }
+    @Transactional
+    public List<MeetingListDto> updateMeeting(Long studyId, Long meetingId, UpdateMeetingRequestDto requestDto) {
 
+        Meeting meeting = meetingRepository.findByIdAndDeletedAtIsNull(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+
+        // 수정
+        if (requestDto.getTopic() != null) {
+            meeting.updateTopic(requestDto.getTopic());
+        }
+
+        if (requestDto.getStudyAt() != null) {
+            meeting.updateStudyAt(requestDto.getStudyAt());
+        }
+
+        return getScheduledMeeting(studyId);
+
+    }
 }

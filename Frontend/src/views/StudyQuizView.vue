@@ -6,9 +6,15 @@
         <v-list lines="two" density="compact" nav>
           <v-list-item three-line>
             <v-list-item-content class="align-self-center">
-              <v-list-item-title class="ml-14 mt-10"><div class="text-2xl font-bold">하마하마스터디</div></v-list-item-title>
+              <v-list-item-title class="ml-14 mt-10"
+                ><div class="text-2xl font-bold">
+                  {{ studyStore.studyTitle }}
+                </div></v-list-item-title
+              >
               <v-list-item-subtitle class="ml-14 mt-1"
-                ><div class="text-base">CS면접</div></v-list-item-subtitle
+                ><div class="text-base">
+                  {{ studyStore.studyDescription }}
+                </div></v-list-item-subtitle
               >
             </v-list-item-content>
           </v-list-item>
@@ -21,23 +27,25 @@
               color="primary"
               rounded="xl"
               class="pl-6 text-xl"
-            >스터디 홈</v-list-item>
+              >스터디 홈</v-list-item
+            >
             <v-list-item
               @click="GoSummary()"
               prepend-icon="mdi-forum"
-             value="summary"
+              value="summary"
               color="primary"
               rounded="xl"
               class="pl-6 text-xl"
-            >요약</v-list-item>
+              >요약</v-list-item
+            >
             <v-list-item
-              @click="GoQuiz()"
               prepend-icon="mdi-help-box"
               value="quiz"
               color="primary"
               rounded="xl"
               class="pl-6 text-xl"
-            >리마인드 퀴즈</v-list-item>
+              >리마인드 퀴즈</v-list-item
+            >
             <v-list-item
               @click="GoSetting()"
               prepend-icon="mdi-account-key"
@@ -45,7 +53,8 @@
               color="primary"
               rounded="xl"
               class="pl-6 text-xl"
-            >스터디 관리</v-list-item>
+              >스터디 관리</v-list-item
+            >
           </div>
         </v-list>
       </v-navigation-drawer>
@@ -56,17 +65,27 @@
             <div class="d-flex justify-between">
               <div class="title d-flex flex-column">
                 <span class="text-2xl ml-5 font-bold">
-                  <span class="tossface text-3xl">📭 </span><span class="point-color font-bold">{{"하마하마스터디"}}</span>의 리마인드 퀴즈</span>
-                  <p class="text-base ml-5 mt-2 italic text-gray-500"><span>{{"스터디에서 학습한 내용을 복습해보세요."}}</span></p>
+                  <span class="tossface text-3xl">📭 </span
+                  ><span class="point-color font-bold">{{ studyStore.studyTitle }}</span
+                  >의 리마인드 퀴즈</span
+                >
+                <p class="text-base ml-5 mt-2 italic text-gray-500">
+                  <span>{{ '스터디에서 학습한 내용을 복습해보세요.' }}</span>
+                </p>
               </div>
             </div>
-            <v-divider :thickness="2" class="border-opacity-50 my-3" style="width:1300px" color="info"></v-divider>
+            <v-divider
+              :thickness="2"
+              class="border-opacity-50 my-3"
+              style="width: 1300px"
+              color="info"
+            ></v-divider>
 
-            <v-card rounded="0" style="width:1300px" variant="flat" class="study-list">
+            <v-card rounded="0" style="width: 1300px" variant="flat" class="study-list">
               <div class="study-section">
-                <v-row class="pt-10 pl-10" v-for="study in studyList" :key="study.id">
+                <v-row class="pt-10 pl-10" v-for="study in studyList" :key="study.remindQuizId">
                   <v-card
-                    @click="GoQuizDetail(study.id)"
+                    @click="GoQuizDetail(study.remindQuizId)"
                     width="950"
                     height="72"
                     variant="tonal"
@@ -74,32 +93,53 @@
                     color=""
                   >
                     <div class="truncate-text">
-                      <span>{{ study.subject }}</span>
+                      <span>{{ study.topic }}</span>
                     </div>
                     <div class="d-flex items-center">
                       <div>{{ study.studyName }}</div>
-                      <v-divider :thickness="2" class="border-opacity-100 mx-3" style="height:50px" vertical color="info"></v-divider>
-                      <div>미팅: {{ study.meetingDate }}</div>
+                      <v-divider
+                        :thickness="2"
+                        class="border-opacity-100 mx-3"
+                        style="height: 50px"
+                        vertical
+                        color="info"
+                      ></v-divider>
+                      <div>미팅: {{ study.studyAt }}</div>
                     </div>
                   </v-card>
                   <div class="date d-flex flex-column ml-5 justify-center">
-                    <span>공개일: {{ study.openDate }}</span>
-                    <span>최종 수정 일시: {{ study.lastUpdate }}</span>
+                    <span>공개일: {{ study.openAt }}</span>
+                    <span>최종 수정 일시: {{ study.lastModifiedAt }}</span>
                   </div>
                 </v-row>
               </div>
             </v-card>
           </div>
 
+          <!-- 선택한 퀴즈  -->
           <div v-else class="quiz-detail">
             <div class="d-flex justify-between">
               <div class="title d-flex flex-column">
                 <span class="text-2xl ml-5 font-bold">
-                  <span class="text-2xl font-normal" @click="TogglePage">< </span><span class="tossface text-3xl">📌 </span><span class="point-color font-bold">{{studyList[0].subject}}</span>에 대한 리마인드 퀴즈</span>
-                  <p class="text-base ml-5 mt-2 italic text-gray-500"><span>{{studyList[0].openDate}} 에 공개된 {{studyList[0].studyName}}의 퀴즈입니다.</span></p>
+                  <span class="text-2xl font-normal" @click="TogglePage">< </span
+                  ><span class="tossface text-3xl">📌 </span
+                  ><span class="point-color font-bold">{{ studyList[0].subject }}</span
+                  >에 대한 리마인드 퀴즈</span
+                >
+                <p class="text-base ml-5 mt-2 italic text-gray-500">
+                  <span
+                    >{{ studyList[0].openDate }} 에 공개된 {{ studyList[0].studyName }}의
+                    퀴즈입니다.</span
+                  >
+                </p>
               </div>
             </div>
-            <v-divider :thickness="2" class="border-opacity-50 my-3" style="width:1300px" color="info"></v-divider>
+            <v-divider
+              :thickness="2"
+              class="border-opacity-50 my-3"
+              style="width: 1300px"
+              color="info"
+            ></v-divider>
 
             <div class="keyword-section">
               <div class="d-flex py-6 pl-12 align-center">
@@ -122,8 +162,10 @@
             <div class="quiz-section mt-16">
               <h3>리마인드 퀴즈</h3>
               <v-list>
-                <v-list-item v-for="(quiz, index) in remindQuizList" :key="quiz.id"
-                  ><p>Q{{ index + 1 }}.{{ quiz.quiz }}</p>
+                <v-list-item v-for="(quiz, index) in remindQuizList" :key="quiz.id">
+                  <v-list-item-content>
+                    <p>Q{{ index + 1 }}.{{ quiz.quiz }}</p>
+                  </v-list-item-content>
                 </v-list-item>
               </v-list>
             </div>
@@ -138,7 +180,9 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import instance from '@/api/index'
+import { useStudyStore } from '@/stores/study'
 
+const studyStore = useStudyStore()
 const route = useRoute()
 const router = useRouter()
 const studyId = route.params.id
@@ -182,67 +226,76 @@ const selectedStudyId = ref()
 
 const studyList = ref([
   {
-    id: 1,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당1',
+    remindQuizId: 1,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당1',
     studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.04.01',
+    lastModifiedAt: '2024.03.22',
+    opened: false
   },
   {
-    id: 2,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당2',
+    remindQuizId: 2,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당2',
     studyName: '스터디 명수는 열두살',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
   },
   {
-    id: 3,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당3',
+    remindQuizId: 3,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당3',
     studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
   },
   {
-    id: 4,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
+    remindQuizId: 4,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
     studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
   },
   {
-    id: 5,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
+    remindQuizId: 5,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
     studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
   },
   {
-    id: 6,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
+    remindQuizId: 6,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
     studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
   },
   {
-    id: 7,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
+    remindQuizId: 7,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
     studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
   }
 ])
 
 const LoadQuizList = () => {
-  instance.get(`api/studies/${studyId}/settings`).then((res) => {
+  instance.get(`api/studies/${studyId}/remind-quiz`).then((res) => {
     const data = res.data.data
+    console.log(res)
     if (res.data.status == 200) {
+      studyList.value = res.data.data
     }
   })
 }

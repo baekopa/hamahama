@@ -10,6 +10,7 @@ import java.time.ZoneId;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RemindQuizDTO {
+
     @JsonFormat(pattern = "yyy-MM-dd HH:mm")
     private LocalDateTime openDate;
     private String quiz;
