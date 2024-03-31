@@ -367,9 +367,12 @@ public class MeetingService {
         String myNoteSummary = submittedNote.getNote().getSummary();
 
         // 전체 요약문
-        String meetingSummary = meetingRepository.findById(meetingId)
+        //String meetingSummary = meetingRepository.findById(meetingId)
+        //        .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()))
+        //        .getNoteSummary();
+        String meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()))
-                .getNoteSummary();
+                .getSummaryContent();
 
         // 두 요약문 함께 전달
         List<String> submittedNoteList = Arrays.asList(myNoteSummary, meetingSummary);
