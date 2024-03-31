@@ -9,5 +9,14 @@ export const useStudyStore = defineStore('study', () => {
   const studyCategory = ref('')
   const studyMembers = ref([])
 
-  return { studyTitle, studyDescription, studyBackgroundImage, studyCategory, studyMembers }
+  const studyAt = ref('')
+
+  return {
+    studyTitle,
+    studyDescription,
+    studyBackgroundImage,
+    studyCategory,
+    studyMembers,
+    studyAt
+  }
 })
