@@ -121,7 +121,7 @@
                   <v-btn @click="InviteStudy()">초대하기</v-btn>
                 </div>
                 <div class="member-list">
-                  <div class="d-flex my-4 align-center" v-for="member in studyStore.studyMembers">
+                  <div class="d-flex my-4 align-center" v-for="member in studyStore.studyMembers" :key="member.id">
                     <img class="user-profile mr-4" :src="member.image" alt="profile" width="50px" />
                     <p class="mr-2" v-if="member.type == 'STUDY_LEADER'">스터디장</p>
                     <p class="mr-2" v-else>스터디원</p>
