@@ -3,6 +3,7 @@ package com.baekopa.backend.domain.member.service;
 import com.baekopa.backend.domain.meeting.dto.NearMeetingStudyDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
 import com.baekopa.backend.domain.meeting.dto.response.RemindQuizListResponseDto;
+import com.baekopa.backend.domain.meeting.dto.response.RemindQuizResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.entity.RemindQuiz;
