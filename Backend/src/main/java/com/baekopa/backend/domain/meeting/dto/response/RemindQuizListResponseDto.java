@@ -15,6 +15,7 @@ public class RemindQuizListResponseDto {
 
     private Long remindQuizId;
     private String topic; // meeting topic
+    private Long studyId;
     private String studyName;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime studyAt;
@@ -25,21 +26,24 @@ public class RemindQuizListResponseDto {
     private LocalDateTime lastModifiedAt;
 
     @Builder
-    private RemindQuizListResponseDto(Long remindQuizId, String topic, String studyName, LocalDateTime studyAt, LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
+    private RemindQuizListResponseDto(Long remindQuizId, String topic, Long studyId, String studyName, LocalDateTime studyAt, LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
         this.remindQuizId = remindQuizId;
         this.topic = topic;
         this.studyAt = studyAt;
+        this.studyId = studyId;
         this.studyName = studyName;
         this.openAt = openAt;
         this.isOpened = isOpened;
         this.lastModifiedAt = lastModifiedAt;
     }
 
-    public static RemindQuizListResponseDto of(Long remindQuizId, String topic, String studyName, LocalDateTime studyAt, LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
+    public static RemindQuizListResponseDto of(Long remindQuizId, String topic, Long studyId, String studyName, LocalDateTime studyAt,
+                                               LocalDateTime openAt, boolean isOpened, LocalDateTime lastModifiedAt) {
 
         return builder().remindQuizId(remindQuizId)
                 .topic(topic)
                 .studyName(studyName)
+                .studyId(studyId)
                 .studyAt(studyAt)
                 .openAt(openAt)
                 .isOpened(isOpened)

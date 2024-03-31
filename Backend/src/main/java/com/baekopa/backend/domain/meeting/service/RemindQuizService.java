@@ -38,10 +38,13 @@ public class RemindQuizService {
 
             log.warn("미팅 id : {}", meeting.getId());
 
-            RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meeting)
-                    .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
+            RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meeting).orElse(null);
 
-            response.add(RemindQuizListResponseDto.of(remindQuiz.getId(), meeting.getTopic(), meeting.getStudy().getTitle(),
+            if (remindQuiz == null) {
+                continue;
+            }
+
+            response.add(RemindQuizListResponseDto.of(remindQuiz.getId(), meeting.getTopic(), meeting.getStudy().getId(), meeting.getStudy().getTitle(),
                     meeting.getStudyAt(), remindQuiz.getOpenDate(),
                     LocalDateTime.now().isAfter(remindQuiz.getOpenDate()) || LocalDateTime.now().isEqual(remindQuiz.getOpenDate()),
                     remindQuiz.getModifiedAt()));
