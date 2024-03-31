@@ -67,7 +67,6 @@ public class SubmittedNoteService {
             // 요청 헤더 설정
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-
             HttpEntity<Object> requestEntity = new HttpEntity<>(data, headers);
 
             // api 요청
