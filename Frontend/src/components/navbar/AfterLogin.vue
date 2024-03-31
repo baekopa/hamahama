@@ -13,7 +13,7 @@
             ></v-btn
           >
 
-          <div class="text-center justify-center d-flex align-center">
+          <div class="text-center justify-center d-flex align-center mr-5">
             <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
               <template #activator="{ props }">
                 <button @click="LoadNoti" v-if="isAlarmExist" v-bind="props">
@@ -24,7 +24,7 @@
                 </button>
               </template>
 
-              <v-card min-width="300">
+              <v-card min-width="300" class="mt-4">
                 <v-list>
                   <v-list-item
                     prepend-avatar="https://cdn.vuetifyjs.com/images/john.jpg"
@@ -58,12 +58,14 @@
           <div class="my-page my-auto">
             <v-menu offset-y>
               <template v-slot:activator="{ props: activatorProps }">
-                <img
-                  :src="authStore.userImgUrl"
-                  alt="userImg"
-                  v-bind="activatorProps"
-                  class="h-10"
-                />
+                <button class="flex">
+                  <img
+                    :src="authStore.userImgUrl"
+                    alt="userImg"
+                    v-bind="activatorProps"
+                    class="h-10 rounded-circle"
+                  />
+                </button>
               </template>
 
               <v-list>
@@ -89,9 +91,6 @@ const router = useRouter()
 const isAlarmExist = ref(true)
 
 const menu = ref(false)
-const message = ref(false)
-const hints = ref(true)
-const activatorProps = ref(false)
 
 // sse 추후 변경 예정
 const baseURL = import.meta.env.VITE_BASE_URL
@@ -124,7 +123,7 @@ const notiList = ref([
 // 알림 종류, 내용, 시간
 const LoadNoti = () => {
   instance
-    .get(`/api/alarm`)
+    .get(`api/alarm`)
     .then((res) => {
       console.log(res)
     })

@@ -7,17 +7,20 @@
           <v-list-item three-line>
             <v-list-item-content class="align-self-center">
               <v-list-item-title class="ml-14 mt-10"
-                ><div class="text-2xl font-bold">하마하마스터디</div></v-list-item-title
+                ><div class="text-2xl font-bold">
+                  {{ studyStore.studyTitle }}
+                </div></v-list-item-title
               >
               <v-list-item-subtitle class="ml-14 mt-1"
-                ><div class="text-base">CS면접</div></v-list-item-subtitle
+                ><div class="text-base">
+                  {{ studyStore.studyDescription }}
+                </div></v-list-item-subtitle
               >
             </v-list-item-content>
           </v-list-item>
 
           <div class="ml-8 mt-8">
             <v-list-item
-              @click="GoHome()"
               prepend-icon="mdi-view-dashboard"
               value="home"
               color="primary"
@@ -66,7 +69,7 @@
                 <span class="tossface text-3xl">📖 </span> 다음 미팅</span
               >
               <p class="text-base ml-5 mt-2 italic text-gray-500">
-                <span>{{ '하마하마스터디' }}</span
+                <span>{{ studyStore.studyTitle }}</span
                 >의 다음 미팅 일정입니다.
               </p>
             </div>
@@ -81,11 +84,11 @@
             <div class="d-flex flex-column">
               <div class="mt-10 ml-5 text-2xl font-semibold">
                 <span class="tossface mr-2">💬</span>
-                {{ 'CS 면접 스터디 3회차 - 네트워크와 OSI 7계층' }}
+                {{ submittedNotes.topic }}
               </div>
               <div class="mt-5 ml-5 text-2xl font-bold">
                 <span class="tossface mr-2">📅</span>
-                {{ '2024-03-30 13:00' }}
+                {{ submittedNotes.studyAt }}
               </div>
             </div>
             <div></div>
@@ -145,10 +148,9 @@
               <div class="d-flex align-center h-10 text-lg font-bold">
                 <p class="text-lg font-bold mr-4">제출된 노트</p>
                 <v-chip-group v-model="noteToggle" variant="text" mandatory>
-                  <v-chip class="h-10" @click="console.log('dd')" value="-1">전체요약</v-chip>
+                  <v-chip class="h-10" value="-1">전체요약</v-chip>
                   <v-chip
                     class="h-10"
-                    @click="console.log('dd')"
                     v-for="(note, index) in submittedNotes.submittedNotes"
                     :key="note.id"
                     :value="index"
@@ -180,9 +182,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStudyStore } from '@/stores/study'
 import { useAudioStore } from '@/stores/audioStore'
-// import axios from 'axios'
 import instance from '@/api'
-import mainImage from '@/assets/image/home/main2.png'
 
 const studyStore = useStudyStore()
 const audioStore = useAudioStore()
@@ -194,48 +194,9 @@ const studyId = route.params.id
 const noteToggle = ref(-1)
 
 const submittedNotes = ref({
-  id: 1,
-  topic: '스터디 주제',
-  studyAt: '2024-03-22 14:00',
-  submittedNotes: [
-    {
-      id: 1,
-      originText:
-        '김이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. ',
-      summaryText:
-        '이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. ',
-      writerName: '김수민',
-      writerImage:
-        'https://isplus.com/data/isp/image/2020/08/20/isp95ee4006-d53b-4d8c-8205-cb7d81752b07.jpg'
-    },
-    {
-      id: 2,
-      originText:
-        '이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. ',
-      summaryText:
-        '이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. ',
-      writerName: '이수민',
-      writerImage:
-        'https://isplus.com/data/isp/image/2020/08/20/isp95ee4006-d53b-4d8c-8205-cb7d81752b07.jpg'
-    },
-    {
-      id: 3,
-      originText:
-        '여 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. 이 노트의 내용은 다음과 같다. ',
-      summaryText:
-        '이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. 이 노트의 요약 내용. ',
-      writerName: '여아정',
-      writerImage:
-        'https://isplus.com/data/isp/image/2020/08/20/isp95ee4006-d53b-4d8c-8205-cb7d81752b07.jpg'
-    }
-  ],
   noteSummary:
     '전체 노트 요약과 꼬리 질문이 여기에 기록됩니다. 전전체 노트 요약과 꼬리 질문이 여기에 기록됩니다.'
 })
-
-const studyAt = ref('')
-const topic = ref('')
-// const submittedNotes = ref([])
 
 const isNextMeetingExist = ref(false)
 
@@ -253,6 +214,7 @@ function LoadStudyData() {
   instance.get(`api/studies/${studyId}/settings`).then((res) => {
     const data = res.data.data
     if (res.data.status == 200) {
+      console.log(data)
       studyStore.studyTitle = data.title
       studyStore.studyDescription = data.description
       studyStore.studyBackgroundImage = data.backgroundImage
@@ -264,15 +226,13 @@ function LoadStudyData() {
 
 function LoadNextSchedule() {
   instance
-    .get(`/api/studies/${studyId}`)
+    .get(`api/studies/${studyId}`)
     .then((res) => {
-      console.log(res)
+      console.log(res.data)
       if (res.data.status == 200 && res.data.data != null) {
         isNextMeetingExist.value = true
+        submittedNotes.value = res.data.data
         meetingID.value = res.data.data.id
-        studyAt.value = res.data.data.studyAt
-        topic.value = res.data.data.topic
-        submittedNotes.value = res.data.data.submittedNotes
       }
     })
     .catch((err) => {
