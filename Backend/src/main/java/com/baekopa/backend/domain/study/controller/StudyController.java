@@ -55,7 +55,6 @@ public class StudyController {
         return ApiResponse.of(SuccessCode.STUDY_UPDATE_BASIC_SUCCESS, studyService.updateStudyBasicInfo(studyId, requestDto));
     }
 
-    // TODO: 스터디 리마인드 퀴즈 목록 조회
     @Operation(summary = "스터디 리마인드 퀴즈 목록", description = "스터디에서 생성됐던 리마인드 퀴즈 리스트")
     @GetMapping("/studies/{study-id}/remind-quiz")
     public ApiResponse<List<RemindQuizListResponseDto>> getStudyRemindQuiz(@PathVariable(value = "study-id") Long studyId) {

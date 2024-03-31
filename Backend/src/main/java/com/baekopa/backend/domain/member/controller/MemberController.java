@@ -1,6 +1,7 @@
 package com.baekopa.backend.domain.member.controller;
 
 import com.baekopa.backend.domain.meeting.dto.response.RemindQuizListResponseDto;
+import com.baekopa.backend.domain.meeting.dto.response.RemindQuizResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
 import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
 import com.baekopa.backend.domain.member.dto.response.MemberMainResponseDto;
@@ -102,14 +103,19 @@ public class MemberController {
         return ApiResponse.of(SuccessCode.REMIND_QUIZ_GET_SUCCESS, memberService.getMyRemindQuiz(member));
     }
 
-    //TODO: 리마인드 퀴즈 조회
-
 
     @Operation(summary = "메인 페이지 조회", description = "메인 페이지 개인 데이터 조회")
     @GetMapping("/main")
     public ApiResponse<MemberMainResponseDto> getMemberMainInfo(@AuthenticationPrincipal Member member) {
 
         return ApiResponse.of(SuccessCode.MEMBER_MAIN_GET_SUCCESS, memberService.getMemberMainInfo(member));
+    }
+
+    @Operation(summary = "마이페이지 리마인드 퀴즈 상세 조회", description = "마이페이지에서 리마인드 퀴즈 상세 조회")
+    @GetMapping("/remind-quiz/{remind-quiz-id}")
+    public ApiResponse<RemindQuizResponseDto> getRemindQuiz(@PathVariable(value = "remind-quiz-id") Long remindQuizId) {
+
+        return ApiResponse.of(SuccessCode.REMIND_QUIZ_GET_SUCCESS, memberService.getRemindQuiz(remindQuizId));
     }
 
 

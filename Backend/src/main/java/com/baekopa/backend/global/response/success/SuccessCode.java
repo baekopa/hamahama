@@ -73,9 +73,10 @@ public enum SuccessCode {
     MEETING_RESULT_GET_SUCCESS(200,"미팅 산출물에 대한 조회가 성공했습니다."),
     MEETING_SCRIPT_GET_SUCCESS(200,"미팅 전문 조회 성공했습니다."),
     MEETING_KEYWORD_CREATE_SUCCESS(201,"새로운 키워드 생성에 성공했습니다."),
-    MEETING_KEYWORD_UPDATE_SUCCESS(201, "키워드 수정에 성공했습니다."),
+    MEETING_KEYWORD_UPDATE_SUCCESS(204, "키워드 수정에 성공했습니다."),
     MEETING_LIST_GET_SUCCESS(200,"스터디의 미팅 리스트 조회에 성공했습니다."),
-    MEETING_SCRIPT_UPDATE_SUCCESS(201, "미팅 스크립트 수정에 성공하였습니다."),
+    MEETING_SCRIPT_UPDATE_SUCCESS(204, "미팅 스크립트 수정에 성공하였습니다."),
+    MEETING_DIFFERENCE_CREATE_SUCCESS(201, "요약본 차이 생성에 성공하였습니다."),
     MEETING_UPDATE_SUCCESS(204, "스터디의 미팅 일정 수정에 송공했습니다."),
 
 
@@ -89,9 +90,9 @@ public enum SuccessCode {
 
     // Notification
     NOTIFICATION_CREATE_SUCCESS(201, "알림 구독에 성공했습니다."),
-    NOTIFICATION_GET_SUCCESS(201, "알림 리스트 조회에 성공했습니다."),
-    NEW_NOTIFICATION_GET_SUCCESS(201, "새로운 알림 조회에 성공했습니다."),
-    NOTIFICATION_UPDATE_SUCCESS(201, "알림 확인에 성공했습니다.");
+    NOTIFICATION_GET_SUCCESS(200, "알림 리스트 조회에 성공했습니다."),
+    NEW_NOTIFICATION_GET_SUCCESS(200, "새로운 알림 조회에 성공했습니다."),
+    NOTIFICATION_UPDATE_SUCCESS(204, "알림 확인에 성공했습니다.");
 
     /**
      * ******************************* Success Code Field ***************************************
