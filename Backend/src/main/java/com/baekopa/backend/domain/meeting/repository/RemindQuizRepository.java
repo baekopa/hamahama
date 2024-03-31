@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface RemindQuizRepository extends JpaRepository<RemindQuiz, Long> {
     Optional<RemindQuiz> findByMeetingAndDeletedAtIsNull(Meeting meeting);
 
+    Optional<RemindQuiz> findByIdAndDeletedAtIsNull(Long remindQuizId);
+
 }
