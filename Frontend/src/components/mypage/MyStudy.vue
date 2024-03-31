@@ -9,15 +9,31 @@
     <v-card rounded="0" variant="flat" class="note-list">
       <div class="list-section">
         <v-row class="pa-10">
+          <v-col cols="12" sm="6" md="4" lg="3" class="mb-8 d-flex align-center">
+            <v-card
+              @click="AddStudy"
+              variant="tonal"
+              color="#3FB1FA"
+              class="rounded-xl d-flex justify-center items-center"
+              hover
+              width="250"
+              height="350"
+            >
+              <div class="text-2xl text-center">
+                <p>+</p>
+                <p>새 노트</p>
+              </div>
+            </v-card>
+          </v-col>
           <v-col cols="12" sm="6" md="4" lg="3" class="mb-8" v-for="note in noteList" :key="note.id">
             <v-card
               @click="GoNoteDetail(note.id)"
-              variant="outlined"
-              class="rounded-lg study-card"
-              color="#4e4e4e"
+              variant="text"
+              class="rounded-xl study-card"
+              color="#2e2e2e"
               hover
               width="250"
-              height="380"
+              height="350"
             >
               <template v-slot:loader="{ isActive }">
                 <v-progress-linear
@@ -28,39 +44,29 @@
                 ></v-progress-linear>
               </template>
 
-              <v-card-item class="grid content-between">
-                <div class="ml-2 mt-2 mb-1 text-3xl leading-normal font-bold note-card">
-                  {{ note.title }}
-                </div>
-                <div class="grid justify-items-start">
-                  <v-card-subtitle class="my-1">
-                    <span class="me-1"><span class="tossface">⏲</span> {{ note.time }} 작성</span>
-                  </v-card-subtitle>
-                  <v-chip v-if="note.study != null"
-                    variant="tonal"
+              <v-card-item class="grid content-between note-card rounded-xl" style="height:350px">
+                <div class="grid" style="height:320px">
+                  <div>
+                    <div class="mx-2 mt-2 mb-1 text-xl font-bold line-clamp-2 text-gray-600">
+                    {{ note.title }}
+                    </div>
+                    <span class="mx-2 mt-2 text-gray-400 italic">{{ note.time }} 작성</span>
+                    <div class="mx-2 mt-3 line-clamp-6 text-gray-500">
+                      {{ note.content }}
+                    </div>
+                  </div>
+                  <div class="place-self-end">
+                  <v-chip v-if="note.isShared == true"
+                    variant="flat"
+                    color="#aaaaaa"
                   >
-                    {{ note.study }}
-                    <img :src=note.studyImage class="shared-study-image" end />
+                    공유됨
+                    <!-- <img :src=note.studyImage class="shared-study-image" end /> -->
                   </v-chip>
+                </div>
                 </div>
               </v-card-item>
               <v-divider class="mx-4 mb-1"></v-divider>
-            </v-card>
-          </v-col>
-          <v-col cols="12" sm="6" md="4" lg="3" class="mb-8 d-flex align-center">
-            <v-card
-              @click="AddStudy"
-              variant="tonal"
-              color="#3FB1FA"
-              class="rounded-lg d-flex justify-center items-center"
-              hover
-              width="250"
-              height="380"
-            >
-              <div class="text-2xl text-center">
-                <p>+</p>
-                <p>새 노트</p>
-              </div>
             </v-card>
           </v-col>
         </v-row>
@@ -192,7 +198,8 @@ onMounted(() => {
 }
 
 .note-card {
-  height: 280px;
+  height:350px;
+  border: 1px solid #bfbfbf;
 }
 
 .chip {
