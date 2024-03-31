@@ -62,7 +62,7 @@ public enum ErrorCode {
     STUDY_MEMBER_FORBIDDEN_ERROR(403, "권한이 없습니다"),
 
     // Note
-    NOTE_NOT_FOUND(400, "노트가 존재하지 않습니다."),
+    NOTE_NOT_FOUND(400, "존재하지 않거나 이미 삭제된 노트입니다."),
     NOTE_DUPLICATE_MEETING(400, "이미 내보내기 된 미팅입니다."),
 
     // Meeting

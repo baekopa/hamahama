@@ -68,4 +68,13 @@ public class NoteController {
         log.info("노트 수정 : {}", noteId);
         return ApiResponse.of(SuccessCode.NOTE_UPDATE_SUCCESS, noteService.updateNote(noteId, requestDto));
     }
+
+    @Operation(summary = "노트 삭제", description = "공부하마 노트를 삭제합니다.")
+    @DeleteMapping("/{note-id}")
+    public ApiResponse<Void> deleteNote(@PathVariable(name = "note-id") Long noteId) {
+
+        log.info("노트 삭제 : {}", noteId);
+        noteService.deleteNote(noteId);
+        return ApiResponse.of(SuccessCode.NOTE_DELETE_SUCCESS);
+    }
 }
