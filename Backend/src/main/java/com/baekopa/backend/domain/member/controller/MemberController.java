@@ -1,6 +1,7 @@
 package com.baekopa.backend.domain.member.controller;
 
 import com.baekopa.backend.domain.meeting.dto.response.RemindQuizListResponseDto;
+import com.baekopa.backend.domain.meeting.dto.response.RemindQuizResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
 import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
 import com.baekopa.backend.domain.member.dto.response.MemberMainResponseDto;
