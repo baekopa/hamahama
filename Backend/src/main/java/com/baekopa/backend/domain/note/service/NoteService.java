@@ -108,13 +108,13 @@ public class NoteService {
         return newSummary;
     }
 
-    // 노드 조회
+    // 노트 조회
     public NoteResponseDto getNote(Long noteId, Member member) {
 
         Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_FOUND, ErrorCode.NOTE_NOT_FOUND.getMessage()));
 
-        List<SubmittedNote> meetingList = submittedNoteRepository.findMeetingByNote(note);
+        List<SubmittedNote> meetingList = submittedNoteRepository.findByNoteAndDeletedAtIsNull(note);
 
         // convert entity to dto
         List<SharedMeetingDto> sharedMeetingDtoList = meetingList.stream().map(this::convertToDto).toList();
@@ -152,6 +152,19 @@ public class NoteService {
         }
 
         return note.getId();
+    }
+
+    // 노트 삭제
+    public void deleteNote(Long noteId) {
+
+        Note note = noteRepository.findByIdAndDeletedAtIsNull(noteId).orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_FOUND, ErrorCode.NOTE_NOT_FOUND.getMessage()));
+
+        submittedNoteRepository.findByNoteAndDeletedAtIsNull(note)
+                .forEach(submittedNote -> submittedNoteRepository.deleteById(submittedNote.getId()));
+
+        // 노트 삭제
+        noteRepository.deleteById(noteId);
+
     }
 }
 

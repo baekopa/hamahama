@@ -37,7 +37,7 @@ public class MeetingScriptController {
     public CompletableFuture<ApiResponse<Map<String, Long>>> saveMeetingScript(@PathVariable(value="studyId") Long studyId,
                                                             @PathVariable(value="meetingId") Long meetingId,
                                                             @RequestParam("file") MultipartFile file) {
-
+        meetingScriptService.saveS3(file, meetingId);
         CompletableFuture<Map<String, Long>> futureResult = meetingScriptService.saveMeetingScriptAsync(studyId, meetingId, file);
         return futureResult.thenApply(result -> ApiResponse.of(SuccessCode.MEETING_SCRIPT_CREATE_SUCCESS, result));
     }
