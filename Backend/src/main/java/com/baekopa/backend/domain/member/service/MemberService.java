@@ -183,16 +183,6 @@ public class MemberService {
                 meeting.getStudyAt());
     }
 
-    // TODO: 일정 조회
-//    public List<WeekMeetingListDto> getMyMeetings(Member member, RequestWeekDto requestDto) {
-//
-//        // TODO: 반복 일정
-//
-//        // TODO: 실제 Meeting 일정
-//
-//        return null;
-//    }
-
     // 내 스터디 조회
     @Transactional(readOnly = true)
     public List<StudyListResponseDto> getMyStudies(Member member) {
