@@ -26,16 +26,6 @@ public class SubmittedNoteDto {
         this.writerImage = writerImage;
     }
 
-//    public static SubmittedNoteDto of(Long id, String originText, String summaryText, Long writerId, String writerName, String writerImage) {
-//        return builder().id(id)
-//                .originText(originText)
-//                .summaryText(summaryText)
-//                .writerId(writerId)
-//                .writerName(writerName)
-//                .writerImage(writerImage)
-//                .build();
-//    }
-
     public static SubmittedNoteDto of(SubmittedNote submittedNote) {
         return builder()
                 .id(submittedNote.getId())
