@@ -16,8 +16,6 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
     List<Meeting> findAllByStudyAndDeletedAtIsNull(Study study);
 
-    Optional<Meeting> findById(Long meetingId);
-
     Optional<Meeting> findByIdAndDeletedAtIsNull(Long meetingId);
 
     List<Meeting> findAllByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(Study study, LocalDateTime current);
