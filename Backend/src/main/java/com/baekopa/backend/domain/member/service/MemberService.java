@@ -228,7 +228,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<NoteListResponseDto> getMyNotes(Member member) {
 
-        return noteRepository.findAllByMember(member).stream()
+        return noteRepository.findAllByMemberAndDeletedAtIsNull(member).stream()
                 .map(note -> NoteListResponseDto.of(note, submittedNoteRepository.existsByNoteAndDeletedAtIsNull(note))).toList();
     }
 
