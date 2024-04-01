@@ -25,17 +25,6 @@ pipeline {
             }
         }
 
-        stage("Build FastAPI to Docker Image") {
-            steps {
-                echo 'FastAPI 도커 이미지 빌드 시작!'
-                dir("./AI") {
-                    // 빌드된 JAR 파일을 Docker 이미지로 빌드
-                    sh "docker build -t oiatmil/d105-ai:latest ."
-                }
-                echo 'FastAPI 도커 이미지 빌드 완료!'
-            }
-        }
-
         stage("fastapi .env download") {
             steps {
                 withCredentials([file(credentialsId: 'secret-env-ai', variable: 'envConfigfile')]) {
@@ -58,6 +47,18 @@ pipeline {
 
             }
         }
+
+        stage("Build FastAPI to Docker Image") {
+            steps {
+                echo 'FastAPI 도커 이미지 빌드 시작!'
+                dir("./AI") {
+                    // 빌드된 JAR 파일을 Docker 이미지로 빌드
+                    sh "docker build -t oiatmil/d105-ai:latest ."
+                }
+                echo 'FastAPI 도커 이미지 빌드 완료!'
+            }
+        }
+
         stage("Push to Docker Hub-FastAPI") {
             steps {
                 echo 'FastAPI 도커 이미지를 Docker Hub에 푸시 시작!'
