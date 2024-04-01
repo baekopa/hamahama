@@ -19,7 +19,7 @@
                 <button @click="LoadNoti" v-if="isAlarmExist" v-bind="props">
                   <img width="32" height="32" src="../icons/nav/alarmExist.svg" alt="alarm" />
                 </button>
-                <button @click="LoadNoti" v-else="isAlarmExist" v-bind="props">
+                <button @click="LoadNoti" v-else v-bind="props">
                   <img width="32" height="32" src="../icons/nav/alarmNone.svg" alt="alarm" />
                 </button>
               </template>
@@ -37,7 +37,7 @@
                 <v-divider></v-divider>
 
                 <v-list class="noti-list">
-                  <v-list-item v-for="noti in notiList">
+                  <v-list-item v-for="noti in notiList" :key="noti.id">
                     <p>
                       {{ noti.content }}
                     </p>
