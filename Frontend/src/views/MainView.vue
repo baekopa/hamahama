@@ -175,7 +175,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useMainPageStore } from '@/stores/mainPage'
 import Slider from '@/components/main/Slider.vue'
 import instance from '@/api/index'
-import noteBasicImage from '@/assets/image/home/NoteBasic.png'
+// import noteBasicImage from '@/assets/image/home/NoteBasic.png'
 
 const authStore = useAuthStore()
 const mainPageStore = useMainPageStore()
