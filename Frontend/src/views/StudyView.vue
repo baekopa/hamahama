@@ -160,7 +160,7 @@
               </div>
               <div class="d-flex mt-5 mb-">
                 <div v-if="noteToggle == -1">
-                  {{ submittedNotes.noteSummary }}
+                  {{ submittedNotes.entireSummary }}
                 </div>
                 <div v-else>
                   <p class="font-bold">노트</p>
@@ -353,14 +353,6 @@ const uploadAudio = async (audioBlob) => {
       }
     )
     console.log(res1)
-    // 5초 후에 res2를 실행하도록 setTimeout 사용
-    setTimeout(async () => {
-      console.log('리마인드 퀴즈 생성 요청')
-      const res2 = await instance.post(
-        `api/studies/${studyId}/meetings/${meetingID.value}/remind-quiz`
-      )
-      console.log(res2)
-    }, 5000) // 5초 (5000 밀리초) 후에 실행
 
     // const data = response.data;
     // console.log("Transcription result:", data);

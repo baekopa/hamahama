@@ -92,7 +92,7 @@
                   :key="summary.id"
                 >
                   <v-card
-                    @click="GoSummaryDetail(summary.id, summary.studyAt)"
+                    @click="GoSummaryDetail(summary)"
                     variant="outlined"
                     class="rounded-lg study-card"
                     color="#4e4e4e"
@@ -120,8 +120,12 @@
                       </div>
                       <div class="grid justify-items-start">
                         <v-card-subtitle class="my-1">
-                          <span class="me-1">
-                            <span v-for="member in summary.memberInfoDTOList" class="tossface" :key="member.id">
+                          <span class="me-1 d-flex align-center justify-center">
+                            <span
+                              v-for="member in summary.memberInfoDTOList"
+                              class="tossface"
+                              :key="member.id"
+                            >
                               {{ member.name }} </span
                             >참여</span
                           >
@@ -166,11 +170,14 @@ function GoHome() {
 function GoQuiz() {
   router.push({ name: 'studyQuiz', params: { id: studyId } })
 }
-function GoSummaryDetail(id, studyAt) {
-  studyStore.studyAt = studyAt
+function GoSummaryDetail(info) {
+  studyStore.studyAt = info.studyAt
+  studyStore.meetingTopic = info.topic
+  studyStore.meetingMembers = info.memberInfoDTOList
+  console.log(studyStore.studyAt)
   router.push({
     name: 'studySummaryDetail',
-    params: { id: id, studyId: studyId }
+    params: { id: info.id, studyId: studyId }
   })
 }
 
