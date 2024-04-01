@@ -3,13 +3,16 @@ package com.baekopa.backend.domain.study.dto.response;
 import com.baekopa.backend.domain.study.dto.StudyMemberDto;
 import com.baekopa.backend.domain.study.entity.Study;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StudyInfoResponseDto {
 
     private Long id;
