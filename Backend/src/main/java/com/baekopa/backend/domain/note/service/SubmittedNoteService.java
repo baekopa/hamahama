@@ -56,7 +56,7 @@ public class SubmittedNoteService {
         SubmittedNote submittedNote = SubmittedNote.createSubmittedNote(null, note, meeting);
         submittedNoteRepository.save(submittedNote);
 
-        return submittedNoteRepository.findMeetingByNote(note).stream()
+        return submittedNoteRepository.findByNoteAndDeletedAtIsNull(note).stream()
                 .map(m -> SharedMeetingDto.of(m.getMeeting().getId(),
                         m.getMeeting().getTopic(),
                         m.getMeeting().getStudyAt(),
