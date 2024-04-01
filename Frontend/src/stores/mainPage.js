@@ -17,5 +17,5 @@ export const useMainPageStore = defineStore('main', () => {
     router.push({ name: 'study', params: { id } })
   }
 
-  return { myStudy, recentEditNote, GoCreateNote, GoRecentEditNote, GoMyStudyRoom }
+  return { myStudy, myStudyImg, recentEditNote, GoCreateNote, GoRecentEditNote, GoMyStudyRoom }
 })

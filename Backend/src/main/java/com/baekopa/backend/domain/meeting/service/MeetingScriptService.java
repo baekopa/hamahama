@@ -44,6 +44,12 @@ public class MeetingScriptService {
     private final MeetingScriptRepository meetingScriptRepository;
     private final S3UploadService s3UploadService;
 
+    @Transactional
+    public void saveS3(MultipartFile file, Long meetingId) {
+        String s3Url = uploadS3RecordFile(file);//s3에 파일 업로드
+        saveS3Url(meetingId, s3Url); //s3url 저장
+    }
+
     public String uploadS3RecordFile(MultipartFile file) {
         try {
             return s3UploadService.saveFile("record", file);
@@ -70,9 +76,6 @@ public class MeetingScriptService {
     @Transactional
     public Map<String, Long> saveMeetingScript(Long studyId, Long meetingId, MultipartFile file) {
         Map<String, Long> result = new HashMap<>();
-
-//        String s3Url = uploadS3RecordFile(file);//s3에 파일 업로드
-//        saveS3Url(meetingId, s3Url); //s3url 저장
 
         String text = sendFileToFastAPI(studyId, meetingId, file); //fast api로 통신하여 STT 실행 및 텍스트 추출
         Long meetingScriptId = saveScript(meetingId, text);//추출한 script 저장
