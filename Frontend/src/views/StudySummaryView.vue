@@ -121,7 +121,7 @@
                       <div class="grid justify-items-start">
                         <v-card-subtitle class="my-1">
                           <span class="me-1">
-                            <span v-for="member in summary.memberInfoDTOList" class="tossface">
+                            <span v-for="member in summary.memberInfoDTOList" class="tossface" :key="member.id">
                               {{ member.name }} </span
                             >참여</span
                           >
