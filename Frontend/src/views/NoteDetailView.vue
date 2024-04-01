@@ -105,23 +105,23 @@
           </div>
 
           <v-row>
-            <v-col v-for="study in sharedStudy" :key="study.id" cols="12" sm="4">
+            <v-col v-for="meeting in sharedStudy" :key="meeting.id" cols="12" sm="4">
               <v-card
-                @click="GoStudyPage(study.id)"
+                @click="GoStudyPage(meeting.studyId)"
                 class="mr-2 my-2 rounded-md"
                 max-width="440"
-                :subtitle="study.studyAt"
-                :title="study.studyName"
+                :subtitle="meeting.studyAt"
+                :title="meeting.studyName"
                 variant="tonal"
                 color="gray"
                 hover
               >
                 <template v-slot:prepend>
                   <v-avatar size="25">
-                    <img alt="studyImg" :src="study.studyImage" />
+                    <img alt="studyImg" :src="meeting.studyImage" />
                   </v-avatar>
                 </template>
-                <v-card-text> {{ study.studyName }} - {{ study.topic }} </v-card-text>
+                <v-card-text> {{ meeting.studyName }} - {{ meeting.topic }} </v-card-text>
               </v-card>
             </v-col>
           </v-row>
@@ -182,8 +182,6 @@ const meetingList = ref(initializeMeetingList())
 watch(studyMeetingScheduleList, () => {
   meetingList.value = initializeMeetingList()
 })
-
-const meetingId = ref()
 
 const selectedMeeting = ref(null)
 
@@ -246,21 +244,29 @@ function EditNote() {
       content: editContent.value
     })
     .then((res) => {
-      console.log(res)
-      console.log('수정성공')
-      content.value = editContent.value
-      isEdit.value = false
+      if (res.data.status === 204) {
+        content.value = editContent.value
+        isEdit.value = false
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '잘못된 요청 입니다.',
+          text: res.data.message
+        })
+      }
     })
     .catch((err) => {
       isEdit.value = false
-      alert('저장실패')
-      console.log('저장실패', err)
+      Swal.fire({
+        icon: 'error',
+        title: '수정실패',
+        text: err.response.data.message
+      })
     })
 }
 
 // 노트 공유하기
 function ShareNote() {
-  console.log(meetingId.value)
   instance
     .post(`api/notes/${noteId}/meetings`, {
       meetingId: selectedMeeting.value
@@ -274,8 +280,8 @@ function ShareNote() {
           showConfirmButton: false,
           timer: 1500
         })
+        LoadNoteData()
       }
-      console.log(res)
     })
     .catch((err) => {
       Swal.fire({
@@ -292,8 +298,8 @@ const MakeSummary = () => {
     .then((res) => {
       if (res.data.status == 201) {
         noteSummary.value = res.data.data.noteSummary
+        console.log(res.data.message)
       }
-      console.log(res)
     })
     .catch((err) => {
       console.log(err)

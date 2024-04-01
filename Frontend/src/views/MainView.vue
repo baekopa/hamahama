@@ -235,7 +235,6 @@ async function GetPersonalData() {
   await instance
     .get('/api/members/me/main')
     .then((res) => {
-      console.log(res)
       const personalData = res.data
       if (personalData.status === 200) {
         noteList.value = personalData.data.notes
@@ -243,11 +242,11 @@ async function GetPersonalData() {
 
         mainPageStore.myStudyId = personalData.data.personalStudy.id
         mainPageStore.myStudyImg = personalData.data.personalStudy.backgroundImage
-        console.log(noteList.value.length)
+
         if (noteList.value.length === 0) {
           mainPageStore.recentEditNote = -1
         } else {
-          mainPageStore.recentEditNote.value = noteList.value[0].id
+          mainPageStore.recentEditNote = noteList.value[0].id
         }
       }
     })

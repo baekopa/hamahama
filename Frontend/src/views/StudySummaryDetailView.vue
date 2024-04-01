@@ -67,7 +67,7 @@
             <div class="title d-flex flex-column">
               <span class="text-2xl ml-5 font-bold">
                 <span class="tossface text-3xl">🗂 </span
-                ><span class="point-color font-bold">{{ meetingContents.topic }}</span> 미팅
+                ><span class="point-color font-bold">{{ studyStore.meetingTopic }}</span> 미팅
                 정리본</span
               >
               <p class="text-base ml-5 mt-2 italic text-gray-500">
@@ -75,16 +75,13 @@
               </p>
               <div class="d-flex ml-5 mt-4">
                 참여 -
-                <p class="ml-1" v-for="member in meetingContents.memberInfoList">
+                <p class="ml-1" v-for="member in studyStore.meetingMembers">
                   {{ member.name }}
                 </p>
               </div>
             </div>
             <div class="mr-40 mt-14">
-              <button @click="CreateMeetingSummary()">
-                <p>미팅 전문 요약 생성</p>
-              </button>
-              <button @click="CreateRemindQuiz()">
+              <button class="mr-10" @click="CreateRemindQuiz()">
                 <p>리마인드 퀴즈 생성</p>
               </button>
               <button @click="CreateDifference()">
@@ -148,6 +145,9 @@
               <div v-if="!isEdit" class="summary-section">
                 <div class="d-flex align-center h-10">
                   <p class="text-lg font-bold mr-4">요약 내용</p>
+                  <v-btn v-if="!isSummaryExist" @click="CreateMeetingSummary()">
+                    <p>미팅 전문 요약 생성</p>
+                  </v-btn>
                   <v-btn @click="RegenSummary()" icon="mdi-refresh" variant="text"></v-btn>
                   <v-btn @click="isEdit = !isEdit" icon="mdi-pencil-outline" variant="text"></v-btn>
                 </div>
@@ -210,30 +210,49 @@
                   </div>
                 </div>
                 <div class="mt-5">
-                  <p>{{ meetingContents.scriptContent }}</p>
+                  <p>{{ scriptContent }}</p>
                 </div>
               </div>
             </div>
             <div v-else-if="toggle == '제출된노트'">
               <div class="d-flex align-center h-10 text-lg font-bold">
                 <p class="text-lg font-bold mr-4">제출된 노트</p>
+
                 <v-chip-group v-model="noteToggle" variant="text" mandatory>
+                  <v-chip class="h-10">전체</v-chip>
                   <v-chip
                     class="h-10"
-                    @click="console.log('dd')"
-                    v-for="(note, index) in meetingContents.submittedNotes"
+                    @click="noteToggle = index + 1"
+                    v-for="(note, index) in meetingContents.submittedNoteSummary.submittedNotes"
                     :key="note.id"
                     :value="index"
                     >{{ note.writerName }}</v-chip
                   >
                 </v-chip-group>
               </div>
-              <div class="d-flex mt-5">
+              <div v-if="noteToggle == 0" class="d-flex mt-5">
+                <div>
+                  <p class="font-bold">미팅에 제출된 노트 전체 요약</p>
+                  <div class="mt-3">
+                    {{ meetingContents.submittedNoteSummary.entireSummary }}
+                  </div>
+                </div>
+              </div>
+              <div v-else class="d-flex mt-5">
                 <div>
                   <p class="font-bold">노트</p>
-                  <div>{{ meetingContents.submittedNotes[noteToggle].originText }}</div>
+                  <div>
+                    {{
+                      meetingContents.submittedNoteSummary.submittedNotes[noteToggle - 1].originText
+                    }}
+                  </div>
                   <p class="font-bold mt-5">요약</p>
-                  <div>{{ meetingContents.submittedNotes[noteToggle].summaryText }}</div>
+                  <div>
+                    {{
+                      meetingContents.submittedNoteSummary.submittedNotes[noteToggle - 1]
+                        .summaryText
+                    }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -250,7 +269,6 @@ import { useRoute, useRouter } from 'vue-router'
 import instance from '@/api/index'
 import { useStudyStore } from '@/stores/study'
 import Swal from 'sweetalert2'
-import { compileScript } from 'vue/compiler-sfc'
 
 const studyStore = useStudyStore()
 const router = useRouter()
@@ -265,15 +283,18 @@ const summaryContent = ref('')
 const scriptContent = ref('')
 const keywords = ref([])
 
+const isSummaryExist = ref(false)
+const isKeywordExist = ref(false)
+
 const meetingContents = ref({
   meetingId: 0,
   topic: '네트워크와 OSI 7계층',
   scriptContent: 'string',
-  summaryContent: 'string',
+  summaryContent: '아직 요약을 생성하지 않았어요! 요약 생성을 해보세요',
   keyword: [
     {
       keywordId: 0,
-      keyword: '허니 오렌지 루이보스'
+      keyword: '키워드가 생성되지 않았어요 키워드 생성 버튼을 눌러보세요'
     }
   ],
   memberInfoList: [
@@ -283,17 +304,32 @@ const meetingContents = ref({
       profile_image: 'string'
     }
   ],
-  submittedNotes: [
-    {
-      id: 0,
-      originText: 'string',
-      summaryText: '요약된 텍스트 입니다',
-      writerId: 0,
-      writerName: '백오파',
-      writerImage: 'string'
-    }
-  ]
+  submittedNoteSummary: {
+    submittedNotes: [
+      {
+        id: 0,
+        originText: '',
+        summaryText: '',
+        writerId: 1,
+        writerName: '',
+        writerImage: ''
+      }
+    ],
+    entireSummary:
+      '1. 대구 지역 한 대학병원 전공의 A씨의 발언에 대해 어떻게 생각하시나요?\n- 대구 지역 한 대학병원 전공의 A씨의 발언은 그의 의견이며, 그만의 이유와 배경이 있을 것으로 생각됩니다.\n\n2. 계명대학교 의과대학 신입생들의 행동에 동의하시나요?\n- 계명대학교 의과대학 신입생들의 행동에 대한 동의 여부는 각자의 판단에 따라 다를 수 있을 것으로 생각됩니다.\n\n3. 의료계와 정부의 출구 없는 갈등에 대해 어떤 해결책이 필요하다고 생각하시나요?\n- 의료계와 정부의 충돌을 해소하기 위해서는 상호 협의와 대화를 통한 해결책 모색이 필요하다고 생각됩니다.\n\n4. 대한의사협회 비상대책위원회의 주 40시간 준법 진료에 대한 반발 움직임에 대해 어떻게 생각하시나요?\n- 대한의사협회 비상대책위원회의 주 40시간 준법 진료에 대한 반발 움직임은 의료계 내부의 다양한 의견이 반영되고 있는 것으로 보입니다.\n\n5. 이번 의료계와 관련된 갈등 상황이 어떻게 발전될 것으로 예상하시나요?\n- 이번 의료계와 관련된 갈등 상황은 상황에 따라 다양한 변화가 있을 수 있으며, 현재는 예측하기 어려운 상황입니다.'
+  }
 })
+
+const submittedNotes = ref([
+  {
+    id: 0,
+    originText: 'string',
+    summaryText: '요약된 텍스트 입니다',
+    writerId: 0,
+    writerName: '백오파',
+    writerImage: 'string'
+  }
+])
 
 // 사용자가 요약을 수정할 수 있도록
 const editedSummary = ref(meetingContents.summaryContent)
@@ -314,7 +350,24 @@ function GoSummary() {
   router.push({ name: 'studySummary', params: { id: studyId } })
 }
 
-function CreateKeyword() {
+// 전문 조회
+function LoadEntireScript() {
+  instance
+    .get(`api/studies/${studyId}/meetings/${meetingId}/entire`)
+    .then((res) => {
+      console.log(res.data.message)
+      if (res.data.status == 200) {
+        scriptContent.value = res.data.data.scriptContent
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+// 키워드 생성
+async function CreateKeyword() {
+  console.log('키워드생성')
   instance
     .post(`api/studies/${studyId}/meetings/${meetingId}/keyword`)
     .then((res) => {
@@ -393,6 +446,7 @@ function EditSummary() {
     })
 }
 
+// 퀴즈생성
 function CreateRemindQuiz() {
   instance
     .post(`api/studies/${studyId}/meetings/${meetingId}/remind-quiz`)
@@ -404,8 +458,9 @@ function CreateRemindQuiz() {
     })
 }
 
-function CreateMeetingSummary() {
-  instance
+// 전문 요약 생성
+async function CreateMeetingSummary() {
+  await instance
     .post(`api/studies/${studyId}/meetings/${meetingId}/summary`)
     .then((res) => {
       console.log(res)
@@ -415,6 +470,7 @@ function CreateMeetingSummary() {
     })
 }
 
+// 내 노트와 차이점 생성
 function CreateDifference() {
   instance
     .post(`api/studies/${studyId}/meetings/${meetingId}/difference`)
@@ -428,6 +484,7 @@ function CreateDifference() {
 
 onMounted(() => {
   LoadAll()
+  LoadEntireScript()
 })
 </script>
 

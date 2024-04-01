@@ -80,13 +80,15 @@
         </div>
         <v-card variant="flat" class="scroll-container overflow-y-auto mt-7" max-height="330">
           <v-list two-line>
-            <template v-for="(item, index) in scheduleItems" :key="index">
-              <v-list-item class="mb-3">
-                <template v-slot:title>{{ item.title }} {{ item.name }}</template>
-                <template v-slot:subtitle>
-                  <span class="font-weight-bold">{{ item.date }}</span>
-                </template>
-              </v-list-item>
+            <template v-for="(study, index) in scheduleItems" :key="index">
+              <div v-for="(meet, idx) in study.meetings" :key="idx">
+                <v-list-item class="mb-3">
+                  <template v-slot:title>{{ study.studyName }} - {{ meet.topic }}</template>
+                  <template v-slot:subtitle>
+                    <span class="font-weight-bold">{{ meet.studyAt }}</span>
+                  </template>
+                </v-list-item>
+              </div>
             </template>
           </v-list>
         </v-card>
@@ -161,8 +163,10 @@ const scheduleItems = ref([
 const GetDashBoardInfo = () => {
   instance
     .get('api/members/me/dashboard')
-    .then((response) => {
-      console.log(response)
+    .then((res) => {
+      console.log(res)
+      scheduleItems.value = res.data.data.weekStudies
+      console.log(scheduleItems.value)
     })
     .catch((err) => {
       console.log(err)

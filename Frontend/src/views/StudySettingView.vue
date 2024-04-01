@@ -212,7 +212,6 @@ const selectMember = (member) => {
     selectedMembers.value.push(member.memberId)
     selectedMembersName.value.push(member)
   }
-  console.log(selectedMembers)
 }
 
 const toggleMemberSelection = (member) => {
@@ -221,7 +220,6 @@ const toggleMemberSelection = (member) => {
     // 이미 선택된 멤버인 경우 선택 해제
     selectedMembers.value.splice(index, 1)
     selectedMembersName.value.splice(index, 1)
-    console.log(selectedMembers)
   } else {
     // 선택되지 않은 멤버인 경우 선택
     selectedMembers.value.push(member.memberId)
@@ -230,7 +228,7 @@ const toggleMemberSelection = (member) => {
 
 function InviteStudy() {
   instance
-    .post(`/api/studies/${studyId}/members`, {
+    .post(`api/studies/${studyId}/members`, {
       memberId: selectedMembers.value[0]
     })
     .then((res) => {
@@ -242,9 +240,9 @@ function InviteStudy() {
           showConfirmButton: false,
           timer: 1500
         })
+      } else {
+        console.log(res)
       }
-
-      console.log(res)
     })
     .catch((err) => {
       console.log(err)
@@ -265,7 +263,6 @@ function LoadMeetingSchedule() {
       if (data.status == 200) {
         console.log(res.data.message)
         scheduleList.value = data.data
-        console.log(res)
       }
     })
     .catch((err) => {
