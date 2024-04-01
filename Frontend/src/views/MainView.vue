@@ -183,12 +183,23 @@ const router = useRouter()
 const noteList = ref(null)
 const studyList = ref([])
 
-function Reissue(){
-  instance.post('reissue', { withCredentials: true }).then((res)=>{
-    console.log(res)
-  }).catch((err)=>{
-    console.log(err)
-  })
+async function Reissue() {
+  const accessToken = localStorage.getItem('accessToken')
+  if (accessToken == null || !accessToken) {
+    router.push({ name: 'login' })
+  }
+  try {
+    console.log('reissue보냄')
+    const response = await instance.post('/reissue', { withCredentials: true })
+    console.log('res_data', response.data)
+    console.log('res', response)
+    const newAccessToken = document.cookie.match(/Authorization=([^;]+)/)
+    localStorage.setItem('accessToken', newAccessToken[1]) // 로컬 스토리지에 액세스 토큰 저장
+    document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+  } catch (error) {
+    router.push({ name: 'login' }) // 토큰 갱신에 실패한 경우 로그인 페이지로 이동
+    console.error('Token refresh failed:', error)
+  }
 }
 
 
