@@ -107,9 +107,10 @@
           <v-row>
             <v-col v-for="study in sharedStudy" :key="study.id" cols="12" sm="4">
               <v-card
+                @click="GoStudyPage(study.id)"
                 class="mr-2 my-2 rounded-md"
                 max-width="440"
-                subtitle="2024-03-20 22:00"
+                :subtitle="study.studyAt"
                 :title="study.studyName"
                 variant="tonal"
                 color="gray"
@@ -136,6 +137,7 @@ import { useRouter, useRoute } from 'vue-router'
 import instance from '@/api/index'
 import Swal from 'sweetalert2'
 const route = useRoute()
+const router = useRouter()
 const noteId = route.params.id
 
 // 원본 제목, 내용
@@ -219,14 +221,17 @@ function LoadMeetingSchedule() {
     .then((res) => {
       console.log(res)
       if (res.data.status == 200) {
-        console.log(res.data.data)
+        console.log(res.data.message)
         studyMeetingScheduleList.value = res.data.data
-        console.log(studyMeetingScheduleList)
       }
     })
     .catch((err) => {
       console.log(err)
     })
+}
+
+function GoStudyPage(id) {
+  router.push({ name: 'study', params: { id: id } })
 }
 
 onMounted(() => {

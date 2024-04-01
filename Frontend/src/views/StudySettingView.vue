@@ -121,7 +121,11 @@
                   <v-btn @click="InviteStudy()">초대하기</v-btn>
                 </div>
                 <div class="member-list">
-                  <div class="d-flex my-4 align-center" v-for="member in studyStore.studyMembers" :key="member.id">
+                  <div
+                    class="d-flex my-4 align-center"
+                    v-for="member in studyStore.studyMembers"
+                    :key="member.id"
+                  >
                     <img class="user-profile mr-4" :src="member.image" alt="profile" width="50px" />
                     <p class="mr-2" v-if="member.type == 'STUDY_LEADER'">스터디장</p>
                     <p class="mr-2" v-else>스터디원</p>
@@ -185,6 +189,7 @@ const memberName = ref('')
 const members = ref([])
 const selectedMembers = ref([])
 const selectedMembersName = ref([])
+
 const searchMembers = async () => {
   if (!memberName.value.trim()) {
     members.value = []
@@ -209,6 +214,7 @@ const selectMember = (member) => {
   }
   console.log(selectedMembers)
 }
+
 const toggleMemberSelection = (member) => {
   const index = selectedMembers.value.findIndex((m) => m.id === member.id)
   if (index !== -1) {
@@ -253,11 +259,11 @@ const getDayOfWeek = (index) => {
 
 function LoadMeetingSchedule() {
   instance
-    .get(`/api/studies/${studyId}/meetings`)
+    .get(`api/studies/${studyId}/meetings`)
     .then((res) => {
-      console.log(res)
       const data = res.data
       if (data.status == 200) {
+        console.log(res.data.message)
         scheduleList.value = data.data
         console.log(res)
       }
