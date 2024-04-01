@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -17,32 +16,34 @@ public class NoteListResponseDto {
 
     private String title;
 
+    private String content;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createAt;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime modifiedAt;
 
-    private List<SubmittedStudyDto> studies;
+    private Boolean isShared;
 
     @Builder
-    private NoteListResponseDto(Long id, String title, LocalDateTime createAt, LocalDateTime modifiedAt) {
+    private NoteListResponseDto(Long id, String title, String content, LocalDateTime createAt, LocalDateTime modifiedAt, Boolean isShared) {
         this.id = id;
         this.title = title;
+        this.content = content;
         this.createAt = createAt;
         this.modifiedAt = modifiedAt;
+        this.isShared = isShared;
     }
 
-    public static NoteListResponseDto of(Long id, String title, LocalDateTime createAt, LocalDateTime modifiedAt) {
-        return builder().id(id).title(title).createAt(createAt).modifiedAt(modifiedAt).build();
-    }
-
-    public static NoteListResponseDto from(Note note) {
+    public static NoteListResponseDto of(Note note, Boolean isShared) {
         return builder()
                 .id(note.getId())
                 .title(note.getTitle())
+                .content(note.getContent())
                 .createAt(note.getCreatedAt())
                 .modifiedAt(note.getModifiedAt())
+                .isShared(isShared)
                 .build();
     }
 

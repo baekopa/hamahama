@@ -3,7 +3,7 @@ import os
 
 def do_tail_question(prompt):
     api_key = os.getenv("OPENAI_API_KEY")
-    command = os.getenv("COMMAND")
+    command = os.getenv("COMMAND_TAIL_QUESTION")
     client = OpenAI(api_key=api_key)
     
     messages = [

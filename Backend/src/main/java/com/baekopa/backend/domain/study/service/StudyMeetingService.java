@@ -1,6 +1,7 @@
 package com.baekopa.backend.domain.study.service;
 
 import com.baekopa.backend.domain.meeting.dto.request.CreateMeetingRequestDto;
+import com.baekopa.backend.domain.meeting.dto.request.UpdateMeetingRequestDto;
 import com.baekopa.backend.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
@@ -40,7 +41,6 @@ public class StudyMeetingService {
         Meeting meeting = meetingRepository.save(Meeting.of(requestDto.getTopic(), requestDto.getStudyAt(), study));
 
         return CreateMeetingResponseDto.of(meeting.getId(), meeting.getTopic(), meeting.getStudyAt());
-
     }
 
     // 스터디 미팅 목록 조회
@@ -61,24 +61,38 @@ public class StudyMeetingService {
     }
 
 
-    // 스터디 예정 일정 조회 , 없다면 null 반환
+    // 스터디 예정 일정 조회, 없다면 null 반환
     public StudyMeetingResponseDto getStudyMeeting(Long studyId) {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
-        Meeting meeting = meetingRepository.findTopByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(study, LocalDateTime.now()).orElse(null);
+        Meeting meeting = meetingRepository.findTopByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(study, LocalDateTime.now().minusMinutes(30)).orElse(null);
 
         if (meeting == null) {
             return null;
         }
 
         List<SubmittedNoteDto> submittedNoteDtoList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
-                .stream().map(submittedNote -> SubmittedNoteDto.of(submittedNote.getId(), submittedNote.getNote().getContent(),
-                        submittedNote.getNote().getSummary(),
-                        submittedNote.getNote().getMember().getId(),
-                        submittedNote.getNote().getMember().getName(),
-                        submittedNote.getNote().getMember().getImage())).toList();
+                .stream().map(SubmittedNoteDto::of).toList();
 
-        return StudyMeetingResponseDto.of(meeting.getId(), meeting.getTopic(), meeting.getStudyAt(), submittedNoteDtoList);
+        return StudyMeetingResponseDto.of(meeting, submittedNoteDtoList);
     }
 
+    @Transactional
+    public List<MeetingListDto> updateMeeting(Long studyId, Long meetingId, UpdateMeetingRequestDto requestDto) {
+
+        Meeting meeting = meetingRepository.findByIdAndDeletedAtIsNull(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+
+        // 수정
+        if (requestDto.getTopic() != null) {
+            meeting.updateTopic(requestDto.getTopic());
+        }
+
+        if (requestDto.getStudyAt() != null) {
+            meeting.updateStudyAt(requestDto.getStudyAt());
+        }
+
+        return getScheduledMeeting(studyId);
+
+    }
 }

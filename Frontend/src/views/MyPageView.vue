@@ -7,16 +7,18 @@
           <v-list-item three-line>
             <v-list-item-avatar class="d-flex justify-center align-center mt-5">
               <img
-                src="@/assets/image/mypage/hama.png"
+                :src="authStore.userImgUrl"
                 alt="Profile"
                 class="rounded-full border-4 border-slate-900"
                 style="height: 200px; width: 200px"
               />
             </v-list-item-avatar>
             <v-list-item-content class="align-self-center">
-              <v-list-item-title class="ml-14 mt-10"><div class="text-2xl font-bold">백오파</div></v-list-item-title>
+              <v-list-item-title class="ml-14 mt-10"
+                ><div class="text-2xl font-bold">{{ authStore.userName }}</div></v-list-item-title
+              >
               <v-list-item-subtitle class="ml-14 mt-1"
-                ><div class="text-base">backopa@example.com</div></v-list-item-subtitle
+                ><div class="text-base">{{ authStore.userEmail }}</div></v-list-item-subtitle
               >
             </v-list-item-content>
           </v-list-item>
@@ -29,7 +31,8 @@
               color="primary"
               rounded="xl"
               class="pl-6 text-xl"
-            >대시보드</v-list-item>
+              >대시보드</v-list-item
+            >
             <v-list-item
               @click="selectedComponent = 'Study'"
               prepend-icon="mdi-account-group"
@@ -37,7 +40,8 @@
               color="primary"
               rounded="xl"
               class="pl-6 text-xl"
-            >같이하마</v-list-item>
+              >같이하마</v-list-item
+            >
             <v-list-item
               @click="selectedComponent = 'MyStudy'"
               prepend-icon="mdi-square-edit-outline"
@@ -45,7 +49,8 @@
               color="primary"
               rounded="xl"
               class="pl-6 text-xl"
-            >공부하마</v-list-item>
+              >공부하마</v-list-item
+            >
             <v-list-item
               @click="selectedComponent = 'RemindQuiz'"
               prepend-icon="mdi-help-box"
@@ -53,7 +58,8 @@
               color="primary"
               rounded="xl"
               class="pl-6 text-xl"
-            >리마인드 퀴즈</v-list-item>
+              >리마인드 퀴즈</v-list-item
+            >
             <v-list-item
               @click="selectedComponent = 'MyInfo'"
               prepend-icon="mdi-account-key"
@@ -61,7 +67,8 @@
               color="primary"
               rounded="xl"
               class="pl-6 text-xl"
-            >내 정보</v-list-item>
+              >내 정보</v-list-item
+            >
           </div>
         </v-list>
       </v-navigation-drawer>
@@ -82,9 +89,7 @@ import MyStudy from '@/components/mypage/MyStudy.vue'
 import Study from '@/components/mypage/Study.vue'
 import RemindQuiz from '@/components/mypage/RemindQuiz.vue'
 
-const userinfo = ref([
-  { name: '백오파', email: 'backOpa@gmail.com', profileimg: 'https://vuejs.org/images/logo.png' }
-])
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   components: {
@@ -96,11 +101,10 @@ export default {
   },
   setup() {
     const selectedComponent = ref('DashBoard')
-    return { selectedComponent }
+    const authStore = useAuthStore()
+    return { selectedComponent, authStore }
   }
 }
-
-// 여기서 모든 정보(스케쥴,요약) 요청을 할까?? 어떻게 할까 모르겠다
 </script>
 
 <style>
