@@ -73,7 +73,6 @@ async def speech_to_text(model, pipeline, file):
 
     # 화자 분할
     diarization = pipeline(converted_filename)
-    # diarization = diarization_pipeline(tmp_filename)
     
     with open("diarization.txt", "w") as text_file:
         text_file.write(str(diarization))

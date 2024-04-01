@@ -193,11 +193,10 @@ function GoStudyPage(id) {
 
 async function GetPersonalData() {
   await instance
-    .get('api/members/me/main')
+    .get('/api/members/me/main')
     .then((res) => {
       console.log(res)
       const personalData = res.data
-      console.log(res)
       if (personalData.status === 200) {
         noteList.value = personalData.data.notes
         studyList.value.push(personalData.data.personalStudy)
