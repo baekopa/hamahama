@@ -64,18 +64,6 @@ public class MemberController {
 
     }
 
-
-    // TODO: 일정 로직 작성
-//    @Operation(summary = "내 일정 조회", description = "나의 주간 일정을 조회합니다. 마이페이지 대시보드에서 사용합니다.")
-//    @GetMapping("/study-timeline")
-//    public ApiResponse<List<WeekMeetingListDto>> getMyMeetings(@AuthenticationPrincipal Member member, @RequestBody RequestWeekDto requestDto) {
-//
-//        log.info("요청 주간 : {} ~ {}", requestDto.getStartDate(), requestDto.getEndDate());
-//
-//        return ApiResponse.of(SuccessCode.MEETING_GET_SUCCESS, memberService.getMyMeetings(member, requestDto));
-//
-//    }
-
     @Operation(summary = "내가 속한 스터디 목록 및 미팅 조회", description = "사용자가 속한 스터디 목록 및 미팅 조회")
     @GetMapping("/studies")
     public ApiResponse<List<StudyListResponseDto>> getMyStudies(@AuthenticationPrincipal Member member) {
