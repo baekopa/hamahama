@@ -6,6 +6,7 @@ import com.baekopa.backend.domain.meeting.dto.response.*;
 import com.baekopa.backend.domain.meeting.entity.*;
 import com.baekopa.backend.domain.meeting.repository.*;
 import com.baekopa.backend.domain.member.entity.Member;
+import com.baekopa.backend.domain.note.dto.SubmittedNoteDto;
 import com.baekopa.backend.domain.note.entity.Note;
 import com.baekopa.backend.domain.note.entity.SubmittedNote;
 import com.baekopa.backend.domain.note.repository.NoteRepository;
@@ -102,6 +103,13 @@ public class MeetingService {
             meetingKeywordDTOList.add(meetingKeywordDTO);
         }
 
+        //제출된 개인 요약, 전체 요약 조회
+        List<SubmittedNoteDto> submittedNoteDtoList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
+                .stream().map(SubmittedNoteDto::of).toList();
+
+        MeetingSubmittedNoteResponseDto submittedNoteSummary = MeetingSubmittedNoteResponseDto.of(submittedNoteDtoList, meeting.getNoteSummary());
+
+
         // 미팅 참여자
         List<SubmittedNote> submittedNoteList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
         List<Note> noteList = new ArrayList<>();
@@ -113,7 +121,7 @@ public class MeetingService {
             meetingMemberInfoDTOList.add(MeetingMemberInfoDTO.from(note.getMember()));
         }
 
-        return MeetingResponseDTO.of(meeting, meetingScript, meetingSummary, meetingKeywordDTOList, meetingMemberInfoDTOList);
+        return MeetingResponseDTO.of(meeting, meetingScript, meetingSummary, meetingKeywordDTOList, meetingMemberInfoDTOList, submittedNoteSummary);
     }
 
     @Transactional
