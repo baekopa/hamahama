@@ -160,7 +160,7 @@
               </div>
               <div class="d-flex mt-5 mb-">
                 <div v-if="noteToggle == -1">
-                  {{ submittedNotes.noteSummary }}
+                  {{ submittedNotes.entireSummary }}
                 </div>
                 <div v-else>
                   <p class="font-bold">노트</p>
@@ -341,14 +341,18 @@ const uploadAudio = async (audioBlob) => {
   }
   // FastAPI 서버로 오디오 파일 전송
   try {
-    console.log('post 간다!')
-    await instance.post(`api/studies/${studyId}/meetings/${meetingID.value}/record`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      },
-      timeout: 99999999999
-    })
-    console.log('post끝')
+    console.log('녹음파일 전송')
+    const res1 = await instance.post(
+      `api/studies/${studyId}/meetings/${meetingID.value}/record`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        timeout: 99999999999
+      }
+    )
+    console.log(res1)
 
     // const data = response.data;
     // console.log("Transcription result:", data);
