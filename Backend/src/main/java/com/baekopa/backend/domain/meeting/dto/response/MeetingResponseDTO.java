@@ -11,25 +11,28 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MeetingResponseDTO {
+
     private Long meetingId; //미팅 id
     private String topic; //미팅 주제
     private String scriptContent; //미팅 스크립트(대화 원문)
     private String summaryContent; //미팅 요약문
     private List<MeetingKeywordDTO> keyword;
     private List<MeetingMemberInfoDTO> memberInfoList;
+    private MeetingSubmittedNoteResponseDto submittedNoteSummary;
 
     @Builder
-    private MeetingResponseDTO(Long meetingId, String topic, String scriptContent, String summaryContent, List<MeetingKeywordDTO> keyword, List<MeetingMemberInfoDTO> memberInfoList) {
+    private MeetingResponseDTO(Long meetingId, String topic, String scriptContent, String summaryContent, List<MeetingKeywordDTO> keyword, List<MeetingMemberInfoDTO> memberInfoList, MeetingSubmittedNoteResponseDto submittedNoteSummary) {
         this.meetingId = meetingId;
         this.topic = topic;
         this.scriptContent = scriptContent;
         this.summaryContent = summaryContent;
         this.keyword = keyword;
         this.memberInfoList = memberInfoList;
+        this.submittedNoteSummary = submittedNoteSummary;
     }
 
 
-    public static MeetingResponseDTO of(Meeting meeting, MeetingScript meetingScript, MeetingSummary meetingSummary, List<MeetingKeywordDTO> keyword, List<MeetingMemberInfoDTO> meetingMemberInfoDTOList) {
+    public static MeetingResponseDTO of(Meeting meeting, MeetingScript meetingScript, MeetingSummary meetingSummary, List<MeetingKeywordDTO> keyword, List<MeetingMemberInfoDTO> meetingMemberInfoDTOList, MeetingSubmittedNoteResponseDto submittedNoteSummary) {
         return builder()
                 .meetingId(meeting.getId())
                 .topic(meeting.getTopic())
@@ -37,6 +40,7 @@ public class MeetingResponseDTO {
                 .summaryContent(meetingSummary.getSummaryContent())
                 .keyword(keyword)
                 .memberInfoList(meetingMemberInfoDTOList)
+                .submittedNoteSummary(submittedNoteSummary)
                 .build();
     }
 }
