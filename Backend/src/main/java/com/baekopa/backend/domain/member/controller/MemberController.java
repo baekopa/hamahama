@@ -1,9 +1,11 @@
 package com.baekopa.backend.domain.member.controller;
 
-import com.baekopa.backend.domain.meeting.dto.request.MyRemindQuizResponseDto;
+import com.baekopa.backend.domain.meeting.dto.response.RemindQuizListResponseDto;
+import com.baekopa.backend.domain.meeting.dto.response.RemindQuizResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.StudyMeetingListDto;
 import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
 import com.baekopa.backend.domain.member.dto.response.MemberMainResponseDto;
+import com.baekopa.backend.domain.member.dto.response.MyDashboardResponseDto;
 import com.baekopa.backend.domain.member.dto.response.MyInfoResponseDto;
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.member.service.MemberService;
@@ -34,8 +36,7 @@ public class MemberController {
     public ApiResponse<MyInfoResponseDto> getMyInfo(@AuthenticationPrincipal Member member) {
 
         log.info(" 내 정보 조회 : {}", member.getEmail());
-
-        return ApiResponse.of(SuccessCode.MEMBER_FIND_SUCCESS, memberService.getMyInfo(member));
+        return ApiResponse.of(SuccessCode.MEMBER_GET_SUCCESS, memberService.getMyInfo(member));
     }
 
     @Operation(summary = "내 정보 수정", description = "사용자의 프로필 사진, 이름을 수정합니다.")
@@ -51,20 +52,17 @@ public class MemberController {
     public ApiResponse<List<StudyMeetingListDto>> getStudyMeetings(@AuthenticationPrincipal Member member) {
 
         log.info("내 스터디 미팅 조회 : {}", member.getName());
-
         return ApiResponse.of(SuccessCode.STUDY_MEETING_GET_SUCCESS, memberService.getStudyMeetings(member));
     }
 
-    // TODO: 일정 로직 작성
-//    @Operation(summary = "내 일정 조회", description = "나의 주간 일정을 조회합니다. 마이페이지 대시보드에서 사용합니다.")
-//    @GetMapping("/study-timeline")
-//    public ApiResponse<List<WeekMeetingListDto>> getMyMeetings(@AuthenticationPrincipal Member member, @RequestBody RequestWeekDto requestDto) {
-//
-//        log.info("요청 주간 : {} ~ {}", requestDto.getStartDate(), requestDto.getEndDate());
-//
-//        return ApiResponse.of(SuccessCode.MEETING_GET_SUCCESS, memberService.getMyMeetings(member, requestDto));
-//
-//    }
+    @Operation(summary = "내 대시보드 조회", description = "나의 알림, 주간 스터디 반복 일정, 주간 미팅 일정을 조회합니다.")
+    @GetMapping("/dashboard")
+    public ApiResponse<MyDashboardResponseDto> getMyDashboard(@AuthenticationPrincipal Member member) {
+
+        log.info("{}님의 대시보드 조회", member.getName());
+        return ApiResponse.of(SuccessCode.MEMBER_DASHBOARD_GET_SUCCESS, memberService.getMyDashboard(member));
+
+    }
 
     @Operation(summary = "내가 속한 스터디 목록 및 미팅 조회", description = "사용자가 속한 스터디 목록 및 미팅 조회")
     @GetMapping("/studies")
@@ -87,11 +85,12 @@ public class MemberController {
 
     @Operation(summary = "내가 속한 스터디의 리마인드 퀴즈 목록 조회", description = "사용자가 속한 스터디의 리마인드 퀴즈 목록 조회")
     @GetMapping("/remind-quiz")
-    public ApiResponse<List<MyRemindQuizResponseDto>> getMyRemindQuiz(@AuthenticationPrincipal Member member) {
+    public ApiResponse<List<RemindQuizListResponseDto>> getMyRemindQuiz(@AuthenticationPrincipal Member member) {
 
         log.info("내가 속한 스터디의 리마인드 퀴즈 목록 조회 : {}", member.getName());
         return ApiResponse.of(SuccessCode.REMIND_QUIZ_GET_SUCCESS, memberService.getMyRemindQuiz(member));
     }
+
 
     @Operation(summary = "메인 페이지 조회", description = "메인 페이지 개인 데이터 조회")
     @GetMapping("/main")
@@ -99,5 +98,13 @@ public class MemberController {
 
         return ApiResponse.of(SuccessCode.MEMBER_MAIN_GET_SUCCESS, memberService.getMemberMainInfo(member));
     }
+
+    @Operation(summary = "마이페이지 리마인드 퀴즈 상세 조회", description = "마이페이지에서 리마인드 퀴즈 상세 조회")
+    @GetMapping("/remind-quiz/{remind-quiz-id}")
+    public ApiResponse<RemindQuizResponseDto> getRemindQuiz(@PathVariable(value = "remind-quiz-id") Long remindQuizId) {
+
+        return ApiResponse.of(SuccessCode.REMIND_QUIZ_GET_SUCCESS, memberService.getRemindQuiz(remindQuizId));
+    }
+
 
 }

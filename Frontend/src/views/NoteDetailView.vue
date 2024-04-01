@@ -26,7 +26,7 @@
                 src="@/assets/image/note/edit.svg"
                 alt="pencil"
               />
-              <v-btn @click="EditNote" v-else
+              <v-btn @click="EditNote()" v-else
                 ><img src="@/assets/image/note/edit.svg" alt="" />수정</v-btn
               >
             </div>
@@ -42,7 +42,7 @@
         ></textarea>
         <textarea
           v-else
-          v-model="content"
+          v-model="editContent"
           variant="plain"
           placeholder="공부한 내용을 작성해주세요. ( •̀ ω •́ )✧"
           class="note-content mt-5"
@@ -105,22 +105,23 @@
           </div>
 
           <v-row>
-            <v-col v-for="study in sharedStudy" :key="study.id" cols="12" sm="4">
+            <v-col v-for="meeting in sharedStudy" :key="meeting.id" cols="12" sm="4">
               <v-card
+                @click="GoStudyPage(meeting.studyId)"
                 class="mr-2 my-2 rounded-md"
                 max-width="440"
-                subtitle="2024-03-20 22:00"
-                :title="study.studyName"
+                :subtitle="meeting.studyAt"
+                :title="meeting.studyName"
                 variant="tonal"
                 color="gray"
                 hover
               >
                 <template v-slot:prepend>
                   <v-avatar size="25">
-                    <img alt="studyImg" :src="study.studyImage" />
+                    <img alt="studyImg" :src="meeting.studyImage" />
                   </v-avatar>
                 </template>
-                <v-card-text> {{ study.studyName }} - {{ study.topic }} </v-card-text>
+                <v-card-text> {{ meeting.studyName }} - {{ meeting.topic }} </v-card-text>
               </v-card>
             </v-col>
           </v-row>
@@ -136,14 +137,15 @@ import { useRouter, useRoute } from 'vue-router'
 import instance from '@/api/index'
 import Swal from 'sweetalert2'
 const route = useRoute()
+const router = useRouter()
 const noteId = route.params.id
 
 // 원본 제목, 내용
 const title = ref('제목')
 const content = ref('')
+
 // 수정 할 내용 (초기값은 원본 내용임)
 const editContent = ref('')
-
 watch(content, (newValue) => {
   editContent.value = newValue
 })
@@ -181,8 +183,6 @@ watch(studyMeetingScheduleList, () => {
   meetingList.value = initializeMeetingList()
 })
 
-const meetingId = ref()
-
 const selectedMeeting = ref(null)
 
 const handleMeetingSelection = () => {
@@ -219,14 +219,17 @@ function LoadMeetingSchedule() {
     .then((res) => {
       console.log(res)
       if (res.data.status == 200) {
-        console.log(res.data.data)
+        console.log(res.data.message)
         studyMeetingScheduleList.value = res.data.data
-        console.log(studyMeetingScheduleList)
       }
     })
     .catch((err) => {
       console.log(err)
     })
+}
+
+function GoStudyPage(id) {
+  router.push({ name: 'study', params: { id: id } })
 }
 
 onMounted(() => {
@@ -237,25 +240,33 @@ onMounted(() => {
 function EditNote() {
   instance
     .put(`api/notes/${noteId}`, {
-      title,
-      editContent
+      title: title.value,
+      content: editContent.value
     })
     .then((res) => {
-      console.log(res)
-      console.log('수정성공')
-      content.value = editContent.value
-      isEdit.value = false
+      if (res.data.status === 204) {
+        content.value = editContent.value
+        isEdit.value = false
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: '잘못된 요청 입니다.',
+          text: res.data.message
+        })
+      }
     })
     .catch((err) => {
       isEdit.value = false
-      alert('저장실패')
-      console.log('저장실패', err)
+      Swal.fire({
+        icon: 'error',
+        title: '수정실패',
+        text: err.response.data.message
+      })
     })
 }
 
 // 노트 공유하기
 function ShareNote() {
-  console.log(meetingId.value)
   instance
     .post(`api/notes/${noteId}/meetings`, {
       meetingId: selectedMeeting.value
@@ -269,8 +280,8 @@ function ShareNote() {
           showConfirmButton: false,
           timer: 1500
         })
+        LoadNoteData()
       }
-      console.log(res)
     })
     .catch((err) => {
       Swal.fire({
@@ -283,12 +294,12 @@ function ShareNote() {
 
 const MakeSummary = () => {
   instance
-    .post(`api/notes/${noteId}/summary`)
+    .post(`api/notes/${noteId}/summary`, {}, { timeout: 1000000 })
     .then((res) => {
       if (res.data.status == 201) {
         noteSummary.value = res.data.data.noteSummary
+        console.log(res.data.message)
       }
-      console.log(res)
     })
     .catch((err) => {
       console.log(err)

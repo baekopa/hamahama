@@ -5,13 +5,16 @@ from fastapi.responses import JSONResponse
 from pyannote.audio import Pipeline
 from pydub import AudioSegment
 from tempfile import NamedTemporaryFile
-from model.request_dto import OriginalText, QuizRequest
-from model.response_dto import SummaryDTO, KeywordDTO, QuizDTO, TailQuestionDTO
+from model.request_dto import OriginalText, QuizRequest, OriginalTextList, DifferenceRequest
+from model.response_dto import SummaryDTO, KeywordDTO, QuizDTO, TailQuestionDTO, UniquificationDTO, DifferenceDTO
 from service.text_processing import process_text, process_for_remind_quiz
 from service.summary_pre_service import do_summary
 from service.keyword_quiz_pre_service import do_keyword, do_quiz
 from service.tail_question_service import do_tail_question
-from service.audio_to_text_service import load_models, set_pipeline, convert_audio_ffmpeg, millisec, remove_time_from_text, clean_up_files, convert_audio_sample_rate
+from service.audio_to_text_service import load_models, set_pipeline, convert_audio_ffmpeg, millisec, remove_time_from_text, clean_up_files, convert_audio_sample_rate, speech_to_text
+from service.difference_service import do_difference
+from service.uniquification_service import do_uniquification
+
 
 
 router=APIRouter(
@@ -44,8 +47,20 @@ async def quiz_text(origin_dto: QuizRequest):
 @router.post("/tailquestion", tags=["꼬리 질문"], response_model=TailQuestionDTO)
 async def tail_question_text(origin_dto: OriginalText):
     
-    tail_question = do_tail_question(origin_dto.original_text)
-    return TailQuestionDTO(original_text=origin_dto.original_text, tail_question=tail_question)
+    tail_question = do_tail_question(origin_dto.originalText)
+    return TailQuestionDTO(tailQuestion=tail_question)
+    
+@router.post("/uniquification", tags=["요약 중복 제거"], response_model=UniquificationDTO)
+async def tail_question_text(origin_dto: OriginalTextList):
+    
+    uniquification = do_uniquification(origin_dto.submittedNoteList)
+    return UniquificationDTO(uniquification=uniquification)
+
+@router.post("/difference", tags=["다른 내용"], response_model=DifferenceDTO)
+async def tail_question_text(origin_dto: DifferenceRequest):
+    
+    difference = do_difference(origin_dto.differenceTextList)
+    return DifferenceDTO(difference=difference)
 
 
 
@@ -54,101 +69,7 @@ async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...
 
     model = load_models()
     diarization_pipeline = set_pipeline()
-    if not file.filename.endswith('.wav'):
-        raise HTTPException(status_code=400, detail="Only WAV files are supported.")
+    data = await speech_to_text(model, diarization_pipeline, file)
+    print(data)
     
-    # 임시 파일에 오디오 저장
-    with NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
-        content = await file.read()
-        print(tmp)
-        tmp.write(content)
-        tmp_filename = tmp.name
-
-    # # ffmpeg로 wav 변환
-    converted_filename = tmp_filename.replace(".wav", "_converted.wav")
-    convert_audio_ffmpeg(tmp_filename, converted_filename)
-    # convert_audio_sample_rate(tmp_filename, converted_filename, new_sample_rate=16000)
-
-    # 화자 분할
-    diarization = diarization_pipeline(converted_filename)
-    # diarization = diarization_pipeline(tmp_filename)
-    
-    with open("diarization.txt", "w") as text_file:
-        text_file.write(str(diarization))
-
-    print(*list(diarization.itertracks(yield_label = True))[:10], sep="\n")
-
-    dzs = open('diarization.txt').read().splitlines()
-
-    groups = []
-    g = []
-    lastend = 0
-
-    for d in dzs:   
-        if g and (g[0].split()[-1] != d.split()[-1]):      #same speaker
-            groups.append(g)
-            g = []
-
-        g.append(d)
-        end = re.findall('[0-9]+:[0-9]+:[0-9]+\.[0-9]+', string=d)[1]
-        end = millisec(end)
-        if (lastend > end):       #segment engulfed by a previous segment
-            groups.append(g)
-            g = [] 
-        else:
-            lastend = end
-
-    if g:
-        groups.append(g)
-
-    print(*groups, sep='\n')
-    
-    audio = AudioSegment.from_wav(converted_filename)
-
-    speaker = []
-    gidx = -1
-    for g in groups:
-        print("g 값 : ", g)
-        print("발화자 번호", g[-1][-1])
-        speaker.append(g[-1][-1])
-        start = re.findall('[0-9]+:[0-9]+:[0-9]+\.[0-9]+', string=g[0])[0]
-        end = re.findall('[0-9]+:[0-9]+:[0-9]+\.[0-9]+', string=g[-1])[1]
-        start = millisec(start) #- spacermilli
-        end = millisec(end)  #- spacermilli
-        print("start, end :", start, end)
-        gidx += 1
-        audio[start:end].export(str(gidx) + '.wav', format='wav')
-    
-    print(speaker)
-    
-    # 화자 분할된 데이터를 JSON 형식으로 준비
-    transcription_data = {
-        "transcriptions": [
-            # 각 화자의 발화 데이터를 여기에 추가
-            # 예: {"speaker": "1", "text": "여기는 화자 1의 발화입니다."},
-        ]
-    }
-
-    for i in range(gidx+1):
-        # 오디오 파일 이름 구성
-        audio_file = f"{i}.wav"
-    
-        result = transcribe(model=model, audio=audio_file)
-        transcribed_text = result["text"]
-
-        print("result 나옴 : ", result)
-        # cleaned_text = remove_time_from_text(result.stdout)
-        cleaned_text = remove_time_from_text(transcribed_text)
-        print("remove text 성공")
-        transcription_data["transcriptions"].append({"speaker": speaker[i], "text": cleaned_text})
-
-        # 결과 출력
-        print(speaker[i]," : ", cleaned_text)
-
-        clean_up_files(f"{i}.*")
-            
-    clean_up_files("diarization.txt")
-    print(transcription_data)
-    print(study_id, meeting_id)
-    
-    return JSONResponse(content=transcription_data["transcriptions"])
+    return JSONResponse(content=data["transcriptions"])

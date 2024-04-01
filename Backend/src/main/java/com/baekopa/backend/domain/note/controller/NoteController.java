@@ -2,6 +2,7 @@ package com.baekopa.backend.domain.note.controller;
 
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.note.dto.request.CreateNoteRequestDto;
+import com.baekopa.backend.domain.note.dto.request.UpdateNoteRequestDto;
 import com.baekopa.backend.domain.note.dto.response.NoteResponseDto;
 import com.baekopa.backend.domain.note.service.NoteService;
 import com.baekopa.backend.global.response.success.ApiResponse;
@@ -38,7 +39,7 @@ public class NoteController {
 
     }
 
-    @Operation(summary = "새 요약 생성", description = "공부하마 노트 요약 생성")
+    @Operation(summary = "새 요약 생성", description = "공부하마 노트 요약 생성합니다.")
     @PostMapping("/{note-id}/summary")
     public ApiResponse<Map<String, String>> createSummary(@PathVariable(name = "note-id") Long noteId) throws JsonProcessingException {
 
@@ -51,12 +52,29 @@ public class NoteController {
 
     }
 
-    @Operation(summary = "노트 조회", description = "공부하마 노트 조회")
+    @Operation(summary = "노트 조회", description = "공부하마 노트 조회합니다.")
     @GetMapping("/{note-id}")
     public ApiResponse<NoteResponseDto> getNote(@PathVariable(name = "note-id") Long noteId, @AuthenticationPrincipal Member member) {
 
         log.info("노트 조회 : {}", noteId);
 
         return ApiResponse.of(SuccessCode.NOTE_GET_SUCCESS, noteService.getNote(noteId, member));
+    }
+
+    @Operation(summary = "노트 수정", description = "공부하마 노트를 수정합니다.")
+    @PutMapping("/{note-id}")
+    public ApiResponse<Long> updateNote(@PathVariable(name = "note-id") Long noteId, @RequestBody UpdateNoteRequestDto requestDto) {
+
+        log.info("노트 수정 : {}", noteId);
+        return ApiResponse.of(SuccessCode.NOTE_UPDATE_SUCCESS, noteService.updateNote(noteId, requestDto));
+    }
+
+    @Operation(summary = "노트 삭제", description = "공부하마 노트를 삭제합니다.")
+    @DeleteMapping("/{note-id}")
+    public ApiResponse<Void> deleteNote(@PathVariable(name = "note-id") Long noteId) {
+
+        log.info("노트 삭제 : {}", noteId);
+        noteService.deleteNote(noteId);
+        return ApiResponse.of(SuccessCode.NOTE_DELETE_SUCCESS);
     }
 }

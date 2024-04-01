@@ -1,112 +1,266 @@
 <template>
-  <v-card>
-    <v-layout>
-      <v-navigation-drawer floating permanent>
-        <v-list density="compact" nav>
-          <v-list-item
-            @click="GoHome()"
-            prepend-icon="mdi-view-dashboard"
-            title="홈"
-            value="home"
-          ></v-list-item>
-          <v-list-item
-            @click="GoSummary()"
-            prepend-icon="mdi-forum"
-            title="요약"
-            value="summary"
-          ></v-list-item>
-          <v-list-item
-            @click="GoQuiz()"
-            prepend-icon="mdi-forum"
-            title="리마인드 퀴즈"
-            value="quiz"
-          ></v-list-item>
-          <v-list-item
-            @click="GoSetting()"
-            prepend-icon="mdi-forum"
-            title="스터디 관리"
-            value="setting"
-          ></v-list-item>
+  <v-container>
+    <v-layout style="max-height: 800px">
+      <v-navigation-drawer style="width: 323px; height: 800px">
+        <p class="text-3xl text-center mt-10 point-font text-stone-900">같이하마</p>
+        <v-list lines="two" density="compact" nav>
+          <v-list-item three-line>
+            <v-list-item-content class="align-self-center">
+              <v-list-item-title class="ml-14 mt-10"
+                ><div class="text-2xl font-bold">
+                  {{ studyStore.studyTitle }}
+                </div></v-list-item-title
+              >
+              <v-list-item-subtitle class="ml-14 mt-1"
+                ><div class="text-base">
+                  {{ studyStore.studyDescription }}
+                </div></v-list-item-subtitle
+              >
+            </v-list-item-content>
+          </v-list-item>
+
+          <div class="ml-8 mt-8">
+            <v-list-item
+              @click="GoHome()"
+              prepend-icon="mdi-view-dashboard"
+              value="home"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+              >스터디 홈</v-list-item
+            >
+            <v-list-item
+              @click="GoSummary()"
+              prepend-icon="mdi-forum"
+              value="summary"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+              >요약</v-list-item
+            >
+            <v-list-item
+              @click="GoQuiz()"
+              prepend-icon="mdi-help-box"
+              value="quiz"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+              >리마인드 퀴즈</v-list-item
+            >
+            <v-list-item
+              @click="GoSetting()"
+              prepend-icon="mdi-account-key"
+              value="setting"
+              color="primary"
+              rounded="xl"
+              class="pl-6 text-xl"
+              >스터디 관리</v-list-item
+            >
+          </div>
         </v-list>
       </v-navigation-drawer>
-      <v-main>
-        <div class="title">
-          <p class="text-xl ml-5 mt-2 italic text-gray-500">
-            <span>{{ summaryData.title }}</span>
-          </p>
-        </div>
+      <v-divider style="height: 900px" class="mr-10" vertical></v-divider>
 
-        <!-- 버튼 아래영역을 v-if 로 컨텐츠 분리 -->
-        <div class="buttons">
-          <v-btn-toggle
-            class="bg-grey-lighten-4"
-            text-color="white"
-            v-model="toggle"
-            variant="outlined"
-            divided
-            mandatory
-            color="primary"
-          >
-            <v-btn class="rounded-t-lg" value="요약">요약</v-btn>
-            <v-btn class="rounded-t-lg" value="키워드">키워드</v-btn>
-            <v-btn class="rounded-t-lg" value="전문">전문</v-btn>
-            <v-btn class="rounded-t-lg" value="노트요약">노트요약</v-btn>
-          </v-btn-toggle>
-        </div>
-        <div class="content">
-          <div v-if="toggle == '요약'">
-            <div v-if="!isEdit" class="summary-section">
-              <div class="d-flex align-center">
-                <p>요약</p>
-                <v-btn @click="RegenSummary()" icon="mdi-refresh" variant="text"></v-btn>
-                <v-btn @click="isEdit = !isEdit" icon="mdi-pencil-outline" variant="text"></v-btn>
+      <v-main class="ml-10 mt-5" style="min-height: 800px">
+        <v-container>
+          <div class="d-flex justify-between">
+            <div class="title d-flex flex-column">
+              <span class="text-2xl ml-5 font-bold">
+                <span class="tossface text-3xl">🗂 </span
+                ><span class="point-color font-bold">{{ studyStore.meetingTopic }}</span> 미팅
+                정리본</span
+              >
+              <p class="text-base ml-5 mt-2 italic text-gray-500">
+                <span>{{ studyStore.studyAt }}</span>
+              </p>
+              <div class="d-flex ml-5 mt-4">
+                참여 -
+                <p class="ml-1" v-for="member in studyStore.meetingMembers">
+                  {{ member.name }}
+                </p>
               </div>
-              <p>{{ summaryData.summary }}</p>
-              <div class="mt-10">
-                <p>참여자</p>
-                <div class="d-flex">
-                  <div class="pa-3" v-for="member in summaryData.members">{{ member }}</div>
+            </div>
+            <div class="mr-40 mt-14">
+              <button class="mr-10" @click="CreateRemindQuiz()">
+                <p>리마인드 퀴즈 생성</p>
+              </button>
+              <button @click="CreateDifference()">
+                <p>요약 차이 생성</p>
+              </button>
+              <button>
+                <img @click="" src="@/assets/image/note/download.svg" alt="download" />
+              </button>
+            </div>
+          </div>
+          <v-divider
+            :thickness="2"
+            class="border-opacity-50 my-3"
+            style="width: 1300px"
+            color="info"
+          ></v-divider>
+
+          <!-- 버튼 아래영역을 v-if 로 컨텐츠 분리 -->
+          <div class="mt-10 ml-5" style="width: 1300px">
+            <v-btn-toggle v-model="toggle" variant="tonal" divided mandatory color="#3FB1FA">
+              <div class="rounded-t-2xl">
+                <v-btn
+                  :variant="toggle == '요약' ? 'elevated' : 'tonal'"
+                  value="요약"
+                  width="125"
+                  height="50"
+                  ><span class="text-lg point-font">요약</span></v-btn
+                >
+              </div>
+              <div class="rounded-t-2xl">
+                <v-btn
+                  :variant="toggle == '키워드' ? 'elevated' : 'tonal'"
+                  value="키워드"
+                  width="125"
+                  height="50"
+                  ><span class="text-lg point-font">키워드</span></v-btn
+                >
+              </div>
+              <div class="rounded-t-2xl">
+                <v-btn
+                  :variant="toggle == '전문' ? 'elevated' : 'tonal'"
+                  value="전문"
+                  width="125"
+                  height="50"
+                  ><span class="text-lg point-font">전문</span></v-btn
+                >
+              </div>
+              <div class="rounded-t-2xl">
+                <v-btn
+                  :variant="toggle == '제출된노트' ? 'elevated' : 'tonal'"
+                  value="제출된노트"
+                  width="125"
+                  height="50"
+                  ><span class="text-lg point-font">제출된 노트</span></v-btn
+                >
+              </div>
+            </v-btn-toggle>
+          </div>
+          <div class="content border ml-5 px-7 py-5 rounded-b-xl">
+            <div v-if="toggle == '요약'">
+              <div v-if="!isEdit" class="summary-section">
+                <div class="d-flex align-center h-10">
+                  <p class="text-lg font-bold mr-4">요약 내용</p>
+                  <v-btn v-if="!isSummaryExist" @click="CreateMeetingSummary()">
+                    <p>미팅 전문 요약 생성</p>
+                  </v-btn>
+                  <v-btn @click="RegenSummary()" icon="mdi-refresh" variant="text"></v-btn>
+                  <v-btn @click="isEdit = !isEdit" icon="mdi-pencil-outline" variant="text"></v-btn>
+                </div>
+                <div class="mt-5">
+                  <p>{{ meetingContents.summaryContent }}</p>
+                </div>
+              </div>
+              <!-- 요약 수정 -->
+              <div v-else>
+                <div class="d-flex align-center h-10 justify-between">
+                  <p class="text-lg font-bold mr-4">요약 내용</p>
+                  <v-btn
+                    @click="EditSummary()"
+                    size="large"
+                    class="save"
+                    variant="tonal"
+                    color="#3fb1fa"
+                    rounded="xl"
+                  >
+                    수정완료
+                  </v-btn>
+                </div>
+                <div class="mt-5">
+                  <textarea
+                    style="width: 1190px; height: 350px"
+                    v-model="editedSummary"
+                    variant="plain"
+                    placeholder="수정할 내용을 작성해주세요. ( •̀ ω •́ )✧"
+                    class="modify-content mt-5"
+                    rows="20"
+                  ></textarea>
                 </div>
               </div>
             </div>
-            <!-- 요약 수정 -->
-            <div v-else>
-              <v-btn @click="EditSummary" prepend-icon="$vuetify">수정완료</v-btn>
-              <v-textarea
-                class="justify-center flex-wrap mx-auto px-4"
-                style="font-family: 'Arial', sans-serif; line-height: 2; background-color: #f7f7f7"
-                v-model="editedSummary"
-                label="수정"
-                outlined
-                no-resize
-                row-height="2"
-                rows="20"
-              ></v-textarea>
-            </div>
-          </div>
 
-          <div v-else-if="toggle == '키워드'">
-            <div>
-              <p>키워드</p>
-              <div class="keywords d-flex">
-                <div class="pa-3" v-for="keyword in summaryData.keywords">#{{ keyword }}</div>
+            <div v-else-if="toggle == '키워드'">
+              <div class="d-flex align-center h-10">
+                <p class="text-lg font-bold mr-4">키워드</p>
+                <v-btn @click="CreateKeyword" icon="mdi-refresh" variant="text"></v-btn>
+              </div>
+              <div class="keywords d-flex mt-5">
+                <v-chip-group>
+                  <v-chip
+                    class="mr-5"
+                    size="x-large"
+                    v-for="keyword in meetingContents.keyword"
+                    :key="keyword.keywordId"
+                    >#{{ keyword.keyword }}</v-chip
+                  >
+                </v-chip-group>
+              </div>
+            </div>
+            <div v-else-if="toggle == '전문'">
+              <div>
+                <div>
+                  <div class="d-flex align-center h-10">
+                    <p class="text-lg font-bold mr-4">전문 내용</p>
+                    <v-btn @click="" icon="mdi-refresh" variant="text"></v-btn>
+                    <v-btn @click="" icon="mdi-pencil-outline" variant="text"></v-btn>
+                  </div>
+                </div>
+                <div class="mt-5">
+                  <p>{{ scriptContent }}</p>
+                </div>
+              </div>
+            </div>
+            <div v-else-if="toggle == '제출된노트'">
+              <div class="d-flex align-center h-10 text-lg font-bold">
+                <p class="text-lg font-bold mr-4">제출된 노트</p>
+
+                <v-chip-group v-model="noteToggle" variant="text" mandatory>
+                  <v-chip class="h-10">전체</v-chip>
+                  <v-chip
+                    class="h-10"
+                    @click="noteToggle = index + 1"
+                    v-for="(note, index) in meetingContents.submittedNoteSummary.submittedNotes"
+                    :key="note.id"
+                    :value="index"
+                    >{{ note.writerName }}</v-chip
+                  >
+                </v-chip-group>
+              </div>
+              <div v-if="noteToggle == 0" class="d-flex mt-5">
+                <div>
+                  <p class="font-bold">미팅에 제출된 노트 전체 요약</p>
+                  <div class="mt-3">
+                    {{ meetingContents.submittedNoteSummary.entireSummary }}
+                  </div>
+                </div>
+              </div>
+              <div v-else class="d-flex mt-5">
+                <div>
+                  <p class="font-bold">노트</p>
+                  <div>
+                    {{
+                      meetingContents.submittedNoteSummary.submittedNotes[noteToggle - 1].originText
+                    }}
+                  </div>
+                  <p class="font-bold mt-5">요약</p>
+                  <div>
+                    {{
+                      meetingContents.submittedNoteSummary.submittedNotes[noteToggle - 1]
+                        .summaryText
+                    }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div v-else-if="toggle == '전문'">
-            <div>
-              <p>{{ summaryData.original }}</p>
-            </div>
-          </div>
-          <div v-else-if="toggle == '노트요약'">
-            <div>
-              <p>여긴 뭐가 들어가는데?</p>
-            </div>
-          </div>
-        </div>
+        </v-container>
       </v-main>
     </v-layout>
-  </v-card>
+  </v-container>
 </template>
 
 <script setup>
@@ -114,6 +268,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import instance from '@/api/index'
 import { useStudyStore } from '@/stores/study'
+import Swal from 'sweetalert2'
 
 const studyStore = useStudyStore()
 const router = useRouter()
@@ -121,21 +276,64 @@ const route = useRoute()
 const meetingId = route.params.id
 const studyId = route.params.studyId
 const toggle = ref('요약')
+const noteToggle = ref(0)
 const isEdit = ref(false)
 
-const summaryData = ref({
-  id: 1,
-  title: '24년 3월 8일 스터디의 주제는 다음과 같습니당나귀',
-  summary:
-    '스터디 결과 요약문은 다음과 같다.스터디 결과 요약문은 다음과 같다스터디 결과 요약문은 다음과 같다스터디 결과 요약문은 다음과 같다스터디 결과 요약문은 다음과 같다스터디 결과 요약문은 다음과 같다스터디 결과 요약문은 다음과 같다스터디 결과 요약문은 다음과 같다스터디 결과 요약문은 다음과 같다스터디 결과 요약문은 다음과 같다스터디 결과 요약문은 다음과 같다스터디 결과 요약문은 다음과 같다스터디 결과 요약문은 다음과 같다.',
-  members: ['김수민', '이수민', '여아정'],
-  keywords: ['네트워크', 'OSI 7계층', 'IP', 'TCP'],
-  original:
-    '울 시내버스 노동조합이 12년 만에 파업에 들어간 28일 출근길 시민들이 적잖은 불편을 겪었다.이른 아침부터 비까지 내리면서 불편이 가중됐다. 새벽까지 이어진 협상이 끝내 결렬되면서 파업에 돌입한 터라 파업 소식을 모르고 출근길에 나섰다가 당황한 시민들도 있었다.이날 오전 8시께 서울 마포구 마포구청역 인근 버스정류장에서 버스를 기다리던 황모(56)씨는 버스 파업으로 회사에 지각할까 봐 걱정스러워했다.마포구청역 인근에서 강서구 화곡동으로 매일 출근한다는 황씨는 "지하철을 타면 세 번은 갈아타야 하고 시간도 훨씬 오래 걸리는데 큰일"이라며 한숨을 쉬었다.기자에게 버스 파업 소식을 처음 들었다며 당황하는 시민도 여럿 보였다.강남 고속터미널 인근으로 출근하는 조민상(37)씨는 "뉴스를 잘 안 봐 버스가 파업하는지 몰랐다"며 "정류장 전광판에 운행 예정 버스가 없어서 어리둥절하던 찰나였다"고 말했다.지하철 4호선 혜화역 인근 정류장에서 만난 한주현(31)씨는 "파업한다는 이야기를 못 들었다"며 "버스를 30분 넘게 기다려야 된다고 하니 어떻게 해야 될지 모르겠다. 출근해야 되는데 마음이 급하다"며 급히 발걸음을 옮겼다.'
+const summaryContent = ref('')
+const scriptContent = ref('')
+const keywords = ref([])
+
+const isSummaryExist = ref(false)
+const isKeywordExist = ref(false)
+
+const meetingContents = ref({
+  meetingId: 0,
+  topic: '네트워크와 OSI 7계층',
+  scriptContent: 'string',
+  summaryContent: '아직 요약을 생성하지 않았어요! 요약 생성을 해보세요',
+  keyword: [
+    {
+      keywordId: 0,
+      keyword: '키워드가 생성되지 않았어요 키워드 생성 버튼을 눌러보세요'
+    }
+  ],
+  memberInfoList: [
+    {
+      memberId: 0,
+      name: '백오파',
+      profile_image: 'string'
+    }
+  ],
+  submittedNoteSummary: {
+    submittedNotes: [
+      {
+        id: 0,
+        originText: '',
+        summaryText: '',
+        writerId: 1,
+        writerName: '',
+        writerImage: ''
+      }
+    ],
+    entireSummary:
+      '1. 대구 지역 한 대학병원 전공의 A씨의 발언에 대해 어떻게 생각하시나요?\n- 대구 지역 한 대학병원 전공의 A씨의 발언은 그의 의견이며, 그만의 이유와 배경이 있을 것으로 생각됩니다.\n\n2. 계명대학교 의과대학 신입생들의 행동에 동의하시나요?\n- 계명대학교 의과대학 신입생들의 행동에 대한 동의 여부는 각자의 판단에 따라 다를 수 있을 것으로 생각됩니다.\n\n3. 의료계와 정부의 출구 없는 갈등에 대해 어떤 해결책이 필요하다고 생각하시나요?\n- 의료계와 정부의 충돌을 해소하기 위해서는 상호 협의와 대화를 통한 해결책 모색이 필요하다고 생각됩니다.\n\n4. 대한의사협회 비상대책위원회의 주 40시간 준법 진료에 대한 반발 움직임에 대해 어떻게 생각하시나요?\n- 대한의사협회 비상대책위원회의 주 40시간 준법 진료에 대한 반발 움직임은 의료계 내부의 다양한 의견이 반영되고 있는 것으로 보입니다.\n\n5. 이번 의료계와 관련된 갈등 상황이 어떻게 발전될 것으로 예상하시나요?\n- 이번 의료계와 관련된 갈등 상황은 상황에 따라 다양한 변화가 있을 수 있으며, 현재는 예측하기 어려운 상황입니다.'
+  }
 })
 
-const editedSummary = ref('')
-watch(summaryData.summary, (newValue) => {
+const submittedNotes = ref([
+  {
+    id: 0,
+    originText: 'string',
+    summaryText: '요약된 텍스트 입니다',
+    writerId: 0,
+    writerName: '백오파',
+    writerImage: 'string'
+  }
+])
+
+// 사용자가 요약을 수정할 수 있도록
+const editedSummary = ref(meetingContents.summaryContent)
+watch(meetingContents.summaryContent, (newValue) => {
   editedSummary.value = newValue
 })
 
@@ -152,12 +350,61 @@ function GoSummary() {
   router.push({ name: 'studySummary', params: { id: studyId } })
 }
 
-// 미팅 요약 조회
-function LoadSummaryData() {
+// 전문 조회
+function LoadEntireScript() {
   instance
-    .get(`api/studies/${studyId}/meetings/${meetingId}/summary`)
+    .get(`api/studies/${studyId}/meetings/${meetingId}/entire`)
     .then((res) => {
+      console.log(res.data.message)
+      if (res.data.status == 200) {
+        scriptContent.value = res.data.data.scriptContent
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+// 키워드 생성
+async function CreateKeyword() {
+  console.log('키워드생성')
+  instance
+    .post(`api/studies/${studyId}/meetings/${meetingId}/keyword`)
+    .then((res) => {
+      if (res.data.status == 201) {
+        meetingContents.value.keyword = res.data.data.keyword
+      }
+      console.log(meetingContents.value)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+// 키워드 조회
+function LoadKeyword() {
+  instance
+    .get(`api/studies/${studyId}/meetings/${meetingId}/keyword`)
+    .then((res) => {
+      if (res.data.status == 201) {
+        keywords.value = res.data.data.keyword
+      }
       console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+// 산출물 조회 (주제, 요약, 전문, 키워드 , 참여자는 추가예정)
+function LoadAll() {
+  instance
+    .get(`api/studies/${studyId}/meetings/${meetingId}/all`)
+    .then((res) => {
+      if (res.data.status == 200) {
+        console.log(res.data.message)
+        meetingContents.value = res.data.data
+      }
     })
     .catch((err) => {
       console.log(err)
@@ -169,7 +416,10 @@ function RegenSummary() {
   instance
     .put(`api/studies/${studyId}/meetings/${meetingId}/summary`)
     .then((res) => {
-      console.log(res)
+      if (res.data.status === 201) {
+        console.log(res.data.message)
+        LoadAll()
+      }
     })
     .catch((err) => {
       console.log(err)
@@ -179,12 +429,16 @@ function RegenSummary() {
 function EditSummary() {
   instance
     .put(`api/studies/${studyId}/meetings/${meetingId}/summary-update`, {
-      summaryText: editedSummary
+      summaryText: editedSummary.value
     })
 
     .then((res) => {
       console.log(res)
-
+      if (res.data.status == 201) {
+        summaryContent.value = res.data.data.summaryText
+        LoadAll()
+      } else {
+      }
       isEdit.value = !isEdit.value
     })
     .catch((err) => {
@@ -192,7 +446,46 @@ function EditSummary() {
     })
 }
 
-onMounted(LoadSummaryData)
+// 퀴즈생성
+function CreateRemindQuiz() {
+  instance
+    .post(`api/studies/${studyId}/meetings/${meetingId}/remind-quiz`)
+    .then((res) => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+// 전문 요약 생성
+async function CreateMeetingSummary() {
+  await instance
+    .post(`api/studies/${studyId}/meetings/${meetingId}/summary`)
+    .then((res) => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+// 내 노트와 차이점 생성
+function CreateDifference() {
+  instance
+    .post(`api/studies/${studyId}/meetings/${meetingId}/difference`)
+    .then((res) => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+onMounted(() => {
+  LoadAll()
+  LoadEntireScript()
+})
 </script>
 
 <style scoped>
@@ -205,16 +498,19 @@ onMounted(LoadSummaryData)
 }
 
 .content {
-  width: 1320px;
-  height: 700px;
-  padding: 4px;
-  margin: 20px;
+  width: 1250px;
+  height: 500px;
   overflow-y: auto;
 }
 
+.modify-content {
+  font-size: large;
+  outline: none;
+}
+
 .shared-study-image {
-  height: 25px;
-  width: 25px;
+  height: 45px;
+  width: 45px;
   border-radius: 50%;
   margin-left: 10px;
   object-fit: cover;
