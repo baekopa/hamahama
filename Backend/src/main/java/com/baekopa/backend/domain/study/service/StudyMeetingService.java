@@ -74,11 +74,7 @@ public class StudyMeetingService {
         List<SubmittedNoteDto> submittedNoteDtoList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
                 .stream().map(SubmittedNoteDto::of).toList();
 
-        return StudyMeetingResponseDto.of(meeting.getId(),
-                meeting.getTopic(),
-                meeting.getStudyAt(),
-                submittedNoteDtoList,
-                meeting.getNoteSummary());
+        return StudyMeetingResponseDto.of(meeting, submittedNoteDtoList);
     }
 
     @Transactional
