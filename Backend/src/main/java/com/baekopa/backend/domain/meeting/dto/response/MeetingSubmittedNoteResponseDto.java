@@ -1,14 +1,13 @@
 package com.baekopa.backend.domain.meeting.dto.response;
 
 import com.baekopa.backend.domain.note.dto.SubmittedNoteDto;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MeetingSubmittedNoteResponseDto {
 
     private List<SubmittedNoteDto> submittedNotes;
