@@ -81,6 +81,15 @@
               </div>
             </div>
             <div class="mr-40 mt-14">
+              <button @click="CreateMeetingSummary()">
+                <p>미팅 전문 요약 생성</p>
+              </button>
+              <button @click="CreateRemindQuiz()">
+                <p>리마인드 퀴즈 생성</p>
+              </button>
+              <button @click="CreateDifference()">
+                <p>요약 차이 생성</p>
+              </button>
               <button>
                 <img @click="" src="@/assets/image/note/download.svg" alt="download" />
               </button>
@@ -177,7 +186,7 @@
             <div v-else-if="toggle == '키워드'">
               <div class="d-flex align-center h-10">
                 <p class="text-lg font-bold mr-4">키워드</p>
-                <v-btn @click="" icon="mdi-refresh" variant="text"></v-btn>
+                <v-btn @click="CreateKeyword" icon="mdi-refresh" variant="text"></v-btn>
               </div>
               <div class="keywords d-flex mt-5">
                 <v-chip-group>
@@ -241,6 +250,7 @@ import { useRoute, useRouter } from 'vue-router'
 import instance from '@/api/index'
 import { useStudyStore } from '@/stores/study'
 import Swal from 'sweetalert2'
+import { compileScript } from 'vue/compiler-sfc'
 
 const studyStore = useStudyStore()
 const router = useRouter()
@@ -304,6 +314,20 @@ function GoSummary() {
   router.push({ name: 'studySummary', params: { id: studyId } })
 }
 
+function CreateKeyword() {
+  instance
+    .post(`api/studies/${studyId}/meetings/${meetingId}/keyword`)
+    .then((res) => {
+      if (res.data.status == 201) {
+        meetingContents.value.keyword = res.data.data.keyword
+      }
+      console.log(meetingContents.value)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
 // 키워드 조회
 function LoadKeyword() {
   instance
@@ -324,14 +348,10 @@ function LoadAll() {
   instance
     .get(`api/studies/${studyId}/meetings/${meetingId}/all`)
     .then((res) => {
-      console.log(res)
       if (res.data.status == 200) {
-        topic.value = res.data.data.topic
-        summaryContent.value = res.data.data.summaryContent
-        scriptContent.value = res.data.data.scriptContent
-        keywords.value = res.data.data.keyword
+        console.log(res.data.message)
+        meetingContents.value = res.data.data
       }
-      console.log(res)
     })
     .catch((err) => {
       console.log(err)
@@ -343,7 +363,10 @@ function RegenSummary() {
   instance
     .put(`api/studies/${studyId}/meetings/${meetingId}/summary`)
     .then((res) => {
-      LoadAll()
+      if (res.data.status === 201) {
+        console.log(res.data.message)
+        LoadAll()
+      }
     })
     .catch((err) => {
       console.log(err)
@@ -360,9 +383,43 @@ function EditSummary() {
       console.log(res)
       if (res.data.status == 201) {
         summaryContent.value = res.data.data.summaryText
+        LoadAll()
       } else {
       }
       isEdit.value = !isEdit.value
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+function CreateRemindQuiz() {
+  instance
+    .post(`api/studies/${studyId}/meetings/${meetingId}/remind-quiz`)
+    .then((res) => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+function CreateMeetingSummary() {
+  instance
+    .post(`api/studies/${studyId}/meetings/${meetingId}/summary`)
+    .then((res) => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+function CreateDifference() {
+  instance
+    .post(`api/studies/${studyId}/meetings/${meetingId}/difference`)
+    .then((res) => {
+      console.log(res)
     })
     .catch((err) => {
       console.log(err)
