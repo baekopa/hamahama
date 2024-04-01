@@ -7,7 +7,7 @@
         <div class="study-section">
           <v-row class="pt-10 pl-10" v-for="study in studyList" :key="study.id">
             <v-card
-              @click="GoQuizDetail(study.id)"
+              @click="GoQuizDetail(study)"
               elevation="4"
               width="810"
               height="70"
@@ -15,14 +15,14 @@
               class="d-flex"
             >
               <div class="quiz-data d-flex align-center">
-                <span class="truncate-text">{{ study.subject }}</span>
+                <span class="truncate-text">{{ study.topic }}</span>
                 <span>{{ study.studyName }}</span>
-                <span>미팅 일시 : {{ study.meetingDate }}</span>
+                <span>미팅 일시 : {{ study.studyAt }}</span>
               </div>
             </v-card>
             <div class="date d-flex flex-column">
-              <span>공개일: {{ study.openDate }}</span>
-              <span>최종 수정 일시:{{ study.lastUpdate }}</span>
+              <span>공개일: {{ study.openAt }}</span>
+              <span>최종 수정 일시:{{ study.lastModifiedAt }}</span>
             </div>
           </v-row>
         </div>
@@ -65,9 +65,75 @@
 <script setup>
 import { ref } from 'vue'
 import instance from '@/api'
+import { onMounted } from 'vue'
 
 const isList = ref(true)
 
+const studyList = ref([
+  {
+    remindQuizId: 1,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당1',
+    studyName: '스터디 명',
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
+  },
+  {
+    remindQuizId: 1,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당1',
+    studyName: '스터디 명',
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
+  },
+  {
+    remindQuizId: 1,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당1',
+    studyName: '스터디 명',
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
+  },
+  {
+    remindQuizId: 1,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당1',
+    studyName: '스터디 명',
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
+  },
+  {
+    remindQuizId: 1,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당1',
+    studyName: '스터디 명',
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
+  },
+  {
+    remindQuizId: 1,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당1',
+    studyName: '스터디 명',
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
+  },
+  {
+    remindQuizId: 1,
+    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당1',
+    studyName: '스터디 명',
+    studyAt: '2024.03.09',
+    openAt: '2024.03.11',
+    lastModifiedAt: '2024.03.22',
+    opened: true
+  }
+])
 const keyWordList = ref([
   { id: 1, keyword: '네트워크' },
   { id: 2, keyword: 'OSI 7계층' },
@@ -82,6 +148,19 @@ const remindQuizList = ref([
   { id: 5, quiz: '다섯번째 질문!' }
 ])
 
+function GetQuizList() {
+  instance
+    .get('api/members/me/remind-quiz')
+    .then((res) => {
+      if (res.data.status === 200) {
+        studyList.value = res.data.data
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
 function searchOnGoogle(keyword) {
   // 검색어에 대한 구글 검색 URL을 생성합니다.
   const googleSearchURL = `https://www.google.com/search?q=${encodeURIComponent(keyword)}`
@@ -93,22 +172,48 @@ function searchOnGoogle(keyword) {
 const quizSubject = ref('')
 const selectedStudyId = ref()
 
-async function GoQuizDetail(id) {
-  try {
-    const keywordResponse = await instance.get(`/api/study/${id}/keywords`)
-    const remindQuizResponse = await instance.get(`/api/study/${id}/remindQuizzes`)
-    // keyWordList.value = keywordResponse.data
-    // remindQuizList.value = remindQuizResponse.data
-    isList.value = !isList.value
-    const matchedStudy = studyList.value.find((item) => item.id === id)
-    quizSubject.value = matchedStudy.subject
-    selectedStudyId.value = id.value
-  } catch (error) {
-    console.log('Error fetching data:', error)
-    isList.value = !isList.value
-    const matchedStudy = studyList.value.find((item) => item.id === id)
-    quizSubject.value = matchedStudy.subject
-    selectedStudyId.value = id
+function getCurrentTime() {
+  return new Date()
+}
+
+// openAt 속성의 값을 분석하는 함수
+function parseOpenAt(openAt) {
+  return new Date(openAt)
+}
+
+// openAt과 현재 시간을 비교하는 함수
+function isOpen(openAt) {
+  const currentTime = getCurrentTime()
+  const openTime = parseOpenAt(openAt)
+
+  // openAt이 현재 시간보다 이후인지 비교합니다.
+  return openTime > currentTime
+}
+
+async function GoQuizDetail(study) {
+  if (study.opened === true || isOpen(study.openAt)) {
+    try {
+      const keywordResponse = await instance.get(`api/study/${id}/keywords`)
+      const remindQuizResponse = await instance.get(
+        `api/studies/${studyId}/remind-quiz/${study.remindQuizId}`
+      )
+      console.log(keywordResponse)
+      console.log(remindQuizResponse)
+      // keyWordList.value = keywordResponse.data
+      // remindQuizList.value = remindQuizResponse.data
+      isList.value = !isList.value
+      const matchedStudy = studyList.value.find((item) => item.id === id)
+      quizSubject.value = matchedStudy.subject
+      selectedStudyId.value = id.value
+    } catch (error) {
+      console.log('Error fetching data:', error)
+      isList.value = !isList.value
+      const matchedStudy = studyList.value.find((item) => item.id === id)
+      quizSubject.value = matchedStudy.subject
+      selectedStudyId.value = id
+    }
+  } else {
+    console.log('hi')
   }
 }
 
@@ -134,64 +239,9 @@ async function regenKeyword() {
   } catch (error) {}
 }
 
-const studyList = ref([
-  {
-    id: 1,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당1',
-    studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
-  },
-  {
-    id: 2,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당2',
-    studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
-  },
-  {
-    id: 3,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당3',
-    studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
-  },
-  {
-    id: 4,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
-    studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
-  },
-  {
-    id: 5,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
-    studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
-  },
-  {
-    id: 6,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
-    studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
-  },
-  {
-    id: 7,
-    subject: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
-    studyName: '스터디 명',
-    meetingDate: '2024.03.09',
-    openDate: '2024.03.11',
-    lastUpdate: '2024.03.22'
-  }
-])
+onMounted(() => {
+  GetQuizList()
+})
 </script>
 
 <style scoped>
