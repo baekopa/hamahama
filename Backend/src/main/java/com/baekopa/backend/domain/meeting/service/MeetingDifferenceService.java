@@ -29,9 +29,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MeetingDifferenceService {
 
-    private final MeetingRepository meetingRepository;
     private final MeetingSummaryRepository meetingSummaryRepository;
     private final SubmittedNoteRepository submittedNoteRepository;
+    private final MeetingRepository meetingRepository;
 
     @Value("${BASE_URL_AI}")
     private String fastUrl;
