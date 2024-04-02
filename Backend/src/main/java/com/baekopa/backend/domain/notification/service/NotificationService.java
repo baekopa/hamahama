@@ -26,7 +26,7 @@ public class NotificationService {
         return NotificationListResponseDto.from(
                 notificationRepository.findAllByReceiverAndIsCheckedIsFalseAndDeletedAtIsNullOrderByCreatedAtDesc(member).stream()
                         .map(NotificationResponseDto::of).toList(),
-                member.getLastNotificationEventId()
+                member.getLastCheckedEventId()
         );
     }
 

@@ -2,9 +2,13 @@ package com.baekopa.backend.domain.note.service;
 
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
+import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.note.dto.request.MeetingUniquificationDTO;
 import com.baekopa.backend.domain.note.dto.request.SubmittedNoteListDTO;
+import com.baekopa.backend.domain.note.entity.SubmittedNote;
 import com.baekopa.backend.domain.note.repository.SubmittedNoteRepository;
+import com.baekopa.backend.domain.notification.entity.NotificationType;
+import com.baekopa.backend.domain.notification.service.EmitterService;
 import com.baekopa.backend.global.response.error.ErrorCode;
 import com.baekopa.backend.global.response.error.exception.BusinessException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,10 +32,11 @@ public class SubmittedNoteSummaryService {
 
     private final MeetingRepository meetingRepository;
     private final SubmittedNoteRepository submittedNoteRepository;
-    private final RestTemplate restTemplate;
+    private final EmitterService emitterService;
 
     @Value("${BASE_URL_AI}")
     private String fastUrl;
+    private final RestTemplate restTemplate;
 
     @Scheduled(fixedRate = 5 * 60 * 1000, zone = "Asia/Seoul")
     @Transactional
@@ -46,10 +51,10 @@ public class SubmittedNoteSummaryService {
         //// 요약 해야하는 제출된 노트 조회
         for (Meeting meeting : meetingList) {
 
-            List<String> submittedNoteList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
-                    .stream().map((submittedNote) -> submittedNote.getNote().getSummary()).toList();
+            List<SubmittedNote> submittedNoteList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
+            List<String> summaryList = submittedNoteList.stream().map((submittedNote) -> submittedNote.getNote().getSummary()).toList();
 
-            SubmittedNoteListDTO submittedNoteListDTO = SubmittedNoteListDTO.of(submittedNoteList);
+            SubmittedNoteListDTO submittedNoteListDTO = SubmittedNoteListDTO.of(summaryList);
             String requestBody = convertObjectToJson(submittedNoteListDTO);
 
             // fast api 통신
@@ -59,8 +64,13 @@ public class SubmittedNoteSummaryService {
 
             MeetingUniquificationDTO meetingUniquificationDTO = restTemplate.postForObject(uniquificationUrl, requestEntity, MeetingUniquificationDTO.class);
             meeting.updateNoteSummary(meetingUniquificationDTO.getUniquification());
-        }
 
+            String message = "'" + meeting.getStudy().getTitle() + "' '" + meeting.getTopic() + "' 요약이 완료되었습니다.";
+            List<Member> mebmerList = submittedNoteList.stream().map((o) -> o.getNote().getMember()).toList();
+            for (Member member : mebmerList) {
+                emitterService.send(member, NotificationType.SUMMARY, message, meeting.getStudy().getId() + "/" + meeting.getId());
+            }
+        }
     }
 
     private String convertObjectToJson(Object object) {

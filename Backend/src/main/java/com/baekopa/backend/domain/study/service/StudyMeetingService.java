@@ -6,10 +6,14 @@ import com.baekopa.backend.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
+import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.note.dto.SubmittedNoteDto;
 import com.baekopa.backend.domain.note.repository.SubmittedNoteRepository;
+import com.baekopa.backend.domain.notification.entity.NotificationType;
+import com.baekopa.backend.domain.notification.service.EmitterService;
 import com.baekopa.backend.domain.study.dto.response.StudyMeetingResponseDto;
 import com.baekopa.backend.domain.study.entity.Study;
+import com.baekopa.backend.domain.study.repository.StudyMemberRepository;
 import com.baekopa.backend.domain.study.repository.StudyRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
 import com.baekopa.backend.global.response.error.exception.BusinessException;
@@ -30,6 +34,8 @@ public class StudyMeetingService {
     private final MeetingRepository meetingRepository;
     private final StudyRepository studyRepository;
     private final SubmittedNoteRepository submittedNoteRepository;
+    private final StudyMemberRepository studyMemberRepository;
+    private final EmitterService emitterService;
 
     // 스터디 미팅 생성
     @Transactional
@@ -39,6 +45,12 @@ public class StudyMeetingService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
 
         Meeting meeting = meetingRepository.save(Meeting.of(requestDto.getTopic(), requestDto.getStudyAt(), study));
+
+        List<Member> memberList = studyMemberRepository.findAllByStudyAndDeletedAtIsNull(study).stream()
+                .map((o) -> o.getMember()).toList();
+        for (Member member : memberList) {
+            emitterService.send(member, NotificationType.SCHEDULE, study.getTitle() + "의 새로운 미팅 일정이 있습니다.", studyId + "");
+        }
 
         return CreateMeetingResponseDto.of(meeting.getId(), meeting.getTopic(), meeting.getStudyAt());
     }

@@ -1,6 +1,6 @@
 import os, re, subprocess, speechbrain
 from whisper import transcribe
-from fastapi import APIRouter, FastAPI, UploadFile, File, HTTPException, Path
+from fastapi import APIRouter, FastAPI, UploadFile, File, HTTPException, Path, Request
 from fastapi.responses import JSONResponse
 from pyannote.audio import Pipeline
 from pydub import AudioSegment
@@ -11,10 +11,9 @@ from service.text_processing import process_text, process_for_remind_quiz
 from service.summary_pre_service import do_summary
 from service.keyword_quiz_pre_service import do_keyword, do_quiz
 from service.tail_question_service import do_tail_question
-from service.audio_to_text_service import load_models, set_pipeline, convert_audio_ffmpeg, millisec, remove_time_from_text, clean_up_files, convert_audio_sample_rate, speech_to_text
+from service.audio_to_text_service import convert_audio_ffmpeg, millisec, remove_time_from_text, clean_up_files, convert_audio_sample_rate, speech_to_text
 from service.difference_service import do_difference
 from service.uniquification_service import do_uniquification
-
 
 
 router=APIRouter(
@@ -65,10 +64,11 @@ async def tail_question_text(origin_dto: DifferenceRequest):
 
 
 @router.post("/transcribe/{study_id}/{meeting_id}", tags=["STT"])
-async def transcribe_audio(study_id: int = Path(...), meeting_id: int = Path(...), file: UploadFile = File(...)):
+async def transcribe_audio(request: Request, study_id: int = Path(...), meeting_id: int = Path(...), file: UploadFile = File(...)):
 
-    model = load_models()
-    diarization_pipeline = set_pipeline()
+    model = request.app.state.whisper_model
+    diarization_pipeline = request.app.state.diarization_pipeline
+    print("model : ", model, "pipeline : ", diarization_pipeline)
     data = await speech_to_text(model, diarization_pipeline, file)
     print(data)
     
