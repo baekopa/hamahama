@@ -37,6 +37,7 @@ public class MeetingDifferenceService {
     private String fastUrl;
     private final RestTemplate restTemplate;
 
+    @Transactional
     public MeetingDifferenceResponseDTO createDifference(Long meetingId, Member member) {
 
         // SubmittedNote 조회
