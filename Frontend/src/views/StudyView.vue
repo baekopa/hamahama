@@ -354,6 +354,7 @@ const uploadAudio = async (audioBlob) => {
     )
     console.log(res1)
 
+
     // const data = response.data;
     // console.log("Transcription result:", data);
     // recordText.value = data.transcription;
