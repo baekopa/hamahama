@@ -29,17 +29,23 @@ public class RemindQuiz extends BaseTime {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private IsolationEnum status;
+
     @Builder
-    private RemindQuiz(Meeting meeting, LocalDateTime openDate, String content) {
+    private RemindQuiz(Meeting meeting, LocalDateTime openDate, String content, IsolationEnum status) {
         this.meeting = meeting;
         this.openDate = openDate;
         this.content = content;
+        this.status = status;
     }
 
     public static RemindQuiz of(Meeting meeting, LocalDateTime openDate, String content) {
         return builder().meeting(meeting)
                 .openDate(openDate)
                 .content(content)
+                .content(IsolationEnum.USING.toString())
                 .build();
     }
 
@@ -48,10 +54,21 @@ public class RemindQuiz extends BaseTime {
                 .meeting(meeting)
                 .openDate(remindQuizDTO.getOpenDate())
                 .content(remindQuizDTO.getQuiz())
+                .status(IsolationEnum.USING)
                 .build();
+    }
+
+    public static RemindQuiz from(Meeting meeting, LocalDateTime openDate) {
+        return builder()
+                .meeting(meeting)
+                .openDate(openDate)
+                .status(IsolationEnum.USING)
+                .build();
+
     }
 
     public void updateRemindQuiz(String content) {
         this.content = content;
+        this.status = IsolationEnum.DONE;
     }
 }

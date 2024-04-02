@@ -62,7 +62,7 @@ public enum ErrorCode {
     STUDY_MEMBER_FORBIDDEN_ERROR(403, "권한이 없습니다"),
 
     // Note
-    NOTE_NOT_FOUND(400, "노트가 존재하지 않습니다."),
+    NOTE_NOT_FOUND(400, "존재하지 않거나 이미 삭제된 노트입니다."),
     NOTE_DUPLICATE_MEETING(400, "이미 내보내기 된 미팅입니다."),
 
     // Meeting
@@ -71,6 +71,9 @@ public enum ErrorCode {
     MEETING_REMIND_QUIZ_NOT_FOUND(400, "리마인드 퀴즈가 존재하지 않습니다."),
     MEETING_SCRIPT_NOT_FOUND(400,"미팅 스크립트가 존재하지 않습니다"),
     MEETING_KEYWORD_NOT_FOUND(400, "미팅 키워드가 존재하지 않습니다"),
+    MEETING_SUMMARY_CAN_NOT_ACCESS(403, "미팅 요약을 수정중이므로 접근이 불가능 합니다."),
+    REMIND_QUIZ_CAN_CNT_ACCESS(403, "리마인드 퀴즈를 수정중이므로 접근이 불가능 합니다."),
+    MEETING_KEYWORD_CAN_NOT_ACCESS(403, "키워드를 수정중 및 사용중이므로 접근이 불가능합니다."),
 
     // Notification
     NOTIFICATION_NOT_FOUND(400, "알림이 존재하지 않습니다."),

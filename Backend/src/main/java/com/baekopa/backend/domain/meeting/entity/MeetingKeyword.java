@@ -24,19 +24,25 @@ public class MeetingKeyword extends BaseBy {
 
     @Column(name = "keyword")
     private String keyword;
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private IsolationEnum status;
 
     @Builder
-    public MeetingKeyword(Meeting meeting, String keyword) {
+    private MeetingKeyword(Meeting meeting, String keyword, IsolationEnum status) {
         this.meeting = meeting;
         this.keyword = keyword;
+        this.status = status;
     }
 
     public static MeetingKeyword of(Meeting meeting, String keyword){
         return builder().meeting(meeting)
                 .keyword(keyword)
+                .status(IsolationEnum.DONE)
                 .build();
     }
     public void updateMeetingKeyword(String keyword){
         this.keyword=keyword;
+        this.status=IsolationEnum.DONE;
     }
 }
