@@ -158,7 +158,7 @@
                   >
                 </v-chip-group>
               </div>
-              <div class="d-flex mt-5 mb-">
+              <div class="content-area d-flex mt-5">
                 <div v-if="noteToggle == -1">
                   {{ submittedNotes.entireSummary }}
                 </div>
@@ -215,12 +215,14 @@ function LoadStudyData() {
   instance.get(`api/studies/${studyId}/settings`).then((res) => {
     const data = res.data.data
     if (res.data.status == 200) {
-      console.log(data)
+      console.log(res.data.message)
       studyStore.studyTitle = data.title
       studyStore.studyDescription = data.description
       studyStore.studyBackgroundImage = data.backgroundImage
       studyStore.studyCategory = data.category
       studyStore.studyMembers = data.members
+    } else {
+      console.log(res.data.message)
     }
   })
 }
@@ -229,13 +231,12 @@ function LoadNextSchedule() {
   instance
     .get(`api/studies/${studyId}`)
     .then((res) => {
-      console.log(res.data)
       if (res.data.status == 200 && res.data.data != null) {
         isNextMeetingExist.value = true
         submittedNotes.value = res.data.data
         meetingID.value = res.data.data.id
-        console.log(meetingID.value)
       }
+      console.log(res.data.message)
     })
     .catch((err) => {
       console.log(err)
@@ -365,13 +366,15 @@ const uploadAudio = async (audioBlob) => {
   padding: 20px 20px;
 }
 .content {
-  height: 840px;
-  overflow-y: auto;
 }
 
 .submitted-note,
 .question {
   border: 1px rgba(242, 242, 242, 1) solid;
   width: 1300px;
+}
+.content-area {
+  height: 300px;
+  overflow-y: auto;
 }
 </style>

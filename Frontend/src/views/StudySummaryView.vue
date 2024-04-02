@@ -174,7 +174,6 @@ function GoSummaryDetail(info) {
   studyStore.studyAt = info.studyAt
   studyStore.meetingTopic = info.topic
   studyStore.meetingMembers = info.memberInfoDTOList
-  console.log(studyStore.studyAt)
   router.push({
     name: 'studySummaryDetail',
     params: { id: info.id, studyId: studyId }
@@ -188,7 +187,7 @@ function LoadSummaryList() {
       if (res.data.status == 200) {
         summaryList.value = res.data.data.meetingStudyDTOList
       }
-      console.log(res)
+      console.log(res.data.message)
     })
     .catch((err) => {
       console.log(err)

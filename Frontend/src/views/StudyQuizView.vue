@@ -176,7 +176,9 @@ import { useRoute, useRouter } from 'vue-router'
 import instance from '@/api/index'
 import { useStudyStore } from '@/stores/study'
 import Swal from 'sweetalert2'
+import { useLoadStore } from '@/stores/load'
 
+const loadStore = useLoadStore()
 const studyStore = useStudyStore()
 const route = useRoute()
 const router = useRouter()
@@ -280,13 +282,21 @@ const studyList = ref([
 ])
 
 const LoadQuizList = () => {
-  instance.get(`api/studies/${studyId}/remind-quiz`).then((res) => {
-    const data = res.data.data
-    console.log(res)
-    if (res.data.status == 200) {
-      studyList.value = res.data.data
-    }
-  })
+  loadStore.isLoading = true
+  instance
+    .get(`api/studies/${studyId}/remind-quiz`)
+    .then((res) => {
+      console.log(res.data.message)
+      if (res.data.status == 200) {
+        loadStore.isLoading = false
+        studyList.value = res.data.data
+      }
+      loadStore.isLoading = false
+    })
+    .catch((err) => {
+      console.log(err)
+      loadStore.isLoading = false
+    })
 }
 
 async function GoQuizDetail(id) {
@@ -342,7 +352,9 @@ async function regenKeyword() {
   } catch (error) {}
 }
 
-onMounted(LoadQuizList)
+onMounted(() => {
+  LoadQuizList()
+})
 </script>
 
 <style scoped>

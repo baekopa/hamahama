@@ -84,9 +84,7 @@
               <button class="mr-10" @click="CreateRemindQuiz()">
                 <p>리마인드 퀴즈 생성</p>
               </button>
-              <button @click="CreateDifference()">
-                <p>요약 차이 생성</p>
-              </button>
+
               <button>
                 <img @click="" src="@/assets/image/note/download.svg" alt="download" />
               </button>
@@ -187,7 +185,8 @@
             <div v-else-if="toggle == '키워드'">
               <div class="d-flex align-center h-10">
                 <p class="text-lg font-bold mr-4">키워드</p>
-                <v-btn @click="CreateKeyword" icon="mdi-refresh" variant="text"></v-btn>
+                <v-btn v-if="!isKeywordExist" @click="CreateKeyword">키워드 생성</v-btn>
+                <v-btn v-else @click="CreateKeyword" icon="mdi-refresh" variant="text"></v-btn>
               </div>
               <div class="keywords d-flex mt-5">
                 <v-chip-group>
@@ -199,6 +198,7 @@
                     >#{{ keyword.keyword }}</v-chip
                   >
                 </v-chip-group>
+                <p v-if="!isKeywordExist">키워드를 생성해 보세요 !</p>
               </div>
             </div>
             <div v-else-if="toggle == '전문'">
@@ -307,8 +307,16 @@
                         .writerName == authStore.userName
                     "
                   >
-                    <p class="font-bold mt-5">미팅 내용과 내 노트와 차이점</p>
-                    {{ 차이점 }}
+                    <div v-if="isDifferenceExist">
+                      <p class="font-bold mt-5">미팅 내용과 내 노트와 차이점</p>
+                      {{ diffrence }}
+                    </div>
+                    <div v-else>
+                      <p class="font-bold mt-5">미팅 내용과 내 노트와 차이점을 생성해 보세요</p>
+                      <v-btn v-if="!isDifferenceExist" @click="CreateDifference()">
+                        <p>요약 차이 생성</p>
+                      </v-btn>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -328,6 +336,7 @@ import { useStudyStore } from '@/stores/study'
 import Swal from 'sweetalert2'
 import { useLoadStore } from '@/stores/load'
 import { useAuthStore } from '@/stores/auth'
+import { resolveDirective } from 'vue'
 
 const authStore = useAuthStore()
 const loadStore = useLoadStore()
@@ -345,10 +354,11 @@ const isEditScript = ref(false)
 const summaryContent = ref('')
 const scriptContent = ref('')
 const scriptContentId = ref()
-const keywords = ref([])
+const diffrence = ref('')
 
 const isSummaryExist = ref(false)
 const isKeywordExist = ref(false)
+const isDifferenceExist = ref(false)
 
 const meetingContents = ref({
   meetingId: 0,
@@ -452,31 +462,19 @@ function LoadEntireScript() {
 
 // 키워드 생성
 async function CreateKeyword() {
-  console.log('키워드생성')
+  loadStore.isLoading = true
   instance
     .post(`api/studies/${studyId}/meetings/${meetingId}/keyword`)
     .then((res) => {
       if (res.data.status == 201) {
         meetingContents.value.keyword = res.data.data.keyword
+        LoadAll()
+        loadStore.isLoading = false
       }
-      console.log(meetingContents.value)
+      loadStore.isLoading = false
     })
     .catch((err) => {
-      console.log(err)
-    })
-}
-
-// 키워드 조회
-function LoadKeyword() {
-  instance
-    .get(`api/studies/${studyId}/meetings/${meetingId}/keyword`)
-    .then((res) => {
-      if (res.data.status == 201) {
-        keywords.value = res.data.data.keyword
-      }
-      console.log(res)
-    })
-    .catch((err) => {
+      loadStore.isLoading = false
       console.log(err)
     })
 }
@@ -490,11 +488,15 @@ function LoadAll() {
         console.log(res.data.message)
         meetingContents.value = res.data.data
         isSummaryExist.value = true
+
+        if (res.data.data.keyword.length === 0) {
+          isKeywordExist.value = false
+        } else {
+          isKeywordExist.value = true
+        }
       }
     })
-    .catch((err) => {
-      console.log(err)
-    })
+    .catch((err) => {})
 }
 
 // 미팅 요약 재생성
@@ -533,12 +535,16 @@ function EditSummary() {
     })
 }
 
-// 퀴즈생성
+// 리마인드 퀴즈생성
 function CreateRemindQuiz() {
+  loadStore.isLoading = true
   instance
     .post(`api/studies/${studyId}/meetings/${meetingId}/remind-quiz`)
     .then((res) => {
-      console.log(res)
+      if (res.data.status == 201) {
+        loadStore.isLoading = false
+      }
+      console.log(res.data.message)
     })
     .catch((err) => {
       console.log(err)
@@ -551,14 +557,13 @@ async function CreateMeetingSummary() {
   await instance
     .post(`api/studies/${studyId}/meetings/${meetingId}/summary`)
     .then((res) => {
+      console.log(res.data.message)
       if (res.data.status === 201) {
-        console.log(res.data.message)
         LoadAll()
         loadStore.isLoading = false
       } else {
         loadStore.isLoading = false
       }
-      console.log(res)
     })
     .catch((err) => {
       loadStore.isLoading = false
@@ -566,14 +571,33 @@ async function CreateMeetingSummary() {
     })
 }
 
+// 차이점 조회
+function LoadDiffrence() {
+  instance
+    .get(`api/studies/${studyId}/meetings/${meetingId}/difference`)
+    .then((res) => {
+      const data = res.data.data.difference
+      if (data != null) {
+        diffrence.value = data
+        isDifferenceExist.value = true
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
 // 내 노트와 차이점 생성
 function CreateDifference() {
+  loadStore.isLoading = true
   instance
     .post(`api/studies/${studyId}/meetings/${meetingId}/difference`)
     .then((res) => {
-      console.log(res)
+      loadStore.isLoading = false
+      LoadDiffrence()
     })
     .catch((err) => {
+      loadStore.isLoading = false
       console.log(err)
     })
 }
@@ -604,12 +628,16 @@ function EditScript() {
 }
 
 function addLineBreaks(text) {
+  if (text === null || text === undefined) {
+    return '' // null 또는 undefined인 경우 빈 문자열 반환
+  }
   return text.replace(/\n/g, '<br>')
 }
 
 onMounted(() => {
   LoadAll()
   LoadEntireScript()
+  LoadDiffrence()
 })
 </script>
 
