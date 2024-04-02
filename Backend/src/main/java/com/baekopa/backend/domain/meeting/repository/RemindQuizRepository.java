@@ -11,4 +11,6 @@ public interface RemindQuizRepository extends JpaRepository<RemindQuiz, Long> {
 
     Optional<RemindQuiz> findByIdAndDeletedAtIsNull(Long remindQuizId);
 
+    boolean existsByMeetingAndDeletedAtIsNull(Meeting meeting);
+
 }

@@ -22,7 +22,6 @@ public class MeetingScript extends BaseBy {
     private Meeting meeting;
 
     @Column(name = "script_content", columnDefinition = "TEXT")
-    @Lob
     private String scriptContent;
 
     @Builder

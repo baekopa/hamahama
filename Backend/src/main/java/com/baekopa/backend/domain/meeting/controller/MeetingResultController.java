@@ -46,11 +46,11 @@ public class MeetingResultController {
         return ApiResponse.of(SuccessCode.MEETING_SUMMARY_GET_SUCCESS, meetingService.getMeetingSummary(meetingId));
     }
 
-    @Operation(summary = "미팅 전문 요약 재생성", description = "미팅 전체문을 요약모델을 통해 재요약을 해줍니다")
-    @PutMapping("/studies/{study-id}/meetings/{meeting-id}/summary")
-    public ApiResponse<MeetingSummaryResponseDTO> updateCreateMeetingSummary(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
-        return ApiResponse.of(SuccessCode.MEETING_SUMMARY_UPDATE_SUCCESS, meetingService.updateCreateSummary(meetingId));
-    }
+    //@Operation(summary = "미팅 전문 요약 재생성", description = "미팅 전체문을 요약모델을 통해 재요약을 해줍니다")
+    //@PutMapping("/studies/{study-id}/meetings/{meeting-id}/summary")
+    //public ApiResponse<MeetingSummaryResponseDTO> updateCreateMeetingSummary(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
+    //    return ApiResponse.of(SuccessCode.MEETING_SUMMARY_UPDATE_SUCCESS, meetingService.updateCreateSummary(meetingId));
+    //}
 
     @Operation(summary = "미팅 전문 요약 수정", description = "미팅 요약문을 수정한 값을 DB에 저장합니다.")
     @PutMapping("/studies/{study-id}/meetings/{meeting-id}/summary-update")
@@ -64,11 +64,11 @@ public class MeetingResultController {
         return ApiResponse.of(SuccessCode.MEETING_REMIND_QUIZ_SUCCESS, meetingService.createMeetingRemindQuiz(meetingId));
     }
 
-    @Operation(summary = "미팅 리마인드 퀴즈 재생성", description = "미팅 요약을 활용하여 리마인드 퀴즈를 재생성 합니다.")
-    @PutMapping("/studies/{study-id}/meetings/{meeting-id}/remind-quiz")
-    public ApiResponse<MeetingRemindQuizResponseDTO> reCreateMeetingRemindQuiz(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
-        return ApiResponse.of(SuccessCode.MEETING_REMIND_QUIZ_SUCCESS, meetingService.reCreateMeetingRemindQuiz(meetingId));
-    }
+    //@Operation(summary = "미팅 리마인드 퀴즈 재생성", description = "미팅 요약을 활용하여 리마인드 퀴즈를 재생성 합니다.")
+    //@PutMapping("/studies/{study-id}/meetings/{meeting-id}/remind-quiz")
+    //public ApiResponse<MeetingRemindQuizResponseDTO> reCreateMeetingRemindQuiz(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
+    //    return ApiResponse.of(SuccessCode.MEETING_REMIND_QUIZ_SUCCESS, meetingService.reCreateMeetingRemindQuiz(meetingId));
+    //}
 
     @Operation(summary = "미팅 키워드 생성", description = "미팅 요약을 활용하여 키워드 생성(키워드는 재생성도 이 경로를 사용합니다)")
     @PostMapping("/studies/{study-id}/meetings/{meeting-id}/keyword")
