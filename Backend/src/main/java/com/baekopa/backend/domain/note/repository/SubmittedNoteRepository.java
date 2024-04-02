@@ -9,11 +9,12 @@ import java.util.List;
 
 public interface SubmittedNoteRepository extends JpaRepository<SubmittedNote, Long> {
 
-    List<SubmittedNote> findMeetingByNote(Note note);
+    List<SubmittedNote> findByNoteAndDeletedAtIsNull(Note note);
 
-    boolean existsByNoteAndMeeting(Note existNote, Meeting existMeeting);
+    boolean existsByNoteAndMeetingAndDeletedAtIsNull(Note existNote, Meeting existMeeting);
 
     List<SubmittedNote> findAllByMeetingAndDeletedAtIsNull(Meeting meeting);
 
     boolean existsByNoteAndDeletedAtIsNull(Note note);
+
 }

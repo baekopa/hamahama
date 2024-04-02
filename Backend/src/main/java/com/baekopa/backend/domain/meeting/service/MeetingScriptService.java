@@ -44,6 +44,12 @@ public class MeetingScriptService {
     private final MeetingScriptRepository meetingScriptRepository;
     private final S3UploadService s3UploadService;
 
+    @Transactional
+    public void saveS3(MultipartFile file, Long meetingId) {
+        String s3Url = uploadS3RecordFile(file);//s3에 파일 업로드
+        saveS3Url(meetingId, s3Url); //s3url 저장
+    }
+
     public String uploadS3RecordFile(MultipartFile file) {
         try {
             return s3UploadService.saveFile("record", file);
@@ -71,9 +77,6 @@ public class MeetingScriptService {
     public Map<String, Long> saveMeetingScript(Long studyId, Long meetingId, MultipartFile file) {
         Map<String, Long> result = new HashMap<>();
 
-//        String s3Url = uploadS3RecordFile(file);//s3에 파일 업로드
-//        saveS3Url(meetingId, s3Url); //s3url 저장
-
         String text = sendFileToFastAPI(studyId, meetingId, file); //fast api로 통신하여 STT 실행 및 텍스트 추출
         Long meetingScriptId = saveScript(meetingId, text);//추출한 script 저장
 
@@ -84,13 +87,13 @@ public class MeetingScriptService {
 
     @Transactional
     public void saveS3Url(Long meetingId, String s3Url) {
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+        Meeting meeting = meetingRepository.findByIdAndDeletedAtIsNull(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
         meeting.updateRecordFile(s3Url);
     }
 
     @Transactional
     public Long saveScript(Long meetingId, String text) {
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, "유효하지 않은 meetingId"));
+        Meeting meeting = meetingRepository.findByIdAndDeletedAtIsNull(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, "유효하지 않은 meetingId"));
 
         MeetingScript meetingScript = MeetingScript.of(meeting, text);
         meetingScript = meetingScriptRepository.save(meetingScript);
@@ -145,7 +148,7 @@ public class MeetingScriptService {
     }
 
     public MeetingScriptDTO getMeetingScript(Long meetingId) {
-        Meeting meeting = meetingRepository.findById(meetingId)
+        Meeting meeting = meetingRepository.findByIdAndDeletedAtIsNull(meetingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
 
         MeetingScript meetingScript = meetingScriptRepository.findByMeetingAndDeletedAtIsNull(meeting)

@@ -77,7 +77,7 @@ public class StudyMeetingService {
     public StudyMeetingResponseDto getStudyMeeting(Long studyId) {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
-        Meeting meeting = meetingRepository.findTopByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(study, LocalDateTime.now()).orElse(null);
+        Meeting meeting = meetingRepository.findTopByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(study, LocalDateTime.now().minusMinutes(30)).orElse(null);
 
         if (meeting == null) {
             return null;
@@ -86,11 +86,7 @@ public class StudyMeetingService {
         List<SubmittedNoteDto> submittedNoteDtoList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
                 .stream().map(SubmittedNoteDto::of).toList();
 
-        return StudyMeetingResponseDto.of(meeting.getId(),
-                meeting.getTopic(),
-                meeting.getStudyAt(),
-                submittedNoteDtoList,
-                meeting.getNoteSummary());
+        return StudyMeetingResponseDto.of(meeting, submittedNoteDtoList);
     }
 
     @Transactional
