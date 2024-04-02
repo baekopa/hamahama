@@ -1,6 +1,7 @@
 package com.baekopa.backend.domain.notification.dto.response;
 
 import com.baekopa.backend.domain.notification.entity.Notification;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,11 +16,12 @@ public class NotificationResponseDto {
     private Long notificationId;
     private String notificationContent;
     private Boolean isChecked;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
-    private Long relatedContentId;
+    private String relatedContentId;
 
     @Builder
-    private NotificationResponseDto(Long notificationId, String notificationContent, Boolean isChecked, LocalDateTime createdAt, Long relatedContentId) {
+    private NotificationResponseDto(Long notificationId, String notificationContent, Boolean isChecked, LocalDateTime createdAt, String relatedContentId) {
         this.notificationId = notificationId;
         this.notificationContent = notificationContent;
         this.isChecked = isChecked;
