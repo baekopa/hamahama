@@ -71,6 +71,18 @@ public class MeetingDifferenceService {
         return meetingDifferenceResponseDTO;
     }
 
+    public MeetingDifferenceResponseDTO getDifference(Long meetingId, Member member) {
+
+        // SubmittedNote 조회
+        SubmittedNote submittedNote = getSubmittedNote(meetingId, member);
+
+        String differenceContent = submittedNote.getDifferenceContent();
+
+        MeetingDifferenceResponseDTO meetingDifferenceResponseDTO = MeetingDifferenceResponseDTO.of(differenceContent);
+
+        return meetingDifferenceResponseDTO;
+    }
+
     private SubmittedNote getSubmittedNote(Long meetingId, Member member) {
 
         Meeting meeting = meetingRepository.findById(meetingId)
