@@ -26,7 +26,8 @@ public class MeetingResultController {
         return ApiResponse.of(SuccessCode.MEETING_LIST_GET_SUCCESS, meetingService.getMeetingList(studyId));
     }
 
-    @Operation(summary = "미팅에 대한 산출물 세부 내용 조회", description = "선택한 미팅의 모든 산출물(전문, 요약, 리마인드퀴즈, 키워드)을 조회합니다.")
+
+    @Operation(summary = "미팅에 대한 산출물 세부 내용 조회", description = "선택한 미팅의 모든 산출물(전문, 요약, 리마인드퀴즈, 키워드, 제출된 개인 요약)을 조회합니다.")
     @GetMapping("/studies/{study-id}/meetings/{meeting-id}/all")
     public ApiResponse<MeetingResponseDTO> getMeetingResultAll(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
         return ApiResponse.of(SuccessCode.MEETING_RESULT_GET_SUCCESS, meetingService.getMeetingResultAll(meetingId));

@@ -41,7 +41,7 @@ public class NotificationService {
     @Transactional
     public void readNotification(Member member, Long notificationId) {
 
-        Notification notification = notificationRepository.findByIdAndReceiver(notificationId, member)
+        Notification notification = notificationRepository.findByIdAndReceiverAndDeletedAtIsNull(notificationId, member)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOTIFICATION_NOT_FOUND, ErrorCode.NOTIFICATION_NOT_FOUND.getMessage()));
 
         notification.updateIsChecked(true);

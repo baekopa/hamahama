@@ -123,12 +123,12 @@
                 <span class="text-2xl ml-5 font-bold">
                   <span class="text-2xl font-normal" @click="TogglePage">< </span
                   ><span class="tossface text-3xl">📌 </span
-                  ><span class="point-color font-bold">{{ studyList[0].subject }}</span
+                  ><span class="point-color font-bold">{{ remindQuiz.topic }}</span
                   >에 대한 리마인드 퀴즈</span
                 >
                 <p class="text-base ml-5 mt-2 italic text-gray-500">
                   <span
-                    >{{ studyList[0].openDate }} 에 공개된 {{ studyList[0].studyName }}의
+                    >{{ remindQuiz.openAt }} 에 공개된 {{ remindQuiz.studyName }}의
                     퀴즈입니다.</span
                   >
                 </p>
@@ -141,7 +141,7 @@
               color="info"
             ></v-divider>
 
-            <div class="keyword-section">
+            <!-- <div class="keyword-section">
               <div class="d-flex py-6 pl-12 align-center">
                 <h2>키워드</h2>
                 <v-btn @click="regenKeyword()" icon="mdi-refresh" variant="text"></v-btn>
@@ -157,17 +157,11 @@
                   <p class="text-center">#{{ keyword.keyword }}</p>
                 </v-chip>
               </div>
-            </div>
+            </div> -->
 
             <div class="quiz-section mt-16">
               <h3>리마인드 퀴즈</h3>
-              <v-list>
-                <v-list-item v-for="(quiz, index) in remindQuizList" :key="quiz.id">
-                  <v-list-item-content>
-                    <p>Q{{ index + 1 }}.{{ quiz.quiz }}</p>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
+              <p>{{ remindQuiz.content }}</p>
             </div>
           </div>
         </v-container>
@@ -181,6 +175,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import instance from '@/api/index'
 import { useStudyStore } from '@/stores/study'
+import Swal from 'sweetalert2'
 
 const studyStore = useStudyStore()
 const route = useRoute()
@@ -205,13 +200,7 @@ const keyWordList = ref([
   { id: 3, keyword: 'IP' },
   { id: 4, keyword: 'TCP' }
 ])
-const remindQuizList = ref([
-  { id: 1, quiz: '첫번째 질문!' },
-  { id: 2, quiz: '두번째 질문!' },
-  { id: 3, quiz: '세번째 질문!' },
-  { id: 4, quiz: '네번째 질문!' },
-  { id: 5, quiz: '다섯번째 질문!' }
-])
+const remindQuiz = ref({})
 
 function searchOnGoogle(keyword) {
   // 검색어에 대한 구글 검색 URL을 생성합니다.
@@ -302,14 +291,26 @@ const LoadQuizList = () => {
 
 async function GoQuizDetail(id) {
   try {
-    const keywordResponse = await instance.get(`/api/study/${id}/keywords`)
-    const remindQuizResponse = await instance.get(`/api/study/${id}/remindQuizzes`)
+    const keywordResponse = await instance.get(`api/study/${id}/keywords`)
+    const remindQuizResponse = await instance.get(`api/studies/${studyId}/remind-quiz/${id}`)
+    console.log(keywordResponse)
+    console.log(remindQuizResponse)
     // keyWordList.value = keywordResponse.data
     // remindQuizList.value = remindQuizResponse.data
+
+    const matchedStudy = studyList.value.find((item) => item.remindQuizId === id)
+    // if (matchedStudy && (new Date(matchedStudy.openAt) < new Date() || matchedStudy.opened))
+    // if (matchedStudy && (new Date(matchedStudy.openAt) < new Date() || matchedStudy.opened)) {
+    remindQuiz.value = remindQuizResponse.data.data
     isList.value = !isList.value
-    const matchedStudy = studyList.value.find((item) => item.id === id)
-    quizSubject.value = matchedStudy.subject
-    selectedStudyId.value = id.value
+    // } else {
+    //   Swal.fire({
+    //     title: 'Error!',
+    //     text: 'Do you want to continue',
+    //     icon: 'error',
+    //     confirmButtonText: 'Cool'
+    //   })
+    // }
   } catch (error) {
     console.log('Error fetching data:', error)
     isList.value = !isList.value
