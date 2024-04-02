@@ -10,21 +10,15 @@ import java.util.List;
 public class NotificationListResponseDto {
 
     private List<NotificationResponseDto> notificationList;
-    private int numOfUncheckedNotification;
-    private String lastNotificationEventId;
 
     @Builder
-    private NotificationListResponseDto(List<NotificationResponseDto> notificationList, int numOfUncheckedNotification, String lastNotificationEventId) {
+    private NotificationListResponseDto(List<NotificationResponseDto> notificationList) {
         this.notificationList = notificationList;
-        this.numOfUncheckedNotification = numOfUncheckedNotification;
-        this.lastNotificationEventId = lastNotificationEventId;
     }
 
-    public static NotificationListResponseDto from(List<NotificationResponseDto> notificationResponseDto, String lastNotificationEventId) {
+    public static NotificationListResponseDto from(List<NotificationResponseDto> notificationResponseDto) {
         return builder()
                 .notificationList(notificationResponseDto)
-                .numOfUncheckedNotification(notificationResponseDto.size())
-                .lastNotificationEventId(lastNotificationEventId)
                 .build();
     }
 }

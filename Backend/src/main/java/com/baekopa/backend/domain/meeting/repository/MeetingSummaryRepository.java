@@ -1,6 +1,7 @@
 package com.baekopa.backend.domain.meeting.repository;
 
 
+import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.entity.MeetingSummary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,5 +13,6 @@ public interface MeetingSummaryRepository extends JpaRepository<MeetingSummary, 
     @Query("SELECT ms FROM MeetingSummary ms WHERE ms.meeting.id = :meetingId")
     Optional<MeetingSummary> findByIdAndDeletedAtIsNull(@Param("meetingId") Long meetingId);
 
+    boolean existsByMeetingAndDeletedAtIsNull(Meeting meeting);
 
 }

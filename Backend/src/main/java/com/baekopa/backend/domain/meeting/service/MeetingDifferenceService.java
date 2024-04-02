@@ -29,14 +29,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MeetingDifferenceService {
 
-    private final MeetingRepository meetingRepository;
     private final MeetingSummaryRepository meetingSummaryRepository;
     private final SubmittedNoteRepository submittedNoteRepository;
+    private final MeetingRepository meetingRepository;
 
     @Value("${BASE_URL_AI}")
     private String fastUrl;
     private final RestTemplate restTemplate;
 
+    @Transactional
     public MeetingDifferenceResponseDTO createDifference(Long meetingId, Member member) {
 
         // SubmittedNote 조회
@@ -67,6 +68,18 @@ public class MeetingDifferenceService {
                 restTemplate.postForObject(differenceUrl, requestEntity, MeetingDifferenceResponseDTO.class);
 
         submittedNote.updateDifferenceContent(meetingDifferenceResponseDTO.getDifference());
+
+        return meetingDifferenceResponseDTO;
+    }
+
+    public MeetingDifferenceResponseDTO getDifference(Long meetingId, Member member) {
+
+        // SubmittedNote 조회
+        SubmittedNote submittedNote = getSubmittedNote(meetingId, member);
+
+        String differenceContent = submittedNote.getDifferenceContent();
+
+        MeetingDifferenceResponseDTO meetingDifferenceResponseDTO = MeetingDifferenceResponseDTO.of(differenceContent);
 
         return meetingDifferenceResponseDTO;
     }
