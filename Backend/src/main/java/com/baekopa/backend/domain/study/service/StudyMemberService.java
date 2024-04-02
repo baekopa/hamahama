@@ -73,7 +73,7 @@ public class StudyMemberService {
     }
 
     // 스터디 초대 승낙
-    public void joinStudy(Long invitationId, Member inviter) {
+    public Long joinStudy(Long invitationId, Member inviter) {
 
         StudyMember studyMember = studyMemberRepository.findByIdAndDeletedAtIsNull(invitationId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_NOT_EXIST, "올바르지 않은 스터디 초대 요청입니다."));
 
@@ -89,6 +89,8 @@ public class StudyMemberService {
         for (Member member : memberList) {
             emitterService.send(member, NotificationType.ENTER, member.getName() + "님이 " + studyMember.getStudy().getTitle() + " 스터디에 참가했습니다.", studyMember.getStudy().getId() + "");
         }
+
+        return studyMember.getStudy().getId();
     }
 
     // 스터디 초대 거절

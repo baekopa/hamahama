@@ -3,8 +3,9 @@
   <v-container>
     <div class="title">
       <span class="text-2xl ml-5 font-bold">
-        <span class="tossface text-3xl">📖</span> 같이하마</span>
-        <p class="text-xl ml-5 mt-2 italic text-gray-500">백오파님께서 참여 중인 스터디 입니다.</p>
+        <span class="tossface text-3xl">📖</span> 같이하마</span
+      >
+      <p class="text-xl ml-5 mt-2 italic text-gray-500">백오파님께서 참여 중인 스터디 입니다.</p>
     </div>
     <!-- <v-chip class="chip" variant="flat"> 전체 </v-chip>
     <v-chip class="chip" variant="flat"> 내가 만든 스터디 </v-chip> -->
@@ -14,7 +15,7 @@
         <v-row class="pa-10">
           <v-col cols="12" sm="6" md="4" lg="3">
             <v-card
-              @click="GoMyStudy"
+              @click="GoStudyHome(personalStudy.id)"
               variant="outlined"
               class="rounded-lg study-card"
               color="#3FB1FA"
@@ -36,20 +37,28 @@
                 </v-card-subtitle>
               </v-card-item>
               <img
-                src="@/assets/image/main/karina.jpg"
+                :src="personalStudy.backgroundImage"
                 cover
                 class="rounded-sm items-center mx-auto study-card-image"
               />
               <v-divider class="mx-4 mb-1"></v-divider>
               <div class="px-4">
-                <v-chip-group v-model="selection">
+                <v-chip-group>
                   <v-chip>혼자하마</v-chip>
                 </v-chip-group>
               </div>
               <v-card-title>개인스터디</v-card-title>
             </v-card>
           </v-col>
-          <v-col cols="12" sm="6" md="4" lg="3" class="mb-8" v-for="study in StudyList" :key="study.id">
+          <v-col
+            cols="12"
+            sm="6"
+            md="4"
+            lg="3"
+            class="mb-8"
+            v-for="study in studyList"
+            :key="study.id"
+          >
             <v-card
               @click="GoStudyHome(study.id)"
               variant="outlined"
@@ -74,17 +83,17 @@
                 </v-card-subtitle>
               </v-card-item>
               <img
-                :src=study.imgUrl
+                :src="study.backgroundImage"
                 cover
                 class="rounded-sm items-center mx-auto study-card-image"
               />
               <v-divider class="mx-4 mb-1"></v-divider>
               <div class="px-4">
-                <v-chip-group v-model="selection">
+                <v-chip-group>
                   <v-chip>{{ study.category }}</v-chip>
                 </v-chip-group>
               </div>
-              <v-card-title>{{ study.studyName }}</v-card-title>
+              <v-card-title>{{ study.title }}</v-card-title>
             </v-card>
           </v-col>
           <v-col cols="12" sm="6" md="4" lg="3" class="mb-8 d-flex align-center">
@@ -115,93 +124,12 @@ import { useRouter } from 'vue-router'
 import instance from '@/api'
 const router = useRouter()
 
-const defaultList = ref([
-  {
-    id: -1,
-    time: '',
-    studyName: '개인 스터디 룸',
-    imgUrl: 'https://vuejs.org/images/logo.png',
-    category: 'CS'
-  }
-])
-const StudyList = ref([
-  {
-    id: 1,
-    time: '1시간 후 스터디 시작!',
-    studyName: 'CS스터디',
-    imgUrl: 'https://vuejs.org/images/logo.png',
-    category: 'CS'
-  },
-  {
-    id: 2,
-    time: '24/03/15 20:00',
-    studyName: '면접스터디',
-    imgUrl: 'https://vuejs.org/images/logo.png',
-    category: 'CS'
-  },
-  {
-    id: 3,
-    time: '24/03/18 20:00',
-    studyName: '오픽스터디',
-    imgUrl: 'https://vuejs.org/images/logo.png',
-    category: 'CS'
-  },
-  {
-    id: 4,
-    time: '24/03/21 20:00',
-    studyName: '독서모임',
-    imgUrl: 'https://vuejs.org/images/logo.png',
-    category: 'CS'
-  },
-  {
-    id: 5,
-    time: '24/03/24 20:00',
-    studyName: '뭐하지.',
-    imgUrl: 'https://vuejs.org/images/logo.png',
-    category: 'CS'
-  },
-  {
-    id: 6,
-    time: '1시간 후 스터디 시작!',
-    studyName: 'CS스터디',
-    imgUrl: 'https://vuejs.org/images/logo.png',
-    category: 'CS'
-  },
-  {
-    id: 7,
-    time: '24/03/15 20:00',
-    studyName: '면접스터디',
-    imgUrl: 'https://vuejs.org/images/logo.png',
-    category: 'CS'
-  },
-  {
-    id: 8,
-    time: '24/03/18 20:00',
-    studyName: '오픽스터디',
-    imgUrl: 'https://vuejs.org/images/logo.png',
-    category: 'CS'
-  },
-  {
-    id: 9,
-    time: '24/03/21 20:00',
-    studyName: '독서모임',
-    imgUrl: 'https://vuejs.org/images/logo.png',
-    category: 'CS'
-  },
-  {
-    id: 10,
-    time: '24/03/24 20:00',
-    studyName: '뭐하지.',
-    imgUrl: 'https://vuejs.org/images/logo.png',
-    category: 'CS'
-  }
-])
+const personalStudy = ref([])
+
+const studyList = ref([])
 
 const GoStudyHome = (id) => {
   router.push({ name: 'study', params: { id } })
-}
-const GoMyStudy = () => {
-  router.push({ name: 'myStudy' })
 }
 
 const AddStudy = () => {
@@ -210,10 +138,20 @@ const AddStudy = () => {
 
 const GetStudyList = () => {
   instance
-    .get(`/members/me/studies`)
-    .then((response) => {
-      // StudyList 채우기
-      console.log(response)
+    .get(`api/members/me/studies`)
+    .then((res) => {
+      if (res.data.status == 200) {
+        studyList.value = res.data.data
+
+        studyList.value.forEach((study) => {
+          if (study.type === 'PERSONAL') {
+            personalStudy.value = study
+            console.log(personalStudy.value)
+          }
+        })
+
+        studyList.value = studyList.value.filter((study) => study.type !== 'PERSONAL')
+      }
     })
     .catch((err) => {
       console.log(err)
@@ -242,7 +180,7 @@ onMounted(() => {
 }
 
 .study-card-image {
-  height: 220px; 
+  height: 220px;
   width: 248px;
   object-fit: cover;
 }
