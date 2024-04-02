@@ -141,6 +141,10 @@ import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import instance from '@/api/index'
 import Swal from 'sweetalert2'
+import { useLoadStore } from '@/stores/load'
+
+const loadStore = useLoadStore()
+
 const route = useRoute()
 const router = useRouter()
 const noteId = route.params.id
@@ -298,15 +302,19 @@ function ShareNote() {
 }
 
 const MakeSummary = () => {
+  loadStore.isLoading = true
   instance
     .post(`api/notes/${noteId}/summary`, {}, { timeout: 1000000 })
     .then((res) => {
+      loadStore.isLoading = false
+      console.log(res)
       if (res.data.status == 201) {
         noteSummary.value = res.data.data.noteSummary
         console.log(res.data.message)
       }
     })
     .catch((err) => {
+      loadStore.isLoading = false
       console.log(err)
     })
 }
