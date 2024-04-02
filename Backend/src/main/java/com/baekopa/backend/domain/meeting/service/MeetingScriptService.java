@@ -159,8 +159,8 @@ public class MeetingScriptService {
     }
 
     @Transactional
-    public MeetingScriptDTO updateMeetingScript(MeetingScriptDTO meetingScriptDTO){
-        MeetingScript meetingScript=meetingScriptRepository.findByIdAndDeletedAtIsNull(meetingScriptDTO.getMeetingScriptId())
+    public MeetingScriptDTO updateMeetingScript(MeetingScriptDTO meetingScriptDTO) {
+        MeetingScript meetingScript = meetingScriptRepository.findByIdAndDeletedAtIsNull(meetingScriptDTO.getMeetingScriptId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SCRIPT_NOT_FOUND, ErrorCode.MEETING_SCRIPT_NOT_FOUND.getMessage()));
 
         meetingScript.updateMeetingScript(meetingScriptDTO.getScriptContent());
