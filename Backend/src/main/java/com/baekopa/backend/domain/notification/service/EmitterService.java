@@ -37,12 +37,12 @@ public class EmitterService {
         emitterRepository.saveEmitter(emitterId, emitter);
 
         // emitter 전처리 작업
-        preProcessEmitter(emitter, emitterId, key);
+        preProcessEmitter(member, emitter, emitterId, key);
 
         // 미수신 event 전송
         Map<String, NotificationResponseDto> events = emitterRepository.findAllEventStartWithKey(emitterId);
         events.entrySet().stream()
-                .filter(entry -> member.getLastCheckedEventId().compareTo(entry.getKey()) < 0)
+                .filter(entry -> member.getLastCheckedEventId() < Long.parseLong(entry.getKey()))
                 .forEach(entry -> {
                     String eventId = entry.getKey();
                     NotificationResponseDto responseDto = entry.getValue();
@@ -84,7 +84,7 @@ public class EmitterService {
 
     }
 
-    private void preProcessEmitter(SseEmitter emitter, String emitterId, String key) {
+    private void preProcessEmitter(Member member, SseEmitter emitter, String emitterId, String key) {
 
         emitter.onCompletion(() -> emitterRepository.deleteEmitterById(emitterId));
         emitter.onTimeout(() -> {
@@ -92,14 +92,14 @@ public class EmitterService {
             emitter.complete();
         });
 
-        String message = createMessage(key, NotificationStatus.CONNECT.name());
-        sendNotification(emitter, emitterId, emitterId, NotificationStatus.CONNECT.name(), message);
-    }
+        // 멤버 이벤트 시간 확인
+        Long lastCheckedEventId = member.getLastCheckedEventId();
 
-    private String createMessage(String key, String data) {
+        // 마지막 이벤트 시간 확인
+        boolean isAnyEventLater = emitterRepository.findAllEventStartWithKey(key).entrySet().stream()
+                .anyMatch(entry -> lastCheckedEventId < Long.parseLong(entry.getKey().split("_")[2]));
 
-        StringBuilder stringBuilder = new StringBuilder();
-        return stringBuilder.append("[알림] ").append(data).append(" (").append(key).append(")").toString();
+        sendNotification(emitter, emitterId, emitterId, NotificationStatus.CONNECT.name(), isAnyEventLater);
     }
 
     private void sendNotification(SseEmitter emitter, String emitterId, String eventId, String notificationName, Object data) {
