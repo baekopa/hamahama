@@ -355,7 +355,7 @@ async function CreateMeeting() {
       ]
     }
   })
-  console.log(formValues[0].value)
+
   if (formValues[0] && formValues[1] && formValues[2]) {
     instance
       .post(`api/studies/${studyId}/meetings`, {
@@ -364,7 +364,7 @@ async function CreateMeeting() {
       })
       .then((res) => {
         const data = res.data
-        console.log(res)
+        console.log(data.message)
         if (data.status == 201) {
           Swal.fire(JSON.stringify(formValues))
           LoadMeetingSchedule()

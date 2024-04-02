@@ -16,7 +16,11 @@
           <div class="text-center justify-center d-flex align-center mr-5">
             <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
               <template #activator="{ props }">
-                <button @click="LoadNoti(props['aria-expanded'])" v-if="hasNewNotification" v-bind="props">
+                <button
+                  @click="LoadNoti(props['aria-expanded'])"
+                  v-if="hasNewNotification"
+                  v-bind="props"
+                >
                   <img width="32" height="32" src="../icons/nav/alarmExist.svg" alt="alarm" />
                 </button>
                 <button @click="LoadNoti(props['aria-expanded'])" v-else v-bind="props">
@@ -26,11 +30,15 @@
 
               <v-card width="340" max-height="400" class="mt-4">
                 <div class="mt-6 ml-4">
-                    <span class="text-xl font-bold"><span class="tossface">📌</span> 알림</span>
-                  <v-divider :thickness="4" class="border-opacity-100" style="width: 310px" color="info"></v-divider>
+                  <span class="text-xl font-bold"><span class="tossface">📌</span> 알림</span>
+                  <v-divider
+                    :thickness="4"
+                    class="border-opacity-100"
+                    style="width: 310px"
+                    color="info"
+                  ></v-divider>
                 </div>
                 <v-list class="noti-list">
-
                   <div v-if="notiList.length == 0">
                     <v-list-item>
                       <p class="text-base font-bold mt-3">
@@ -39,14 +47,23 @@
                     </v-list-item>
                   </div>
                   <div>
-                    <v-list-item v-for="noti in notiList" :key="noti.notificationId" @click=checkNotification(noti)>
+                    <v-list-item
+                      v-for="noti in notiList"
+                      :key="noti.notificationId"
+                      @click="checkNotification(noti)"
+                    >
                       <p class="text-base font-bold mt-3">
                         {{ noti.notificationContent }}
                       </p>
                       <p class="text-sm">
                         {{ noti.createdAt }}
                       </p>
-                      <v-divider :thickness="2" class="border-opacity-100" style="width: 310px" color="info"></v-divider>
+                      <v-divider
+                        :thickness="2"
+                        class="border-opacity-100"
+                        style="width: 310px"
+                        color="info"
+                      ></v-divider>
                     </v-list-item>
                   </div>
                 </v-list>
@@ -89,16 +106,16 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import instance from '@/api'
-import { EventSourcePolyfill } from 'event-source-polyfill';
-import { onMounted } from 'vue';
+import { EventSourcePolyfill } from 'event-source-polyfill'
+import { onMounted } from 'vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
 const isAlarmExist = ref(true)
-const hasNewNotification = ref(false);
+const hasNewNotification = ref(false)
 
 const menu = ref(false)
-var notiSource;
+var notiSource
 // sse 추후 변경 예정
 const baseURL = import.meta.env.VITE_BASE_URL
 
@@ -108,20 +125,19 @@ notiSource = new EventSourcePolyfill(`${baseURL}/api/sse/subscribe`, {
   connectionTimeout: 30000,
   headers: {
     Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-    "Content-Type": 'text/event-stream;charset=utf-8',
-    "Cache-Control": "no-cache",
-    'Connection': 'keep-alive',
-  },
+    'Content-Type': 'text/event-stream;charset=utf-8',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive'
+  }
   // heartbeatTimeout: 86400000,
-});
-
-
-notiSource.addEventListener("NEW", (e) => {
-  hasNewNotification.value = true;
 })
 
-notiSource.addEventListener("CONNECT", (e) => {
-  console.log(e);
+notiSource.addEventListener('NEW', (e) => {
+  hasNewNotification.value = true
+})
+
+notiSource.addEventListener('CONNECT', (e) => {
+  console.log(e)
 })
 
 notiSource.onmessage = (event) => {
@@ -130,31 +146,30 @@ notiSource.onmessage = (event) => {
 }
 
 notiSource.onerror = (err) => {
-  console.error('EventSource failed:', err);
-  notiSource.close();
+  console.error('EventSource failed:', err)
+  notiSource.close()
 }
 
 const notiList = ref([])
 
 // 알림 종류, 내용, 시간
 const LoadNoti = (isOpened) => {
-   
   // 알림 리스트 열렸을 때만 알림 조회
   if (isOpened == 'false') {
     instance
-    .get(`api/notifications`)
-    .then((res) => {
-      console.log(res)
+      .get(`api/notifications`)
+      .then((res) => {
+        console.log(res)
 
-      // 알림 불 제거
-      hasNewNotification.value = false;
+        // 알림 불 제거
+        hasNewNotification.value = false
 
-      // 알림 리스트 업데이트
-      notiList.value = res.data.data.notificationList;
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+        // 알림 리스트 업데이트
+        notiList.value = res.data.data.notificationList
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 }
 
@@ -163,64 +178,68 @@ const checkNotification = (noti) => {
   instance
     .put(`api/notifications/${noti.notificationId}`)
     .then((res) => {
-      console.log(res);
-      deleteFromNotiList(noti.notificationId);
-      moveTo(noti);
+      console.log(res)
+      deleteFromNotiList(noti.notificationId)
+      moveTo(noti)
     })
     .catch((err) => {
-      console.log(err);
+      console.log(err)
     })
 }
 
 // notiList에서 확인 알림 제거
 const deleteFromNotiList = (notificationId) => {
-
-  const idx = notiList.value.findIndex(notification => notification.notificationId == notificationId);
+  const idx = notiList.value.findIndex(
+    (notification) => notification.notificationId == notificationId
+  )
 
   if (idx != -1) {
-    notiList.value.splice(idx, 1);
+    notiList.value.splice(idx, 1)
   }
 }
 
 // 알림 확인으로 페이지 이동
 const moveTo = (noti) => {
-
   switch (noti.notificationType) {
     case 'INVITE':
-      joinStudy(noti.relatedContentId);
-      break;
-    case 'ENTER': case 'DELEGATE': case 'SCHEDULE': case 'UPCOMING':
-      router.push({ name: 'study', params: { id: noti.relatedContentId } });
-      break;
-    case 'SUMMARY': case 'KEYWORD':
-      moveToSummary(noti.relatedContentId);
-      break;
+      joinStudy(noti.relatedContentId)
+      break
+    case 'ENTER':
+    case 'DELEGATE':
+    case 'SCHEDULE':
+    case 'UPCOMING':
+      router.push({ name: 'study', params: { id: noti.relatedContentId } })
+      break
+    case 'SUMMARY':
+    case 'KEYWORD':
+      moveToSummary(noti.relatedContentId)
+      break
     case 'REMIND':
-      router.push({ name: 'studyQuiz', params: { id: noti.relatedContentId }});
-      break;
+      router.push({ name: 'studyQuiz', params: { id: noti.relatedContentId } })
+      break
   }
 }
 
 const moveToSummary = (relatedContentId) => {
-  const ids = relatedContentId.split("/");
+  const ids = relatedContentId.split('/')
   router.push({
     name: 'studySummaryDetail',
     params: { id: ids[1], studyId: ids[0] }
-  });
+  })
 }
 
 // 스터디 조인!
 const joinStudy = (invitationId) => {
   // 조인 하고 스터디 아이디 반환해서 스터디 페이지로 넘어가도록 하기
-  console.log(invitationId);
+  console.log(invitationId)
   instance
     .put(`api/members/me/invitations/${invitationId}`)
     .then((res) => {
-      console.log(res);
-      router.push({ name: 'study', params: { id: res.data.data.studyId } });
+      console.log(res)
+      router.push({ name: 'study', params: { id: res.data.data.studyId } })
     })
     .catch((err) => {
-      console.log(err);
+      console.log(err)
     })
 }
 

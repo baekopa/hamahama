@@ -24,7 +24,7 @@
               class="create-note ml-5"
               prepend-icon="mdi-format-list-bulleted"
               size="large"
-              @click="mainPageStore.GoCreateNote()"
+              @click="router.push({ name: 'mypagewhere', params: { where: 'MyStudy' } })"
               >전체 노트</v-chip
             >
           </div>
@@ -105,7 +105,7 @@
               class="create-note ml-5"
               prepend-icon="mdi-format-list-bulleted"
               size="large"
-              @click="mainPageStore.GoCreateNote()"
+              @click="router.push({ name: 'mypagewhere', params: { where: 'Study' } })"
               >전체 스터디</v-chip
             >
           </div>
@@ -233,7 +233,7 @@ function GoStudyPage(id) {
 
 async function GetPersonalData() {
   await instance
-    .get('/api/members/me/main')
+    .get('api/members/me/main')
     .then((res) => {
       const personalData = res.data
       if (personalData.status === 200) {
@@ -273,7 +273,7 @@ function GetMyInfo() {
 
 onMounted(() => {
   GetPersonalData()
-  GetMyInfo()
+  // GetMyInfo()
 })
 </script>
 
