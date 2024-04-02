@@ -4,18 +4,22 @@ import { defineStore } from 'pinia'
 
 export const useMainPageStore = defineStore('main', () => {
   const router = useRouter()
-  const myStudy = ref(0)
+  const myStudyId = ref(0)
   const recentEditNote = ref(0)
   const myStudyImg = ref('')
   function GoCreateNote() {
     router.push({ name: 'createnote' })
   }
-  function GoRecentEditNote(id) {
-    router.push({ name: 'note', params: { id } })
+  function GoRecentEditNote() {
+    if (recentEditNote.value == -1) {
+      GoCreateNote()
+    } else {
+      router.push({ name: 'note', params: { id: recentEditNote.value } })
+    }
   }
-  function GoMyStudyRoom(id) {
-    router.push({ name: 'study', params: { id } })
+  function GoMyStudyRoom() {
+    router.push({ name: 'study', params: { id: myStudyId.value } })
   }
 
-  return { myStudy, recentEditNote, GoCreateNote, GoRecentEditNote, GoMyStudyRoom }
+  return { myStudyId, recentEditNote, myStudyImg, GoCreateNote, GoRecentEditNote, GoMyStudyRoom }
 })

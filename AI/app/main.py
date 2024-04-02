@@ -2,11 +2,12 @@ import uvicorn, os
 from fastapi import FastAPI
 from routers import study
 from dotenv import load_dotenv
+from service.resource import app_lifespan
 
 load_dotenv()
 token = os.getenv("STT_TOKEN")
 
-app=FastAPI()
+app=FastAPI(lifespan=app_lifespan)
 app.include_router(study.router)
 
 origins =["*"]
