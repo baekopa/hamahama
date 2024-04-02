@@ -248,12 +248,6 @@ public class MeetingService {
         RemindQuizDTO remindQuizDTO = RemindQuizDTO.of(meetingRemindQuizResponseDTO.getQuiz());
         remindQuizRepository.save(RemindQuiz.from(meeting, remindQuizDTO));
 
-        String message = "'" + meeting.getStudy().getTitle() + "' '" + meeting.getTopic() + "' 리마인드 퀴즈 생성이 완료되었습니다.";
-        List<Member> members = getMeetingMember(meetingId);
-        for (Member member : members) {
-            emitterService.send(member, NotificationType.REMIND, message, studyId + "/" + meetingId);
-        }
-
         return meetingRemindQuizResponseDTO;
     }
 
@@ -290,12 +284,6 @@ public class MeetingService {
 
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
-
-        String message = "'" + meeting.getStudy().getTitle() + "' '" + meeting.getTopic() + "' 리마인드 퀴즈 생성이 완료되었습니다.";
-        List<Member> members = getMeetingMember(meetingId);
-        for (Member member : members) {
-            emitterService.send(member, NotificationType.REMIND, message, studyId + "/" + meetingId);
-        }
 
         return meetingRemindQuizResponseDTO;
     }
