@@ -42,7 +42,7 @@ public class EmitterService {
         // 미수신 event 전송
         Map<String, NotificationResponseDto> events = emitterRepository.findAllEventStartWithKey(emitterId);
         events.entrySet().stream()
-                .filter(entry -> member.getLastNotificationEventId().compareTo(entry.getKey()) < 0)
+                .filter(entry -> member.getLastCheckedEventId().compareTo(entry.getKey()) < 0)
                 .forEach(entry -> {
                     String eventId = entry.getKey();
                     NotificationResponseDto responseDto = entry.getValue();
@@ -54,7 +54,7 @@ public class EmitterService {
 
     // 알림 전송
     @Transactional
-    public void send(Member receiver, NotificationType notificationType, String notificationContent, Long relatedContentId) {
+    public void send(Member receiver, NotificationType notificationType, String notificationContent, String relatedContentId) {
 
         String key = createKeyByEmailAndDomain(receiver);
         String eventId = createIdByKeyAndTime(key);
