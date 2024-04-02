@@ -52,9 +52,9 @@ public class StudyMemberService {
         Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, "초대 대상 ID가 올바르지 않습니다."));
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "올바르지 않은 studyId."));
 
-        studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));
+        StudyMember studyMember = studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));
 
-        emitterService.send(member, NotificationType.INVITE, study.getTitle() + " 스터디에 초대됐습니다.", study.getId());
+        emitterService.send(member, NotificationType.INVITE, study.getTitle() + " 스터디에 초대됐습니다.", studyMember.getId() + "");
     }
 
     // 스터디 멤버 초대 - 여러 명
@@ -66,25 +66,29 @@ public class StudyMemberService {
                 ).toList();
 
         members.forEach(member -> {
-            studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));
+            StudyMember studyMember = studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));
 
-            emitterService.send(member, NotificationType.INVITE, study.getTitle() + " 스터디에 초대됐습니다.", study.getId());
+            emitterService.send(member, NotificationType.INVITE, study.getTitle() + " 스터디에 초대됐습니다.", studyMember.getId() + "");
         });
     }
 
     // 스터디 초대 승낙
-    public void joinStudy(Long invitationId, Member member) {
+    public void joinStudy(Long invitationId, Member inviter) {
 
         StudyMember studyMember = studyMemberRepository.findByIdAndDeletedAtIsNull(invitationId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_NOT_EXIST, "올바르지 않은 스터디 초대 요청입니다."));
 
         // 본인만 승낙 가능
-        if (!studyMember.getMember().getId().equals(member.getId())) {
+        if (!studyMember.getMember().getId().equals(inviter.getId())) {
             throw new BusinessException(ErrorCode.STUDY_MEMBER_NOT_EXIST, "스터디 초대 대상이 아닌 유저입니다.");
         }
 
         studyMember.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_MEMBER);
 
-        emitterService.send(member, NotificationType.ENTER, member.getName() + "님이 " + studyMember.getStudy().getTitle() + " 스터디에 참가했습니다.", studyMember.getStudy().getId());
+        List<Member> memberList = studyMemberRepository.findAllByStudyAndDeletedAtIsNull(studyMember.getStudy()).stream()
+                .map((o) -> o.getMember()).toList();
+        for (Member member : memberList) {
+            emitterService.send(member, NotificationType.ENTER, member.getName() + "님이 " + studyMember.getStudy().getTitle() + " 스터디에 참가했습니다.", studyMember.getStudy().getId() + "");
+        }
     }
 
     // 스터디 초대 거절
@@ -124,7 +128,7 @@ public class StudyMemberService {
         newLeader.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_LEADER);
         curLeader.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_MEMBER);
 
-        emitterService.send(newLeader.getMember(), NotificationType.DELEGATE, newLeader.getStudy().getTitle() + " 스터디장으로 위임되었습니다.", newLeader.getStudy().getId());
+        emitterService.send(newLeader.getMember(), NotificationType.DELEGATE, newLeader.getStudy().getTitle() + " 스터디장으로 위임되었습니다.", newLeader.getStudy().getId() + "");
     }
 
     // 스터디 나가기
@@ -151,6 +155,6 @@ public class StudyMemberService {
 
         studyMemberRepository.delete(studyMember);
 
-        emitterService.send(studyMember.getMember(), NotificationType.RESIGN, studyMember.getStudy().getTitle() + " 스터디에서 강퇴되었습니다.", studyMember.getStudy().getId());
+        emitterService.send(studyMember.getMember(), NotificationType.RESIGN, studyMember.getStudy().getTitle() + " 스터디에서 강퇴되었습니다.", "");
     }
 }

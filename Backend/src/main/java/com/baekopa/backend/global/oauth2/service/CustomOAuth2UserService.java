@@ -52,7 +52,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // 유저 DB 저장
         String providerCode = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
-        Member existMember = memberRepository.findByProviderCode(providerCode).orElse(null);
+        Member existMember = memberRepository.findByProviderCodeAndDeletedAtIsNull(providerCode).orElse(null);
         MemberDTO memberDTO = new MemberDTO();
 
         if (existMember == null) { // 신규 가입
