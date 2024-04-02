@@ -51,7 +51,12 @@
       </div>
       <div class="d-flex flex-column mt-20" style="width: 1300px">
         <div class="d-flex items-end justify-between">
-          <div class="note-title point-font">요약 <span class="tossface">💻</span></div>
+          <div>
+            <div class="note-title point-font">요약 및 꼬리 질문 <span class="tossface">💻</span></div>
+          <div>
+            <div class="note-content text-gray-500">작성한 노트를 바탕으로 노트 요약과 꼬리 질문을 생성합니다.</div>
+          </div>
+          </div>
           <v-btn
             @click="MakeSummary"
             size="large"

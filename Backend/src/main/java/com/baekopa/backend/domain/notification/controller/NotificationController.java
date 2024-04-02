@@ -15,17 +15,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
+
     private final NotificationService notificationService;
 
     @Operation(summary = "미확인 알림 목록 조회", description = "인증된 회원에 대한 미확인 알림 목록을 가져옵니다.")
-    @GetMapping("/")
+    @GetMapping
     public ApiResponse<NotificationListResponseDto> getNotificationAll(@AuthenticationPrincipal Member member) {
 
         return ApiResponse.of(SuccessCode.NOTIFICATION_GET_SUCCESS, notificationService.getNotificationList(member));
     }
 
     @Operation(summary = "미확인 알림 목록 확인 시간 갱신", description = "인증된 회원의 마지막 알림 이벤트 ID를 업데이트하여 알림을 읽음으로 표시합니다.")
-    @PutMapping("/")
+    @PutMapping
     public ApiResponse updateLastEventId(@AuthenticationPrincipal Member member, @RequestBody UpdateNotificationEventIdRequestDto requestDto) {
 
         notificationService.updateLastEventId(member, requestDto.getLastEventId());

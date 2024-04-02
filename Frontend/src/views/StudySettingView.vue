@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout style="max-height: 800px">
-      <v-navigation-drawer style="width: 323px; height: 800px">
+      <v-navigation-drawer style="width: 323px; height: 850px">
         <p class="text-3xl text-center mt-10 point-font text-stone-900">같이하마</p>
         <v-list lines="two" density="compact" nav>
           <v-list-item three-line>
@@ -60,35 +60,74 @@
         </v-list>
       </v-navigation-drawer>
       <v-divider style="height: 900px" class="mr-10" vertical></v-divider>
-      <v-main class="ml-10 mt-5" style="min-height: 800px">
+      <v-main class="ml-10 mt-5 overflow-y-auto" style="min-height: 850px">
         <v-container>
-          <div>
-            <div>
-              <p>{{ studyStore.studyTitle }}</p>
+          <div class="d-flex justify-between">
+            <div class="title d-flex flex-column">
+              <span class="text-2xl ml-5 font-bold">
+                <span class="tossface text-3xl">🔏 </span
+                ><span class="point-color font-bold">{{ studyStore.studyTitle }}</span> 스터디
+                관리</span
+              >
+              <p class="text-base ml-5 mt-2 italic text-gray-500">
+                <span>{{ '스터디 정보를 변경하세요.' }}</span>
+              </p>
             </div>
-            <div class="study-info d-flex">
-              <img :src="studyStore.studyBackgroundImage" alt="스터디이미지" class="study-image" />
-              <div class="ml-10">
-                <v-chip>{{ studyStore.studyCategory }}</v-chip>
-                <p>{{ studyStore.studyDescription }}</p>
+          </div>
+          <v-divider
+            :thickness="2"
+            class="border-opacity-50 my-3"
+            style="width: 1300px"
+            color="info"
+          ></v-divider>
+
+          <div class="d-flex flex-column" style="width: 1500px">
+            <div class="d-flex">
+              <div class="">
+                <img
+                  :src="studyStore.studyBackgroundImage"
+                  alt="스터디이미지"
+                  class="study-image"
+                />
+              </div>
+              <div class="mt-6 ml-12 d-flex flex-column">
+                <div>
+                  <v-chip size="x-large">{{ studyStore.studyCategory }}</v-chip>
+                </div>
+                <div>
+                  <textarea
+                    class="mt-5 note-content"
+                    style="width: 800px; height: 230px"
+                    :value="studyStore.studyDescription"
+                  ></textarea>
+                </div>
               </div>
             </div>
-            <div class="flex">
-              <div class="mr-16">
-                <div class="d-flex">
-                  <p class="mr-3">스터디원</p>
-                  <p>{{ studyStore.studyMembers.length }}</p>
+            <div class="d-flex mt-20">
+              <div class="mr-16" style="width: 600px">
+                <div class="d-flex justify-between mr-10">
+                  <span class="text-2xl font-bold">스터디원</span>
+                  <span class="text-xl"
+                    ><span class="tossface">👤 </span> {{ studyStore.studyMembers.length }}</span
+                  >
                 </div>
-                <div class="invite-user">
-                  <div>
+                <v-divider
+                  :thickness="2"
+                  class="border-opacity-75 my-3"
+                  style="width: 600px"
+                  color="info"
+                ></v-divider>
+                <div class="invite-user mt-5">
+                  <div class="d-flex flex-column">
                     <div>
-                      <label for="memberName">멤버 이름:</label>
                       <input
-                        class="border"
                         type="text"
                         id="memberName"
                         v-model="memberName"
                         @input="searchMembers"
+                        variant="plain"
+                        placeholder="초대할 스터디원의 이메일을 입력하세요."
+                        class="content-title w-full"
                       />
                     </div>
 
@@ -104,19 +143,6 @@
                         </li>
                       </ul>
                     </div>
-
-                    <div class="mt-5">
-                      <span>선택된 멤버:</span>
-                      <ul>
-                        <li
-                          v-for="(member, index) in selectedMembersName"
-                          :key="index"
-                          @click="toggleMemberSelection(member)"
-                        >
-                          {{ member.name }}
-                        </li>
-                      </ul>
-                    </div>
                   </div>
                   <v-btn @click="InviteStudy()">초대하기</v-btn>
                 </div>
@@ -127,19 +153,45 @@
                     :key="member.id"
                   >
                     <img class="user-profile mr-4" :src="member.image" alt="profile" width="50px" />
-                    <p class="mr-2" v-if="member.type == 'STUDY_LEADER'">스터디장</p>
-                    <p class="mr-2" v-else>스터디원</p>
-                    <p>{{ member.name }}</p>
+                    <div class="point-color font-bold">
+                      <p class="mr-2" v-if="member.type == 'STUDY_LEADER'">스터디장</p>
+                      <p class="mr-2" v-else-if="member.type == 'STUDY_MEMBER'">스터디원</p>
+                      <p class="mr-2" v-else-if="member.type == 'INVITATION'">초대요청</p>
+                    </div>
+                    <p class="mr-2">{{ member.name }}</p>
+                    <p>{{ member.email }}</p>
+                    <!-- 스터디장일 때 -->
+                    <div class="ml-5">
+                      <v-chip v-if="member.type == 'STUDY_LEADER'">위임하기</v-chip>
+                      <v-chip v-else-if="member.type == 'STUDY_MEMBER'">강퇴하기</v-chip>
+                      <v-chip v-else-if="member.type == 'INVITATION'">초대취소</v-chip>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="study-schedule">
+              <div class="study-schedule d-flex flex-column" style="width: 600px">
                 <div class="d-flex justify-between">
-                  <p class="mr-4">스터디 일정</p>
-                  <!-- <div class="study-date mr-4" v-for="(date, index) in studyDate" :key="index">
+                  <div>
+                    <div class="d-flex mr-10">
+                      <span class="text-2xl font-bold mr-5">스터디일정</span>
+                      <span v-for="(date, index) in studyDate" :key="index"
+                        ><v-chip color="#3FB1FA" variant="flat" class="mr-3" v-if="date === '1'">{{
+                          getDayOfWeek(index)
+                        }}</v-chip></span
+                      >
+                    </div>
+                    <v-divider
+                      :thickness="2"
+                      class="border-opacity-75 my-3"
+                      style="width: 600px"
+                      color="info"
+                    ></v-divider>
+                  </div>
+                  <div class="study-date mr-4" v-for="(date, index) in studyDate" :key="index">
                     <p v-if="date === '1'">{{ getDayOfWeek(index) }}</p>
                   </div>
-                  <p>{{ studyStartTime }} ~ {{ studyEndTime }}</p> -->
+                  <p>{{ studyStartTime }} ~ {{ studyEndTime }}</p>
+                  -->
                 </div>
                 <v-btn @click="CreateMeeting" class="w-full" color="#3FB1FA">일정추가</v-btn>
                 <div class="schedule-list">
@@ -340,13 +392,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.study-info {
-  width: 1300px;
-  height: 400px;
-}
 .study-image {
-  height: 389px;
-  width: 389px;
+  height: 350px;
+  width: 350px;
 }
 .user-profile {
   height: 50px;
@@ -365,5 +413,14 @@ onMounted(() => {
 .schedule-list {
   height: 280px;
   overflow-y: auto;
+}
+.content-title {
+  font-size: medium;
+  outline: none;
+}
+.note-content {
+  font-size: large;
+  outline: none;
+  /* line-height: 30px; */
 }
 </style>

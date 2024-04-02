@@ -139,7 +139,7 @@ public class MeetingScriptService {
                 sb.append(transcription.getSpeaker()).append("  ").append(textWithSpaces).append("\n");
             }
             String text = sb.toString();
-
+            System.out.println("text = " + text);
             return text; // FastAPI로부터 받은 응답(변환된 텍스트의 리스트)
         } catch (Exception e) {
             e.printStackTrace();
@@ -159,8 +159,8 @@ public class MeetingScriptService {
     }
 
     @Transactional
-    public MeetingScriptDTO updateMeetingScript(MeetingScriptDTO meetingScriptDTO){
-        MeetingScript meetingScript=meetingScriptRepository.findByIdAndDeletedAtIsNull(meetingScriptDTO.getMeetingScriptId())
+    public MeetingScriptDTO updateMeetingScript(MeetingScriptDTO meetingScriptDTO) {
+        MeetingScript meetingScript = meetingScriptRepository.findByIdAndDeletedAtIsNull(meetingScriptDTO.getMeetingScriptId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SCRIPT_NOT_FOUND, ErrorCode.MEETING_SCRIPT_NOT_FOUND.getMessage()));
 
         meetingScript.updateMeetingScript(meetingScriptDTO.getScriptContent());
