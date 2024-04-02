@@ -31,18 +31,18 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MeetingScriptService {
 
+    private final MeetingScriptRepository meetingScriptRepository;
+    private final MeetingRepository meetingRepository;
+    private final S3UploadService s3UploadService;
+
     @Value("${BASE_URL_AI}")
     private String fastUrl;
-
-    private final MeetingRepository meetingRepository;
-    private final MeetingScriptRepository meetingScriptRepository;
-    private final S3UploadService s3UploadService;
 
     @Transactional
     public void saveS3(MultipartFile file, Long meetingId) {

@@ -25,14 +25,6 @@ public class NotificationController {
         return ApiResponse.of(SuccessCode.NOTIFICATION_GET_SUCCESS, notificationService.getNotificationList(member));
     }
 
-    @Operation(summary = "미확인 알림 목록 확인 시간 갱신", description = "인증된 회원의 마지막 알림 이벤트 ID를 업데이트하여 알림을 읽음으로 표시합니다.")
-    @PutMapping
-    public ApiResponse updateLastEventId(@AuthenticationPrincipal Member member, @RequestBody UpdateNotificationEventIdRequestDto requestDto) {
-
-        notificationService.updateLastEventId(member, requestDto.getLastEventId());
-        return ApiResponse.of(SuccessCode.NEW_NOTIFICATION_GET_SUCCESS);
-    }
-
     @Operation(summary = "특정 알림 확인", description = "인증된 회원의 특정 알림을 읽은 상태로 변환합니다.")
     @PutMapping("/{notification-id}")
     public ApiResponse readNotification(@AuthenticationPrincipal Member member,
