@@ -1,27 +1,12 @@
-import torch
-from whisper import load_model
-from pyannote.audio import Pipeline
 # import soundfile as sf
 import torchaudio
 from tempfile import NamedTemporaryFile
 from torchaudio.transforms import Resample
 import ffmpeg
 import re, glob, os
-from pyannote.audio import Pipeline
 from pydub import AudioSegment
 from fastapi import HTTPException
 
-
-def load_models():
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    whisper_model = load_model("small", device=device)
-    return whisper_model
-
-def set_pipeline():
-    token = os.getenv("STT_TOKEN")
-    diarization_pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization@2.1", use_auth_token=token)
-    print(diarization_pipeline)
-    return diarization_pipeline
 
 def convert_audio_ffmpeg(input_path, output_path, sample_rate=16000):
     ffmpeg.input(input_path).output(output_path, ar=sample_rate, ac=1).run()
@@ -141,7 +126,8 @@ async def speech_to_text(model, pipeline, file):
         # cleaned_text = remove_time_from_text(result.stdout)
         cleaned_text = remove_time_from_text(transcribed_text)
         print("remove text 성공")
-        transcription_data["transcriptions"].append({"speaker": speaker[i], "text": cleaned_text})
+        speaker_num = "화자 " + speaker[i] + " : "
+        transcription_data["transcriptions"].append({"speaker": speaker_num, "text": cleaned_text})
 
         # 결과 출력
         print(speaker[i]," : ", cleaned_text)

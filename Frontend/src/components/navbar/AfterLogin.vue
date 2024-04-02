@@ -29,8 +29,8 @@
                     <span class="text-xl font-bold"><span class="tossface">📌</span> 알림</span>
                   <v-divider :thickness="4" class="border-opacity-100" style="width: 310px" color="info"></v-divider>
                 </div>
-
                 <v-list class="noti-list">
+
                   <div v-if="notiList.length == 0">
                     <v-list-item>
                       <p class="text-base font-bold mt-3">
