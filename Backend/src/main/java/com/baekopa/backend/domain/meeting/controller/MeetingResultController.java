@@ -4,6 +4,7 @@ import com.baekopa.backend.domain.meeting.dto.request.MeetingSummaryUpdateDTO;
 import com.baekopa.backend.domain.meeting.dto.request.UpdateMeetingKeywordListDTO;
 import com.baekopa.backend.domain.meeting.dto.response.*;
 import com.baekopa.backend.domain.meeting.service.MeetingService;
+import com.baekopa.backend.domain.meeting.service.RemindQuizService;
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.global.response.success.ApiResponse;
 import com.baekopa.backend.global.response.success.SuccessCode;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class MeetingResultController {
 
     private final MeetingService meetingService;
+    private final RemindQuizService remindQuizService;
 
     @Operation(summary = "미팅 리스트 조회", description = "스터디에 속하는 미팅을 모두 조회합니다. 미팅이 진행된 이후의 미팅들 중 최근에 진행된 것 우선으로 정렬하여 출력하였습니다.")
     @GetMapping("/studies/{study-id}/meetings/end")
@@ -61,13 +63,13 @@ public class MeetingResultController {
     @Operation(summary = "미팅 리마인드 퀴즈 생성", description = "미팅 요약을 활용하여 리마인드 퀴즈를 생성합니다.")
     @PostMapping("/studies/{study-id}/meetings/{meeting-id}/remind-quiz")
     public ApiResponse<MeetingRemindQuizResponseDTO> createMeetingRemindQuiz(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
-        return ApiResponse.of(SuccessCode.MEETING_REMIND_QUIZ_SUCCESS, meetingService.createMeetingRemindQuiz(studyId, meetingId));
+        return ApiResponse.of(SuccessCode.MEETING_REMIND_QUIZ_SUCCESS, remindQuizService.createMeetingRemindQuiz(studyId, meetingId));
     }
 
     @Operation(summary = "미팅 리마인드 퀴즈 재생성", description = "미팅 요약을 활용하여 리마인드 퀴즈를 재생성 합니다.")
     @PutMapping("/studies/{study-id}/meetings/{meeting-id}/remind-quiz")
     public ApiResponse<MeetingRemindQuizResponseDTO> reCreateMeetingRemindQuiz(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
-        return ApiResponse.of(SuccessCode.MEETING_REMIND_QUIZ_SUCCESS, meetingService.reCreateMeetingRemindQuiz(studyId, meetingId));
+        return ApiResponse.of(SuccessCode.MEETING_REMIND_QUIZ_SUCCESS, remindQuizService.reCreateMeetingRemindQuiz(studyId, meetingId));
     }
 
     @Operation(summary = "미팅 키워드 생성", description = "미팅 요약을 활용하여 키워드 생성(키워드는 재생성도 이 경로를 사용합니다)")

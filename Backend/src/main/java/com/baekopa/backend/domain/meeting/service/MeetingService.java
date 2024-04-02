@@ -1,10 +1,18 @@
 package com.baekopa.backend.domain.meeting.service;
 
-import com.baekopa.backend.domain.meeting.dto.RemindQuizDTO;
-import com.baekopa.backend.domain.meeting.dto.request.*;
+import com.baekopa.backend.domain.meeting.dto.request.MeetingSummaryRequestDTO;
+import com.baekopa.backend.domain.meeting.dto.request.MeetingSummaryUpdateDTO;
+import com.baekopa.backend.domain.meeting.dto.request.UpdateMeetingKeywordDTO;
+import com.baekopa.backend.domain.meeting.dto.request.UpdateMeetingKeywordListDTO;
 import com.baekopa.backend.domain.meeting.dto.response.*;
-import com.baekopa.backend.domain.meeting.entity.*;
-import com.baekopa.backend.domain.meeting.repository.*;
+import com.baekopa.backend.domain.meeting.entity.Meeting;
+import com.baekopa.backend.domain.meeting.entity.MeetingKeyword;
+import com.baekopa.backend.domain.meeting.entity.MeetingScript;
+import com.baekopa.backend.domain.meeting.entity.MeetingSummary;
+import com.baekopa.backend.domain.meeting.repository.MeetingKeywordRepository;
+import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
+import com.baekopa.backend.domain.meeting.repository.MeetingScriptRepository;
+import com.baekopa.backend.domain.meeting.repository.MeetingSummaryRepository;
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.note.entity.Note;
 import com.baekopa.backend.domain.note.entity.SubmittedNote;
@@ -25,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -41,7 +50,6 @@ public class MeetingService {
     private final MeetingRepository meetingRepository;
     private final MeetingSummaryRepository meetingSummaryRepository;
     private final MeetingScriptRepository meetingScriptRepository;
-    private final RemindQuizRepository remindQuizRepository;
     private final MeetingKeywordRepository meetingKeywordRepository;
     private final S3UploadService s3UploadService;
     private final StudyRepository studyRepository;
@@ -219,76 +227,6 @@ public class MeetingService {
     }
 
     @Transactional
-    public MeetingRemindQuizResponseDTO createMeetingRemindQuiz(Long studyId, Long meetingId) {
-        String remindQuizUrl = fastUrl + "/studies/quiz";
-
-        MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
-
-        CreateMeetingRemindQuizDTO createMeetingRemindQuizDTO = CreateMeetingRemindQuizDTO.from(meetingSummary);
-        ObjectMapper objectMapper = new ObjectMapper();
-        Object jsonText;
-
-        try {
-            jsonText = objectMapper.writeValueAsString(createMeetingRemindQuizDTO);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-        // fast api 통신
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Object> requestEntity = new HttpEntity<>(jsonText, headers);
-
-        MeetingRemindQuizResponseDTO meetingRemindQuizResponseDTO = restTemplate.postForObject(remindQuizUrl, requestEntity, MeetingRemindQuizResponseDTO.class);
-
-        Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
-        // db 저장
-        RemindQuizDTO remindQuizDTO = RemindQuizDTO.of(meetingRemindQuizResponseDTO.getQuiz());
-        remindQuizRepository.save(RemindQuiz.from(meeting, remindQuizDTO));
-
-        return meetingRemindQuizResponseDTO;
-    }
-
-    @Transactional
-    public MeetingRemindQuizResponseDTO reCreateMeetingRemindQuiz(Long studyId, Long meetingId) {
-        String remindQuizUrl = fastUrl + "/studies/quiz";
-
-        MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
-
-        CreateMeetingRemindQuizDTO createMeetingRemindQuizDTO = CreateMeetingRemindQuizDTO.from(meetingSummary);
-        ObjectMapper objectMapper = new ObjectMapper();
-        Object jsonText;
-
-        try {
-            jsonText = objectMapper.writeValueAsString(createMeetingRemindQuizDTO);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-        // fast api 통신
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Object> requestEntity = new HttpEntity<>(jsonText, headers);
-
-        MeetingRemindQuizResponseDTO meetingRemindQuizResponseDTO = restTemplate.postForObject(remindQuizUrl, requestEntity, MeetingRemindQuizResponseDTO.class);
-
-        // db 저장
-        RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meetingRepository.findById(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage())))
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
-
-        assert meetingRemindQuizResponseDTO != null;
-        remindQuiz.updateRemindQuiz(meetingRemindQuizResponseDTO.getQuiz());
-
-        Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
-
-        return meetingRemindQuizResponseDTO;
-    }
-
-    @Transactional
     public MeetingKeywordListDTO createMeetingKeyword(Long studyId, Long meetingId) {
         Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
         //이미 기존의 키워드가 존재 한다면?
@@ -394,5 +332,23 @@ public class MeetingService {
         return submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
                 .stream()
                 .map((o) -> o.getNote().getMember()).collect(Collectors.toList());
+    }
+
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+    public void getTomorrowMeetings() {
+
+        // 내일의 날짜로 미팅 조회
+        List<Meeting> upcomingMeetings = meetingRepository.findTomorrowMeetings();
+
+        // 조회된 미팅에 대한 처리
+        for (Meeting meeting : upcomingMeetings) {
+            List<Member> memberList = studyMemberRepository.findAllByStudyAndDeletedAtIsNull(meeting.getStudy()).stream()
+                    .map((o) -> (o.getMember())).toList();
+
+            String message = "'" + meeting.getStudy().getTitle() + "' 미팅 일정이 있습니다.";
+            for (Member member : memberList) {
+                emitterService.send(member, NotificationType.UPCOMING, message, meeting.getStudy().getId() + "");
+            }
+        }
     }
 }
