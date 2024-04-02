@@ -44,10 +44,10 @@ public class Member extends BaseTime implements UserDetails {
     private OAuthProvider provider;
 
     @Column(name = "last_notification_event_id")
-    private String lastCheckedEventId;
+    private Long lastCheckedEventId;
 
     @Builder
-    private Member(String name, String providerCode, String email, String image, String role, OAuthProvider provider, String lastCheckedEventId) {
+    private Member(String name, String providerCode, String email, String image, String role, OAuthProvider provider, Long lastCheckedEventId) {
         this.name = name;
         this.email = email;
         this.image = image;
@@ -65,7 +65,7 @@ public class Member extends BaseTime implements UserDetails {
                 .image(image)
                 .role(role)
                 .provider(provider)
-                .lastCheckedEventId(initLastNotificationEventId(email, provider))
+                .lastCheckedEventId(System.currentTimeMillis())
                 .build();
     }
 
@@ -81,14 +81,8 @@ public class Member extends BaseTime implements UserDetails {
         this.image = image;
     }
 
-    public static String initLastNotificationEventId(String email, OAuthProvider provider) {
-
-        StringBuilder stringBuilder = new StringBuilder();
-        return stringBuilder.append(email).append("_").append(provider.name()).append("_").append(System.currentTimeMillis()).toString();
-    }
-
-    public void updateLastNotificationEventId(String lastNotificationEventId) {
-        this.lastCheckedEventId = lastNotificationEventId;
+    public void updateLastNotificationEventId() {
+        this.lastCheckedEventId = System.currentTimeMillis();
     }
 
     @Override

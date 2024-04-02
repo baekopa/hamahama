@@ -101,7 +101,7 @@ public class NoteService {
 
         CreateNoteTailQuestionResponseDto createNoteTailQuestionResponseDto = restTemplate.postForObject(tailquestionUrl, requestTailQuestionEntity, CreateNoteTailQuestionResponseDto.class);
 
-        String newSummary = createNoteSummaryResponseDto.getSummaryText() + "\n" + createNoteTailQuestionResponseDto.getTailQuestion();
+        String newSummary = createNoteSummaryResponseDto.getSummaryText() + "\n\n-------------------------------------------------------------------------\n\n" + createNoteTailQuestionResponseDto.getTailQuestion();
 
         note.updateSummary(newSummary);
 

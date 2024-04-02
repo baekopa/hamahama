@@ -207,7 +207,6 @@ const searchMembers = async () => {
 
   try {
     const response = await instance.get(`api/members?q=${memberName.value}`)
-    console.log(response)
     members.value = response.data.data
   } catch (error) {
     console.error('멤버 검색 오류:', error)

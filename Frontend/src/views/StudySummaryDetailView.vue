@@ -84,9 +84,7 @@
               <button class="mr-10" @click="CreateRemindQuiz()">
                 <p>리마인드 퀴즈 생성</p>
               </button>
-              <button @click="CreateDifference()">
-                <p>요약 차이 생성</p>
-              </button>
+
               <button>
                 <img @click="" src="@/assets/image/note/download.svg" alt="download" />
               </button>
@@ -104,6 +102,15 @@
             <v-btn-toggle v-model="toggle" variant="tonal" divided mandatory color="#3FB1FA">
               <div class="rounded-t-2xl">
                 <v-btn
+                  :variant="toggle == '전문' ? 'elevated' : 'tonal'"
+                  value="전문"
+                  width="125"
+                  height="50"
+                  ><span class="text-lg point-font">전문</span></v-btn
+                >
+              </div>
+              <div class="rounded-t-2xl">
+                <v-btn
                   :variant="toggle == '요약' ? 'elevated' : 'tonal'"
                   value="요약"
                   width="125"
@@ -118,15 +125,6 @@
                   width="125"
                   height="50"
                   ><span class="text-lg point-font">키워드</span></v-btn
-                >
-              </div>
-              <div class="rounded-t-2xl">
-                <v-btn
-                  :variant="toggle == '전문' ? 'elevated' : 'tonal'"
-                  value="전문"
-                  width="125"
-                  height="50"
-                  ><span class="text-lg point-font">전문</span></v-btn
                 >
               </div>
               <div class="rounded-t-2xl">
@@ -152,7 +150,8 @@
                   <v-btn @click="isEdit = !isEdit" icon="mdi-pencil-outline" variant="text"></v-btn>
                 </div>
                 <div class="mt-5">
-                  <p>{{ meetingContents.summaryContent }}</p>
+                  <p v-html="addLineBreaks(meetingContents.summaryContent)"></p>
+                  <!-- <p>{{ meetingContents.summaryContent }}</p> -->
                 </div>
               </div>
               <!-- 요약 수정 -->
@@ -186,7 +185,8 @@
             <div v-else-if="toggle == '키워드'">
               <div class="d-flex align-center h-10">
                 <p class="text-lg font-bold mr-4">키워드</p>
-                <v-btn @click="CreateKeyword" icon="mdi-refresh" variant="text"></v-btn>
+                <v-btn v-if="!isKeywordExist" @click="CreateKeyword">키워드 생성</v-btn>
+                <v-btn v-else @click="CreateKeyword" icon="mdi-refresh" variant="text"></v-btn>
               </div>
               <div class="keywords d-flex mt-5">
                 <v-chip-group>
@@ -198,19 +198,52 @@
                     >#{{ keyword.keyword }}</v-chip
                   >
                 </v-chip-group>
+                <p v-if="!isKeywordExist">키워드를 생성해 보세요 !</p>
               </div>
             </div>
             <div v-else-if="toggle == '전문'">
-              <div>
+              <div v-if="!isEditScript">
                 <div>
                   <div class="d-flex align-center h-10">
                     <p class="text-lg font-bold mr-4">전문 내용</p>
                     <v-btn @click="" icon="mdi-refresh" variant="text"></v-btn>
-                    <v-btn @click="" icon="mdi-pencil-outline" variant="text"></v-btn>
+                    <v-btn
+                      @click="isEditScript = true"
+                      icon="mdi-pencil-outline"
+                      variant="text"
+                    ></v-btn>
                   </div>
                 </div>
                 <div class="mt-5">
-                  <p>{{ scriptContent }}</p>
+                  <p v-html="addLineBreaks(scriptContent)"></p>
+                </div>
+              </div>
+
+              <div>
+                <div v-if="isEditScript">
+                  <div class="d-flex align-center h-10 justify-between">
+                    <p class="text-lg font-bold mr-4">요약 내용</p>
+                    <v-btn
+                      @click="EditScript()"
+                      size="large"
+                      class="save"
+                      variant="tonal"
+                      color="#3fb1fa"
+                      rounded="xl"
+                    >
+                      수정완료
+                    </v-btn>
+                  </div>
+                  <div class="mt-5">
+                    <textarea
+                      style="width: 1190px; height: 350px"
+                      v-model="editedScript"
+                      variant="plain"
+                      placeholder="수정할 내용을 작성해주세요. ( •̀ ω •́ )✧"
+                      class="modify-content mt-5"
+                      rows="20"
+                    ></textarea>
+                  </div>
                 </div>
               </div>
             </div>
@@ -234,7 +267,10 @@
                 <div>
                   <p class="font-bold">미팅에 제출된 노트 전체 요약</p>
                   <div class="mt-3">
-                    {{ meetingContents.submittedNoteSummary.entireSummary }}
+                    <p
+                      v-html="addLineBreaks(meetingContents.submittedNoteSummary.entireSummary)"
+                    ></p>
+                    <!-- {{ meetingContents.submittedNoteSummary.entireSummary }} -->
                   </div>
                 </div>
               </div>
@@ -242,16 +278,45 @@
                 <div>
                   <p class="font-bold">노트</p>
                   <div>
-                    {{
+                    <p
+                      v-html="
+                        addLineBreaks(
+                          meetingContents.submittedNoteSummary.submittedNotes[noteToggle - 1]
+                            .originText
+                        )
+                      "
+                    ></p>
+                    <!-- {{
                       meetingContents.submittedNoteSummary.submittedNotes[noteToggle - 1].originText
-                    }}
+                    }} -->
                   </div>
                   <p class="font-bold mt-5">요약</p>
                   <div>
-                    {{
+                    <p
+                      v-html="
+                        addLineBreaks(
+                          meetingContents.submittedNoteSummary.submittedNotes[noteToggle - 1]
+                            .summaryText
+                        )
+                      "
+                    ></p>
+                  </div>
+                  <div
+                    v-if="
                       meetingContents.submittedNoteSummary.submittedNotes[noteToggle - 1]
-                        .summaryText
-                    }}
+                        .writerName == authStore.userName
+                    "
+                  >
+                    <div v-if="isDifferenceExist">
+                      <p class="font-bold mt-5">미팅 내용과 내 노트와 차이점</p>
+                      {{ diffrence }}
+                    </div>
+                    <div v-else>
+                      <p class="font-bold mt-5">미팅 내용과 내 노트와 차이점을 생성해 보세요</p>
+                      <v-btn v-if="!isDifferenceExist" @click="CreateDifference()">
+                        <p>요약 차이 생성</p>
+                      </v-btn>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -264,27 +329,36 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import instance from '@/api/index'
 import { useStudyStore } from '@/stores/study'
 import Swal from 'sweetalert2'
+import { useLoadStore } from '@/stores/load'
+import { useAuthStore } from '@/stores/auth'
+import { resolveDirective } from 'vue'
 
+const authStore = useAuthStore()
+const loadStore = useLoadStore()
 const studyStore = useStudyStore()
 const router = useRouter()
 const route = useRoute()
 const meetingId = route.params.id
 const studyId = route.params.studyId
-const toggle = ref('요약')
+const toggle = ref('전문')
 const noteToggle = ref(0)
 const isEdit = ref(false)
 
+const isEditScript = ref(false)
+
 const summaryContent = ref('')
 const scriptContent = ref('')
-const keywords = ref([])
+const scriptContentId = ref()
+const diffrence = ref('')
 
 const isSummaryExist = ref(false)
 const isKeywordExist = ref(false)
+const isDifferenceExist = ref(false)
 
 const meetingContents = ref({
   meetingId: 0,
@@ -320,21 +394,17 @@ const meetingContents = ref({
   }
 })
 
-const submittedNotes = ref([
-  {
-    id: 0,
-    originText: 'string',
-    summaryText: '요약된 텍스트 입니다',
-    writerId: 0,
-    writerName: '백오파',
-    writerImage: 'string'
+// 요약을 수정관련
+const editedSummary = computed({
+  get: () => meetingContents.value.summaryContent,
+  set: (newValue) => {
+    meetingContents.value.summaryContent = newValue
   }
-])
-
-// 사용자가 요약을 수정할 수 있도록
-const editedSummary = ref(meetingContents.summaryContent)
-watch(meetingContents.summaryContent, (newValue) => {
-  editedSummary.value = newValue
+})
+// 전문 수정관련
+const editedScript = ref(scriptContent)
+watch(scriptContent, (newValue) => {
+  editedScript.value = newValue
 })
 
 function GoSetting() {
@@ -358,40 +428,53 @@ function LoadEntireScript() {
       console.log(res.data.message)
       if (res.data.status == 200) {
         scriptContent.value = res.data.data.scriptContent
+        scriptContentId.value = res.data.data.meetingScriptId
+      } else {
+        Swal.fire({
+          title: '잠깐만요!',
+          text: '아직 녹음본이 변환되지 않았어요! 잠시만 기다려 주세요',
+          icon: 'question',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: '돌아기기'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            router.go(-1)
+          }
+        })
       }
     })
     .catch((err) => {
-      console.log(err)
+      if (err.response.data.message === '미팅 스크립트가 존재하지 않습니다') {
+        Swal.fire({
+          title: '잠깐만요!',
+          text: '아직 녹음본이 변환되지 않았어요! 잠시만 기다려 주세요',
+          icon: 'question',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: '돌아가기'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            router.go(-1)
+          }
+        })
+      }
     })
 }
 
 // 키워드 생성
 async function CreateKeyword() {
-  console.log('키워드생성')
+  loadStore.isLoading = true
   instance
     .post(`api/studies/${studyId}/meetings/${meetingId}/keyword`)
     .then((res) => {
       if (res.data.status == 201) {
         meetingContents.value.keyword = res.data.data.keyword
+        LoadAll()
+        loadStore.isLoading = false
       }
-      console.log(meetingContents.value)
+      loadStore.isLoading = false
     })
     .catch((err) => {
-      console.log(err)
-    })
-}
-
-// 키워드 조회
-function LoadKeyword() {
-  instance
-    .get(`api/studies/${studyId}/meetings/${meetingId}/keyword`)
-    .then((res) => {
-      if (res.data.status == 201) {
-        keywords.value = res.data.data.keyword
-      }
-      console.log(res)
-    })
-    .catch((err) => {
+      loadStore.isLoading = false
       console.log(err)
     })
 }
@@ -404,11 +487,16 @@ function LoadAll() {
       if (res.data.status == 200) {
         console.log(res.data.message)
         meetingContents.value = res.data.data
+        isSummaryExist.value = true
+
+        if (res.data.data.keyword.length === 0) {
+          isKeywordExist.value = false
+        } else {
+          isKeywordExist.value = true
+        }
       }
     })
-    .catch((err) => {
-      console.log(err)
-    })
+    .catch((err) => {})
 }
 
 // 미팅 요약 재생성
@@ -426,6 +514,7 @@ function RegenSummary() {
     })
 }
 
+// 전문요약 수정
 function EditSummary() {
   instance
     .put(`api/studies/${studyId}/meetings/${meetingId}/summary-update`, {
@@ -446,12 +535,16 @@ function EditSummary() {
     })
 }
 
-// 퀴즈생성
+// 리마인드 퀴즈생성
 function CreateRemindQuiz() {
+  loadStore.isLoading = true
   instance
     .post(`api/studies/${studyId}/meetings/${meetingId}/remind-quiz`)
     .then((res) => {
-      console.log(res)
+      if (res.data.status == 201) {
+        loadStore.isLoading = false
+      }
+      console.log(res.data.message)
     })
     .catch((err) => {
       console.log(err)
@@ -460,10 +553,34 @@ function CreateRemindQuiz() {
 
 // 전문 요약 생성
 async function CreateMeetingSummary() {
+  loadStore.isLoading = true
   await instance
     .post(`api/studies/${studyId}/meetings/${meetingId}/summary`)
     .then((res) => {
-      console.log(res)
+      console.log(res.data.message)
+      if (res.data.status === 201) {
+        LoadAll()
+        loadStore.isLoading = false
+      } else {
+        loadStore.isLoading = false
+      }
+    })
+    .catch((err) => {
+      loadStore.isLoading = false
+      console.log(err)
+    })
+}
+
+// 차이점 조회
+function LoadDiffrence() {
+  instance
+    .get(`api/studies/${studyId}/meetings/${meetingId}/difference`)
+    .then((res) => {
+      const data = res.data.data.difference
+      if (data != null) {
+        diffrence.value = data
+        isDifferenceExist.value = true
+      }
     })
     .catch((err) => {
       console.log(err)
@@ -472,9 +589,37 @@ async function CreateMeetingSummary() {
 
 // 내 노트와 차이점 생성
 function CreateDifference() {
+  loadStore.isLoading = true
   instance
     .post(`api/studies/${studyId}/meetings/${meetingId}/difference`)
     .then((res) => {
+      loadStore.isLoading = false
+      LoadDiffrence()
+    })
+    .catch((err) => {
+      loadStore.isLoading = false
+      console.log(err)
+    })
+}
+
+// 전문 수정
+function EditScript() {
+  instance
+    .put(`api/studies/${studyId}/meetings/${meetingId}/entire`, {
+      meetingScriptId: scriptContentId.value,
+      scriptContent: editedScript.value
+    })
+    .then((res) => {
+      if (res.data.status === 204) {
+        Swal.fire({
+          title: '전문 수정 성공!',
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: '확인'
+        })
+
+        isEditScript.value = false
+      }
       console.log(res)
     })
     .catch((err) => {
@@ -482,9 +627,17 @@ function CreateDifference() {
     })
 }
 
+function addLineBreaks(text) {
+  if (text === null || text === undefined) {
+    return '' // null 또는 undefined인 경우 빈 문자열 반환
+  }
+  return text.replace(/\n/g, '<br>')
+}
+
 onMounted(() => {
   LoadAll()
   LoadEntireScript()
+  LoadDiffrence()
 })
 </script>
 

@@ -158,7 +158,7 @@
                   >
                 </v-chip-group>
               </div>
-              <div class="d-flex mt-5 mb-">
+              <div class="content-area d-flex mt-5">
                 <div v-if="noteToggle == -1">
                   {{ submittedNotes.entireSummary }}
                 </div>
@@ -183,6 +183,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useStudyStore } from '@/stores/study'
 import { useAudioStore } from '@/stores/audioStore'
 import instance from '@/api'
+import Swal from 'sweetalert2'
 
 const studyStore = useStudyStore()
 const audioStore = useAudioStore()
@@ -214,12 +215,14 @@ function LoadStudyData() {
   instance.get(`api/studies/${studyId}/settings`).then((res) => {
     const data = res.data.data
     if (res.data.status == 200) {
-      console.log(data)
+      console.log(res.data.message)
       studyStore.studyTitle = data.title
       studyStore.studyDescription = data.description
       studyStore.studyBackgroundImage = data.backgroundImage
       studyStore.studyCategory = data.category
       studyStore.studyMembers = data.members
+    } else {
+      console.log(res.data.message)
     }
   })
 }
@@ -228,13 +231,12 @@ function LoadNextSchedule() {
   instance
     .get(`api/studies/${studyId}`)
     .then((res) => {
-      console.log(res.data)
       if (res.data.status == 200 && res.data.data != null) {
         isNextMeetingExist.value = true
         submittedNotes.value = res.data.data
         meetingID.value = res.data.data.id
-        console.log(meetingID.value)
       }
+      console.log(res.data.message)
     })
     .catch((err) => {
       console.log(err)
@@ -270,7 +272,7 @@ const updateElapsedTime = () => {
 }
 
 const startRecording = async () => {
-  console.log('녹음이 시작됨')
+  // console.log('스터디 시작')
   recording.value = true
   startTime.value = Date.now()
   updateElapsedTime()
@@ -295,7 +297,7 @@ const pauseRecording = () => {
     clearInterval(timer.value)
     paused.value = true
     pausedTime.value = Date.now() // 일시정지 시작 시간 저장
-    console.log('녹음이 일시정지됨')
+    // console.log('녹음이 일시정지됨')
   }
 }
 
@@ -306,14 +308,14 @@ const resumeRecording = () => {
     totalPausedDuration.value += pausedDuration // 총 일시정지 시간 업데이트
     timer.value = setInterval(updateElapsedTime, 1000)
     paused.value = false
-    console.log('녹음이 재개됨')
+    // console.log('녹음이 재개됨')
   }
 }
 
 const stopRecording = () => {
-  console.log('레코딩 멈춰 명령 실행')
+  console.log('스터디 중지')
   if (mediaRecorder.value) {
-    console.log('녹음파일 있으니 녹음 중지할게요')
+    // console.log('녹음파일 있으니 녹음 중지할게요')
     mediaRecorder.value.stop()
     mediaRecorder.value.stream.getTracks().forEach((track) => track.stop()) // 스트림의 모든 트랙을 멈춤. 마이크 종료
     clearInterval(timer.value)
@@ -322,7 +324,7 @@ const stopRecording = () => {
     recording.value = false
     mediaRecorder.value.onstop = async () => {
       const audioBlob = new Blob(audioChunks.value, { type: 'audio/wav' })
-      console.log('업로드 함수 실행 직전')
+      // console.log('업로드 함수 실행 직전')
       await uploadAudio(audioBlob)
       audioStore.setRecordingStatus(false)
     }
@@ -334,8 +336,6 @@ const stopRecording = () => {
 const uploadAudio = async (audioBlob) => {
   const formData = new FormData()
   formData.append('file', audioBlob, 'recording.wav')
-
-  console.log('트라이 직전')
   for (let [key, value] of formData.entries()) {
     console.log(`${key}:`, value)
   }
@@ -349,16 +349,9 @@ const uploadAudio = async (audioBlob) => {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
-        timeout: 99999999999
+        timeout: 100000
       }
     )
-    console.log(res1)
-
-
-    // const data = response.data;
-    // console.log("Transcription result:", data);
-    // recordText.value = data.transcription;
-    // console.log(recordText.value)
   } catch (error) {
     console.error('오류가 발생했습니다:', error)
   }
@@ -373,13 +366,15 @@ const uploadAudio = async (audioBlob) => {
   padding: 20px 20px;
 }
 .content {
-  height: 840px;
-  overflow-y: auto;
 }
 
 .submitted-note,
 .question {
   border: 1px rgba(242, 242, 242, 1) solid;
   width: 1300px;
+}
+.content-area {
+  height: 300px;
+  overflow-y: auto;
 }
 </style>

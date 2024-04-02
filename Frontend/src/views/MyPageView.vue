@@ -82,7 +82,8 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import DashBoard from '@/components/mypage/DashBoard.vue'
 import MyInfo from '@/components/mypage/MyInfo.vue'
 import MyStudy from '@/components/mypage/MyStudy.vue'
@@ -100,8 +101,10 @@ export default {
     RemindQuiz
   },
   setup() {
-    const selectedComponent = ref('DashBoard')
+    const route = useRoute()
+    const selectedComponent = ref(route.params.where || 'DashBoard')
     const authStore = useAuthStore()
+    // const selectedComponent = ref(route.params.where)
     return { selectedComponent, authStore }
   }
 }

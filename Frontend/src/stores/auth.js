@@ -3,7 +3,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', () => {
-  const isLogin = ref(!!sessionStorage.getItem('isLoginHAMAHAMA'))
+  const isLogin = ref(sessionStorage.getItem('isLoginHAMAHAMA'))
   const router = useRouter()
   const userName = ref('백오파')
   const userImgUrl = ref('https://vuejs.org/images/logo.png')
