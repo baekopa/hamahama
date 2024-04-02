@@ -87,13 +87,13 @@ public class MeetingScriptService {
 
     @Transactional
     public void saveS3Url(Long meetingId, String s3Url) {
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+        Meeting meeting = meetingRepository.findByIdAndDeletedAtIsNull(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
         meeting.updateRecordFile(s3Url);
     }
 
     @Transactional
     public Long saveScript(Long meetingId, String text) {
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, "유효하지 않은 meetingId"));
+        Meeting meeting = meetingRepository.findByIdAndDeletedAtIsNull(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, "유효하지 않은 meetingId"));
 
         MeetingScript meetingScript = MeetingScript.of(meeting, text);
         meetingScript = meetingScriptRepository.save(meetingScript);
@@ -148,7 +148,7 @@ public class MeetingScriptService {
     }
 
     public MeetingScriptDTO getMeetingScript(Long meetingId) {
-        Meeting meeting = meetingRepository.findById(meetingId)
+        Meeting meeting = meetingRepository.findByIdAndDeletedAtIsNull(meetingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
 
         MeetingScript meetingScript = meetingScriptRepository.findByMeetingAndDeletedAtIsNull(meeting)
@@ -159,8 +159,8 @@ public class MeetingScriptService {
     }
 
     @Transactional
-    public MeetingScriptDTO updateMeetingScript(MeetingScriptDTO meetingScriptDTO){
-        MeetingScript meetingScript=meetingScriptRepository.findByIdAndDeletedAtIsNull(meetingScriptDTO.getMeetingScriptId())
+    public MeetingScriptDTO updateMeetingScript(MeetingScriptDTO meetingScriptDTO) {
+        MeetingScript meetingScript = meetingScriptRepository.findByIdAndDeletedAtIsNull(meetingScriptDTO.getMeetingScriptId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SCRIPT_NOT_FOUND, ErrorCode.MEETING_SCRIPT_NOT_FOUND.getMessage()));
 
         meetingScript.updateMeetingScript(meetingScriptDTO.getScriptContent());

@@ -3,7 +3,8 @@
     <div class="title">
       <span class="text-2xl">
         <span class="text-2xl point-font point-color">{{ authStore.userName }}</span>
-        님 반가워요! 오늘도 파이팅 <span class="tossface text-3xl">👏</span></span>
+        님 반가워요! 오늘도 파이팅 <span class="tossface text-3xl">👏</span></span
+      >
     </div>
 
     <div class="mt-10 d-flex justify-start">
@@ -79,13 +80,15 @@
         </div>
         <v-card variant="flat" class="scroll-container overflow-y-auto mt-7" max-height="330">
           <v-list two-line>
-            <template v-for="(item, index) in scheduleItems" :key="index">
-              <v-list-item class="mb-3">
-                <template v-slot:title>{{ item.title }} {{ item.name }}</template>
-                <template v-slot:subtitle>
-                  <span class="font-weight-bold">{{ item.date }}</span>
-                </template>
-              </v-list-item>
+            <template v-for="(study, index) in scheduleItems" :key="index">
+              <div v-for="(meet, idx) in study.meetings" :key="idx">
+                <v-list-item class="mb-3">
+                  <template v-slot:title>{{ study.studyName }} - {{ meet.topic }}</template>
+                  <template v-slot:subtitle>
+                    <span class="font-weight-bold">{{ meet.studyAt }}</span>
+                  </template>
+                </v-list-item>
+              </div>
             </template>
           </v-list>
         </v-card>
@@ -101,7 +104,7 @@ import { useRouter } from 'vue-router'
 
 import instance from '@/api'
 import MyCalendar from '@/components/mypage/MyCalendar.vue'
-
+import Swal from 'sweetalert2'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -160,24 +163,42 @@ const scheduleItems = ref([
 const GetDashBoardInfo = () => {
   instance
     .get('api/members/me/dashboard')
-    .then((response) => {
-      console.log(response)
+    .then((res) => {
+      console.log(res)
+      scheduleItems.value = res.data.data.weekStudies
+      console.log(scheduleItems.value)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+const GetMyInfo = () => {
+  instance
+    .get('/api/members/me')
+    .then((res) => {
+      if (res.data.status == 200) {
+        authStore.userName = res.data.data.name
+        authStore.userEmail = res.data.data.email
+        authStore.userImgUrl = res.data.data.image_url
+      } else {
+        // Swal.fire()
+      }
     })
     .catch((err) => {
       console.log(err)
     })
 }
 
-const GetWeeklySchedule = () => {
-  instance
-    .get('members/me/study-timeline')
-    .then((res) => {
-      console.log(res)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-}
+// const GetWeeklySchedule = () => {
+//   instance
+//     .get('members/me/study-timeline')
+//     .then((res) => {
+//       console.log(res)
+//     })
+//     .catch((err) => {
+//       console.log(err)
+//     })
+// }
 
 const EditMyInfo = () => {
   instance
@@ -209,8 +230,8 @@ const goUserGuide = () => {
 }
 
 onMounted(() => {
+  GetMyInfo()
   GetDashBoardInfo()
-  GetWeeklySchedule()
 })
 </script>
 
