@@ -25,66 +25,53 @@ pipeline {
             }
         }
 
-        stage("fastapi .env download") {
-            steps {
-                withCredentials([file(credentialsId: 'secret-env-ai', variable: 'envConfigfile')]) {
-                    script {
-                        sh 'cp -rf $envConfigfile ./AI/app/.env'
-                    }
-                }
+// stage("fastapi .env download") {
+//   steps {
+//       withCredentials([file(credentialsId: 'secret-env-ai', variable: 'envConfigfile')]) {
+//           script {
+//               sh 'cp -rf $envConfigfile ./AI/app/.env'
+//           }
+//       }
+//   }
+// }
 
-                withCredentials([file(credentialsId: 'secret-jwt', variable: 'jwtConfigFile')]) {
-                    script {
-                        sh 'cp -rf $jwtConfigFile ./Backend/src/main/resources/application-jwt.yml'
-                    }
-                }
+// stage("Build FastAPI to Docker Image") {
+//   steps {
+//       echo 'FastAPI 도커 이미지 빌드 시작!'
+//       dir("./AI") {
+//           // 빌드된 JAR 파일을 Docker 이미지로 빌드
+//           sh "docker build -t oiatmil/d105-ai:latest ."
+//       }
+//       echo 'FastAPI 도커 이미지 빌드 완료!'
+//   }
+// }
 
-                withCredentials([file(credentialsId: 'secret-oauth', variable: 'oauthConfigFile')]) {
-                    script {
-                        sh 'cp -rf $oauthConfigFile ./Backend/src/main/resources/application-oauth.yml'
-                    }
-                }
+// stage("Push to Docker Hub-FastAPI") {
+//   steps {
+//       echo 'FastAPI 도커 이미지를 Docker Hub에 푸시 시작!'
+//       withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+//           sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+//       }
+//       dir("./AI") {
+//           sh "docker push oiatmil/d105-ai:latest"
+//       }
+//       echo 'FastAPI 도커 이미지를 Docker Hub에 푸시 완료!'
+//   }
+// }
 
-            }
-        }
-
-        stage("Build FastAPI to Docker Image") {
-            steps {
-                echo 'FastAPI 도커 이미지 빌드 시작!'
-                dir("./AI") {
-                    // 빌드된 JAR 파일을 Docker 이미지로 빌드
-                    sh "docker build -t oiatmil/d105-ai:latest ."
-                }
-                echo 'FastAPI 도커 이미지 빌드 완료!'
-            }
-        }
-
-        stage("Push to Docker Hub-FastAPI") {
-            steps {
-                echo 'FastAPI 도커 이미지를 Docker Hub에 푸시 시작!'
-                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                    sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
-                }
-                dir("./AI") {
-                    sh "docker push oiatmil/d105-ai:latest"
-                }
-                echo 'FastAPI 도커 이미지를 Docker Hub에 푸시 완료!'
-            }
-        }
-
-        stage("Deploy to EC2-FastAPI") {
-            steps {
-                echo 'FastAPI EC2에 배포 시작!'
-                // 여기에서는 SSH 플러그인이나 SSH 스크립트를 사용하여 EC2로 연결하고 Docker 컨테이너 실행
-                
-                sh "docker rm -f fastapi"
-                sh "docker rmi oiatmil/d105-ai:latest"
-                sh "docker image prune -f"
-                sh "docker pull oiatmil/d105-ai:latest && docker run -d -p 9000:9000 -v /var/opt/models:/MODEL --name fastapi oiatmil/d105-ai:latest"
-                
-                echo 'FastAPI EC2에 배포 완료!'
-            }
-        }
+// stage("Deploy to EC2-FastAPI") {
+//   steps {
+//       echo 'FastAPI EC2에 배포 시작!'
+//       // 여기에서는 SSH 플러그인이나 SSH 스크립트를 사용하여 EC2로 연결하고 Docker 컨테이너 실행
+      
+//       sh "docker rm -f fastapi"
+//       sh "docker rmi oiatmil/d105-ai:latest"
+//       sh "docker image prune -f"
+//       sh "docker pull oiatmil/d105-ai:latest && docker run -d -p 9000:9000 -v /var/opt/models:/MODEL --name fastapi oiatmil/d105-ai:latest"
+      
+//       echo 'FastAPI EC2에 배포 완료!'
+//   }
+// }
 
 
         stage("secret.yml download") {
