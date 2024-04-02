@@ -348,7 +348,13 @@ const uploadAudio = async (audioBlob) => {
       },
       timeout: 99999999999
     })
-    console.log('post끝')
+    .then(
+      console.log('post끝')
+    )
+    .catch(
+
+    )
+    
 
     // const data = response.data;
     // console.log("Transcription result:", data);
