@@ -5,6 +5,7 @@ import com.baekopa.backend.domain.meeting.dto.request.CreateMeetingRemindQuizDTO
 import com.baekopa.backend.domain.meeting.dto.response.MeetingRemindQuizResponseDTO;
 import com.baekopa.backend.domain.meeting.dto.response.RemindQuizListResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.RemindQuizResponseDto;
+import com.baekopa.backend.domain.meeting.entity.IsolationEnum;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.entity.MeetingSummary;
 import com.baekopa.backend.domain.meeting.entity.RemindQuiz;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,10 +44,10 @@ import java.util.List;
 public class RemindQuizService {
 
     private final MeetingSummaryRepository meetingSummaryRepository;
+    private final StudyMemberRepository studyMemberRepository;
     private final RemindQuizRepository remindQuizRepository;
     private final MeetingRepository meetingRepository;
     private final StudyRepository studyRepository;
-    private final StudyMemberRepository studyMemberRepository;
     private final EmitterService emitterService;
 
     @Value("${BASE_URL_AI}")
@@ -53,11 +55,38 @@ public class RemindQuizService {
     private final RestTemplate restTemplate;
 
     @Transactional
-    public MeetingRemindQuizResponseDTO createMeetingRemindQuiz(Long studyId, Long meetingId) {
+    public synchronized MeetingRemindQuizResponseDTO createMeetingRemindQuiz(Long studyId, Long meetingId) {
         String remindQuizUrl = fastUrl + "/studies/quiz";
 
         MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+        // todo 읽기 권한 체크 더 하기
+        if(meetingSummary.getStatus()== IsolationEnum.USING){
+            throw new BusinessException(ErrorCode.MEETING_SUMMARY_CAN_NOT_ACCESS, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage());
+        }
+        LocalDateTime openDate=null;
+
+        Meeting meeting = meetingRepository.findByIdAndDeletedAtIsNull(meetingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+
+        if (remindQuizRepository.existsByMeetingAndDeletedAtIsNull(meeting)) { // 리마인드 퀴즈가 이미 존재한다면..?
+            RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meeting)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
+            openDate = remindQuiz.getOpenDate();
+
+            if (remindQuiz.getStatus() == IsolationEnum.USING) {
+                throw new BusinessException(ErrorCode.REMIND_QUIZ_CAN_CNT_ACCESS, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage());
+            }
+            remindQuizRepository.delete(remindQuiz);
+            remindQuizRepository.flush();
+        }
+
+        if(openDate==null){
+            openDate=LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(7);
+        }
+
+        RemindQuiz remindQuiz=RemindQuiz.from(meeting, openDate);
+        remindQuizRepository.saveAndFlush(remindQuiz);
 
         CreateMeetingRemindQuizDTO createMeetingRemindQuizDTO = CreateMeetingRemindQuizDTO.from(meetingSummary);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -76,48 +105,50 @@ public class RemindQuizService {
 
         MeetingRemindQuizResponseDTO meetingRemindQuizResponseDTO = restTemplate.postForObject(remindQuizUrl, requestEntity, MeetingRemindQuizResponseDTO.class);
 
-        Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
         // db 저장
         RemindQuizDTO remindQuizDTO = RemindQuizDTO.of(meetingRemindQuizResponseDTO.getQuiz());
-        remindQuizRepository.save(RemindQuiz.from(meeting, remindQuizDTO));
+        //remindQuizRepository.save(RemindQuiz.from(meeting, remindQuizDTO));
+        remindQuiz.updateRemindQuiz(remindQuizDTO.getQuiz());
 
         return meetingRemindQuizResponseDTO;
     }
 
-    @Transactional
-    public MeetingRemindQuizResponseDTO reCreateMeetingRemindQuiz(Long studyId, Long meetingId) {
-        String remindQuizUrl = fastUrl + "/studies/quiz";
-
-        MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
-
-        CreateMeetingRemindQuizDTO createMeetingRemindQuizDTO = CreateMeetingRemindQuizDTO.from(meetingSummary);
-        ObjectMapper objectMapper = new ObjectMapper();
-        Object jsonText;
-
-        try {
-            jsonText = objectMapper.writeValueAsString(createMeetingRemindQuizDTO);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-        // fast api 통신
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Object> requestEntity = new HttpEntity<>(jsonText, headers);
-
-        MeetingRemindQuizResponseDTO meetingRemindQuizResponseDTO = restTemplate.postForObject(remindQuizUrl, requestEntity, MeetingRemindQuizResponseDTO.class);
-
-        // db 저장
-        RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meetingRepository.findById(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage())))
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
-
-        assert meetingRemindQuizResponseDTO != null;
-        remindQuiz.updateRemindQuiz(meetingRemindQuizResponseDTO.getQuiz());
-
-        return meetingRemindQuizResponseDTO;
-    }
+    //@Transactional
+    //public MeetingRemindQuizResponseDTO reCreateMeetingRemindQuiz(Long studyId, Long meetingId) {
+    //    String remindQuizUrl = fastUrl + "/studies/quiz";
+    //
+    //    MeetingSummary meetingSummary = meetingSummaryRepository.findByIdAndDeletedAtIsNull(meetingId)
+    //            .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SUMMARY_NOT_FOUND, ErrorCode.MEETING_SUMMARY_NOT_FOUND.getMessage()));
+    //
+    //    CreateMeetingRemindQuizDTO createMeetingRemindQuizDTO = CreateMeetingRemindQuizDTO.from(meetingSummary);
+    //    ObjectMapper objectMapper = new ObjectMapper();
+    //    Object jsonText;
+    //
+    //    try {
+    //        jsonText = objectMapper.writeValueAsString(createMeetingRemindQuizDTO);
+    //    } catch (JsonProcessingException e) {
+    //        throw new RuntimeException(e);
+    //    }
+    //
+    //    // fast api 통신
+    //    HttpHeaders headers = new HttpHeaders();
+    //    headers.setContentType(MediaType.APPLICATION_JSON);
+    //    HttpEntity<Object> requestEntity = new HttpEntity<>(jsonText, headers);
+    //
+    //    MeetingRemindQuizResponseDTO meetingRemindQuizResponseDTO = restTemplate.postForObject(remindQuizUrl, requestEntity, MeetingRemindQuizResponseDTO.class);
+    //
+    //    // db 저장
+    //    RemindQuiz remindQuiz = remindQuizRepository.findByMeetingAndDeletedAtIsNull(meetingRepository.findByIdAndDeletedAtIsNull(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage())))
+    //            .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND, ErrorCode.MEETING_REMIND_QUIZ_NOT_FOUND.getMessage()));
+    //
+    //    assert meetingRemindQuizResponseDTO != null;
+    //    remindQuiz.updateRemindQuiz(meetingRemindQuizResponseDTO.getQuiz());
+    //
+    //    Meeting meeting = meetingRepository.findById(meetingId)
+    //            .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
+    //
+    //    return meetingRemindQuizResponseDTO;
+    //}
 
     public List<RemindQuizListResponseDto> getStudyRemindQuiz(Long studyId) {
 
