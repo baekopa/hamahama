@@ -41,10 +41,10 @@ public class Notification extends BaseBy {
     private String eventId;
 
     @Column(name = "related_content_id")
-    private Long relatedContentId;
+    private String relatedContentId;
 
     @Builder
-    public Notification(Member receiver, NotificationType notificationType, String notificationContent, Boolean isChecked, String eventId, Long relatedContentId) {
+    public Notification(Member receiver, NotificationType notificationType, String notificationContent, Boolean isChecked, String eventId, String relatedContentId) {
         this.receiver = receiver;
         this.notificationType = notificationType;
         this.notificationContent = notificationContent;
@@ -53,7 +53,7 @@ public class Notification extends BaseBy {
         this.relatedContentId = relatedContentId;
     }
 
-    public static Notification of(Member receiver, NotificationType notificationType, String notificationContent, String eventId, Long relatedContentId) {
+    public static Notification of(Member receiver, NotificationType notificationType, String notificationContent, String eventId, String relatedContentId) {
 
         return builder()
                 .receiver(receiver)

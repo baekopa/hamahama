@@ -38,7 +38,7 @@ public class MeetingResultController {
     @Operation(summary = "미팅 전문 요약 생성", description = "미팅 전체문을 요약모델을 통해 요약을 해줍니다")
     @PostMapping("/studies/{study-id}/meetings/{meeting-id}/summary")
     public ApiResponse<MeetingSummaryResponseDTO> createMeetingSummary(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
-        return ApiResponse.of(SuccessCode.MEETING_SUMMARY_CREATE_SUCCESS, meetingService.createSummary(meetingId));
+        return ApiResponse.of(SuccessCode.MEETING_SUMMARY_CREATE_SUCCESS, meetingService.createSummary(studyId, meetingId));
     }
 
     @Operation(summary = "미팅 전문 요약 조회", description = "미팅 요약을 조회합니다.")
@@ -50,7 +50,7 @@ public class MeetingResultController {
     @Operation(summary = "미팅 전문 요약 재생성", description = "미팅 전체문을 요약모델을 통해 재요약을 해줍니다")
     @PutMapping("/studies/{study-id}/meetings/{meeting-id}/summary")
     public ApiResponse<MeetingSummaryResponseDTO> updateCreateMeetingSummary(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
-        return ApiResponse.of(SuccessCode.MEETING_SUMMARY_UPDATE_SUCCESS, meetingService.updateCreateSummary(meetingId));
+        return ApiResponse.of(SuccessCode.MEETING_SUMMARY_UPDATE_SUCCESS, meetingService.updateCreateSummary(studyId, meetingId));
     }
 
     @Operation(summary = "미팅 전문 요약 수정", description = "미팅 요약문을 수정한 값을 DB에 저장합니다.")
@@ -62,19 +62,19 @@ public class MeetingResultController {
     @Operation(summary = "미팅 리마인드 퀴즈 생성", description = "미팅 요약을 활용하여 리마인드 퀴즈를 생성합니다.")
     @PostMapping("/studies/{study-id}/meetings/{meeting-id}/remind-quiz")
     public ApiResponse<MeetingRemindQuizResponseDTO> createMeetingRemindQuiz(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
-        return ApiResponse.of(SuccessCode.MEETING_REMIND_QUIZ_SUCCESS, meetingService.createMeetingRemindQuiz(meetingId));
+        return ApiResponse.of(SuccessCode.MEETING_REMIND_QUIZ_SUCCESS, meetingService.createMeetingRemindQuiz(studyId, meetingId));
     }
 
     @Operation(summary = "미팅 리마인드 퀴즈 재생성", description = "미팅 요약을 활용하여 리마인드 퀴즈를 재생성 합니다.")
     @PutMapping("/studies/{study-id}/meetings/{meeting-id}/remind-quiz")
     public ApiResponse<MeetingRemindQuizResponseDTO> reCreateMeetingRemindQuiz(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
-        return ApiResponse.of(SuccessCode.MEETING_REMIND_QUIZ_SUCCESS, meetingService.reCreateMeetingRemindQuiz(meetingId));
+        return ApiResponse.of(SuccessCode.MEETING_REMIND_QUIZ_SUCCESS, meetingService.reCreateMeetingRemindQuiz(studyId, meetingId));
     }
 
     @Operation(summary = "미팅 키워드 생성", description = "미팅 요약을 활용하여 키워드 생성(키워드는 재생성도 이 경로를 사용합니다)")
     @PostMapping("/studies/{study-id}/meetings/{meeting-id}/keyword")
     public ApiResponse<MeetingKeywordListDTO> createMeetingKeyword(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
-        return ApiResponse.of(SuccessCode.MEETING_KEYWORD_CREATE_SUCCESS, meetingService.createMeetingKeyword(meetingId));
+        return ApiResponse.of(SuccessCode.MEETING_KEYWORD_CREATE_SUCCESS, meetingService.createMeetingKeyword(studyId, meetingId));
     }
 
     @Operation(summary = "미팅 키워드 조회", description = "미팅 요약을 활용하여 키워드 생성(키워드는 재생성도 이 경로를 사용합니다)")
@@ -88,11 +88,5 @@ public class MeetingResultController {
     @PutMapping("/studies/{study-id}/meetings/{meeting-id}/keyword")
     public ApiResponse<MeetingKeywordListDTO> updateMeetingKeyword(@RequestBody UpdateMeetingKeywordListDTO updateMeetingKeywordListDTO, @PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
         return ApiResponse.of(SuccessCode.MEETING_KEYWORD_UPDATE_SUCCESS, meetingService.updateMeetingKeyword(meetingId, updateMeetingKeywordListDTO));
-    }
-
-    @Operation(summary = "요약 차이 생성", description = "미팅 전체 요약과 내 요약을 비교하여 차이를 생성해줍니다")
-    @PostMapping("/studies/{study-id}/meetings/{meeting-id}/difference")
-    public ApiResponse<MeetingDifferenceResponseDTO> createDifference(@PathVariable("study-id") Long studyId, @PathVariable("meeting-id") Long meetingId, @AuthenticationPrincipal Member member) {
-        return ApiResponse.of(SuccessCode.MEETING_DIFFERENCE_CREATE_SUCCESS, meetingService.createDifference(meetingId, member));
     }
 }
