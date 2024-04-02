@@ -21,7 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EmitterService {
 
-    private static final Long DEFAULT_TIMEOUT = 1000L * 60 * 30;
+    private static final Long DEFAULT_TIMEOUT = 1000L * 60 * 70;
 
     private final EmitterRepository emitterRepository;
     private final NotificationRepository notificationRepository;
@@ -115,7 +115,6 @@ public class EmitterService {
             // 클라이언트와의 연결이 끊긴 경우, emitter를 만료시킨다.
             emitter.complete();
             emitterRepository.deleteEmitterById(emitterId);
-            throw new BusinessException(ErrorCode.NOTIFICATION_NOT_SEND, ErrorCode.NOTIFICATION_NOT_SEND.getMessage());
         }
     }
 
