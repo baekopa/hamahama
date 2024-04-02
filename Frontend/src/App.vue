@@ -1,13 +1,35 @@
 <script setup>
-import { ref, watchEffect } from 'vue'
-import { RouterLink, RouterView } from 'vue-router'
+import { ref, watchEffect, onMounted } from 'vue'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useLoadStore } from '@/stores/load'
 import AfterLogin from '@/components/navbar/AfterLogin.vue'
 import BeforeLogin from '@/components/navbar/BeforeLogin.vue'
+import instance from '@/api/index'
 
 const authStore = useAuthStore()
 const loadStore = useLoadStore()
+const router = useRouter()
+
+function GetMyInfo() {
+  instance
+    .get(`api/members/me`)
+    .then((res) => {
+      if (res.data.status == 200) {
+        const userInfo = res.data.data
+        authStore.userName = userInfo.name
+        authStore.userImgUrl = userInfo.image_url
+        authStore.userEmail = userInfo.email
+      }
+    })
+    .catch((err) => {
+      router.push({ name: 'login' })
+    })
+}
+
+onMounted(() => {
+  GetMyInfo()
+})
 </script>
 
 <template>

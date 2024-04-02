@@ -52,10 +52,14 @@
       <div class="d-flex flex-column mt-20" style="width: 1300px">
         <div class="d-flex items-end justify-between">
           <div>
-            <div class="note-title point-font">요약 및 꼬리 질문 <span class="tossface">💻</span></div>
-          <div>
-            <div class="note-content text-gray-500">작성한 노트를 바탕으로 노트 요약과 꼬리 질문을 생성합니다.</div>
-          </div>
+            <div class="note-title point-font">
+              요약 및 꼬리 질문 <span class="tossface">💻</span>
+            </div>
+            <div>
+              <div class="note-content text-gray-500">
+                작성한 노트를 바탕으로 노트 요약과 꼬리 질문을 생성합니다.
+              </div>
+            </div>
           </div>
           <v-btn
             @click="MakeSummary"
@@ -197,8 +201,6 @@ const selectedMeeting = ref(null)
 const handleMeetingSelection = () => {
   if (selectedMeeting.value) {
     const selectedMeetingId = selectedMeeting.value
-    // 여기서 선택된 항목의 ID를 사용하여 원하는 작업을 수행할 수 있습니다.
-    console.log('선택된 미팅 ID:', selectedMeetingId)
   }
 }
 // 노트 내용 조회
@@ -226,7 +228,6 @@ function LoadMeetingSchedule() {
   instance
     .get(`api/members/me/meetings`)
     .then((res) => {
-      console.log(res)
       if (res.data.status == 200) {
         console.log(res.data.message)
         studyMeetingScheduleList.value = res.data.data
@@ -301,13 +302,13 @@ function ShareNote() {
     })
 }
 
+// 요약 생성하기
 const MakeSummary = () => {
   loadStore.isLoading = true
   instance
     .post(`api/notes/${noteId}/summary`, {}, { timeout: 1000000 })
     .then((res) => {
       loadStore.isLoading = false
-      console.log(res)
       if (res.data.status == 201) {
         noteSummary.value = res.data.data.noteSummary
         console.log(res.data.message)
