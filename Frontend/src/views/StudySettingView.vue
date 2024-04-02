@@ -122,7 +122,7 @@
                 </div>
                 <div class="member-list">
                   <div
-                    class="d-flex my-4 align-center"
+                    class="d-flex align-center pa-4"
                     v-for="member in studyStore.studyMembers"
                     :key="member.id"
                   >
@@ -136,16 +136,19 @@
               <div class="study-schedule">
                 <div class="d-flex justify-between">
                   <p class="mr-4">스터디 일정</p>
-                  <div class="study-date mr-4" v-for="(date, index) in studyDate" :key="index">
+                  <!-- <div class="study-date mr-4" v-for="(date, index) in studyDate" :key="index">
                     <p v-if="date === '1'">{{ getDayOfWeek(index) }}</p>
                   </div>
-                  <p>{{ studyStartTime }} ~ {{ studyEndTime }}</p>
+                  <p>{{ studyStartTime }} ~ {{ studyEndTime }}</p> -->
                 </div>
                 <v-btn @click="CreateMeeting" class="w-full" color="#3FB1FA">일정추가</v-btn>
                 <div class="schedule-list">
-                  <div v-for="schedule in scheduleList" :key="schedule.id">
-                    <p>{{ schedule.topic }}</p>
-                    <p>{{ schedule.studyAt }}</p>
+                  <div
+                    class="pa-4 align-center"
+                    v-for="schedule in scheduleList"
+                    :key="schedule.id"
+                  >
+                    <p>{{ schedule.studyAt }} - {{ schedule.topic }}</p>
                     <hr />
                   </div>
                 </div>
@@ -274,13 +277,23 @@ async function CreateMeeting() {
   const { value: formValues } = await Swal.fire({
     title: '스터디 일정 추가하마',
     html: `
-    <label for="swal-input1">스터디 주제</label>
-    <input id="swal-input1" class="swal2-input">
-    <label for="swal-input2">날짜</label>
-    <input type=date id="swal-input2" class="swal2-input">
-    <label for="swal-input3">시간</label>
-    <input type="time" id="swal-input3" class="swal2-input">
-  `,
+        <style>
+            .swal2-label {
+                display: inline-block;
+                width: 100px; /* 라벨 너비 조정 */
+                
+            }
+            .swal2-input {
+                width: calc(100% - 200px); /* 입력란 너비 조정 */
+            }
+        </style>
+        <label for="swal-input1" class="swal2-label">스터디 주제</label>
+        <input id="swal-input1" class="swal2-input">
+        <label for="swal-input2" class="swal2-label">날짜</label>
+        <input type="date" id="swal-input2" class="swal2-input">
+        <label for="swal-input3" class="swal2-label">시간</label>
+        <input type="time" id="swal-input3" class="swal2-input">
+    `,
     focusConfirm: false,
     preConfirm: () => {
       return [
@@ -290,22 +303,34 @@ async function CreateMeeting() {
       ]
     }
   })
-  if (formValues) {
+  console.log(formValues[0].value)
+  if (formValues[0] && formValues[1] && formValues[2]) {
     instance
-      .post(`/api/studies/${studyId}/meetings`, {
+      .post(`api/studies/${studyId}/meetings`, {
         topic: formValues[0],
         studyAt: `${formValues[1]} ${formValues[2]}`
       })
       .then((res) => {
         const data = res.data
+        console.log(res)
         if (data.status == 201) {
           Swal.fire(JSON.stringify(formValues))
           LoadMeetingSchedule()
         }
       })
       .catch((err) => {
-        console.log(err)
+        Swal.fire({
+          icon: 'error',
+          title: '일정 추가 실패',
+          text: `${err.response.message}`
+        })
       })
+  } else {
+    Swal.fire({
+      icon: 'error',
+      title: '일정 추가 실패',
+      text: '주제, 날짜, 시간은 필수 입력입니다.'
+    })
   }
 }
 
@@ -317,7 +342,7 @@ onMounted(() => {
 <style scoped>
 .study-info {
   width: 1300px;
-  height: 550px;
+  height: 400px;
 }
 .study-image {
   height: 389px;
@@ -328,16 +353,17 @@ onMounted(() => {
   width: 50px;
   border-radius: 50%;
 }
-.study-member {
-  width: 600px;
-  height: 470px;
+.member-list {
+  overflow-y: auto;
+  width: 400px;
+  height: 200px;
   border: 1px solid;
 }
 .study-schedule {
   width: 650px;
-  height: 650px;
 }
 .schedule-list {
+  height: 280px;
   overflow-y: auto;
 }
 </style>
