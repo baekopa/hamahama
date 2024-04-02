@@ -13,6 +13,8 @@ public interface RemindQuizRepository extends JpaRepository<RemindQuiz, Long> {
 
     Optional<RemindQuiz> findByIdAndDeletedAtIsNull(Long remindQuizId);
 
+    boolean existsByMeetingAndDeletedAtIsNull(Meeting meeting);
+
     @Query(value = "SELECT * FROM remind_quiz WHERE abs(TIMESTAMPDIFF(MINUTE, open_date, now())) <= 1 AND deleted_at is NULL AND open_date >= now() ", nativeQuery = true)
     List<RemindQuiz> findUpcomingRemindQuizzes();
 

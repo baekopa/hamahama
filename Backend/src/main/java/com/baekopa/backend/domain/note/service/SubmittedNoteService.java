@@ -39,11 +39,11 @@ public class SubmittedNoteService {
 
         Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOTE_NOT_FOUND, ErrorCode.NOTE_NOT_FOUND.getMessage()));
-        Meeting meeting = meetingRepository.findById(requestDto.getMeetingId())
+        Meeting meeting = meetingRepository.findByIdAndDeletedAtIsNull(requestDto.getMeetingId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
 
         // 이미 내보내기 된 노트와 스터디인지 확인한다.
-        if (submittedNoteRepository.existsByNoteAndMeeting(note, meeting)) {
+        if (submittedNoteRepository.existsByNoteAndMeetingAndDeletedAtIsNull(note, meeting)) {
             throw new BusinessException(ErrorCode.NOTE_DUPLICATE_MEETING, ErrorCode.NOTE_DUPLICATE_MEETING.getMessage());
         }
 
@@ -56,7 +56,7 @@ public class SubmittedNoteService {
         SubmittedNote submittedNote = SubmittedNote.createSubmittedNote(null, note, meeting);
         submittedNoteRepository.save(submittedNote);
 
-        return submittedNoteRepository.findMeetingByNote(note).stream()
+        return submittedNoteRepository.findByNoteAndDeletedAtIsNull(note).stream()
                 .map(m -> SharedMeetingDto.of(m.getMeeting().getId(),
                         m.getMeeting().getTopic(),
                         m.getMeeting().getStudyAt(),

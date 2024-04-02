@@ -1,5 +1,6 @@
 package com.baekopa.backend.domain.study.dto.response;
 
+import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.note.dto.SubmittedNoteDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
@@ -29,12 +30,12 @@ public class StudyMeetingResponseDto {
         this.entireSummary = entireSummary;
     }
 
-    public static StudyMeetingResponseDto of(Long id, String topic, LocalDateTime studyAt, List<SubmittedNoteDto> submittedNotes, String entireSummary) {
-        return builder().id(id)
-                .topic(topic)
-                .studyAt(studyAt)
+    public static StudyMeetingResponseDto of(Meeting meeting, List<SubmittedNoteDto> submittedNotes) {
+        return builder().id(meeting.getId())
+                .topic(meeting.getTopic())
+                .studyAt(meeting.getStudyAt())
                 .submittedNotes(submittedNotes)
-                .entireSummary(entireSummary)
+                .entireSummary(meeting.getNoteSummary())
                 .build();
     }
 

@@ -1,13 +1,31 @@
 <template>
   <div>
-    <img @click="KakaoLogin" src="@/assets/image/login/kakao_login_medium_wide.png"></img>
+    <img
+      @click="Login('kakao')"
+      style="width: 300px"
+      src="@/assets/image/login/kakao_login_large_narrow.png"
+    />
+    <img
+      class="mt-10"
+      style="width: 300px"
+      @click="Login('naver')"
+      src="@/assets/image/login/naverLoginButton.png"
+      alt=""
+    />
+    <img
+      @click="Login('google')"
+      class="mt-10"
+      style="width: 300px"
+      src="@/assets/image/login/web_neutral_sq_SI.svg"
+      alt=""
+    />
   </div>
 </template>
 
 <script setup>
 const URL = import.meta.env.VITE_BASE_URL
-const KakaoLogin = () => {
-  window.location.href = `${URL}/oauth2/authorization/kakao`
+function Login(provider) {
+  window.location.href = `${URL}/oauth2/authorization/${provider}`
 }
 </script>
 

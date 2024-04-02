@@ -160,7 +160,7 @@
               </div>
               <div class="d-flex mt-5 mb-">
                 <div v-if="noteToggle == -1">
-                  {{ submittedNotes.noteSummary }}
+                  {{ submittedNotes.entireSummary }}
                 </div>
                 <div v-else>
                   <p class="font-bold">노트</p>
@@ -183,6 +183,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useStudyStore } from '@/stores/study'
 import { useAudioStore } from '@/stores/audioStore'
 import instance from '@/api'
+import Swal from 'sweetalert2'
 
 const studyStore = useStudyStore()
 const audioStore = useAudioStore()
@@ -270,7 +271,7 @@ const updateElapsedTime = () => {
 }
 
 const startRecording = async () => {
-  console.log('녹음이 시작됨')
+  // console.log('스터디 시작')
   recording.value = true
   startTime.value = Date.now()
   updateElapsedTime()
@@ -295,7 +296,7 @@ const pauseRecording = () => {
     clearInterval(timer.value)
     paused.value = true
     pausedTime.value = Date.now() // 일시정지 시작 시간 저장
-    console.log('녹음이 일시정지됨')
+    // console.log('녹음이 일시정지됨')
   }
 }
 
@@ -306,14 +307,14 @@ const resumeRecording = () => {
     totalPausedDuration.value += pausedDuration // 총 일시정지 시간 업데이트
     timer.value = setInterval(updateElapsedTime, 1000)
     paused.value = false
-    console.log('녹음이 재개됨')
+    // console.log('녹음이 재개됨')
   }
 }
 
 const stopRecording = () => {
-  console.log('레코딩 멈춰 명령 실행')
+  console.log('스터디 중지')
   if (mediaRecorder.value) {
-    console.log('녹음파일 있으니 녹음 중지할게요')
+    // console.log('녹음파일 있으니 녹음 중지할게요')
     mediaRecorder.value.stop()
     mediaRecorder.value.stream.getTracks().forEach((track) => track.stop()) // 스트림의 모든 트랙을 멈춤. 마이크 종료
     clearInterval(timer.value)
@@ -322,7 +323,7 @@ const stopRecording = () => {
     recording.value = false
     mediaRecorder.value.onstop = async () => {
       const audioBlob = new Blob(audioChunks.value, { type: 'audio/wav' })
-      console.log('업로드 함수 실행 직전')
+      // console.log('업로드 함수 실행 직전')
       await uploadAudio(audioBlob)
       audioStore.setRecordingStatus(false)
     }
@@ -334,26 +335,22 @@ const stopRecording = () => {
 const uploadAudio = async (audioBlob) => {
   const formData = new FormData()
   formData.append('file', audioBlob, 'recording.wav')
-
-  console.log('트라이 직전')
   for (let [key, value] of formData.entries()) {
     console.log(`${key}:`, value)
   }
   // FastAPI 서버로 오디오 파일 전송
   try {
-    console.log('post 간다!')
-    await instance.post(`api/studies/${studyId}/meetings/${meetingID.value}/record`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      },
-      timeout: 99999999999
-    })
-    console.log('post끝')
-
-    // const data = response.data;
-    // console.log("Transcription result:", data);
-    // recordText.value = data.transcription;
-    // console.log(recordText.value)
+    console.log('녹음파일 전송')
+    const res1 = await instance.post(
+      `api/studies/${studyId}/meetings/${meetingID.value}/record`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        timeout: 100000
+      }
+    )
   } catch (error) {
     console.error('오류가 발생했습니다:', error)
   }
