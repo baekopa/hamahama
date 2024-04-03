@@ -79,7 +79,7 @@
             color="info"
           ></v-divider>
 
-          <v-card rounded="0" variant="flat" class="note-list">
+          <v-card rounded="0" variant="flat"  class="note-list">
             <div class="list-section" v-if="summaryList.length != 0">
               <v-row class="pa-10">
                 <v-col
@@ -92,43 +92,10 @@
                   :key="summary.id"
                 >
                   <v-card
-                    @click="GoNoteDetail(s)"
-                    variant="text"
-                    class="rounded-xl study-card"
-                    color="#2e2e2e"
-                    hover
-                    width="250"
-                    height="350"
-                  >
-                    <template v-slot:loader="{ isActive }">
-                      <v-progress-linear
-                        :active="isActive"
-                        color="deep-purple"
-                        height="4"
-                        indeterminate
-                      ></v-progress-linear>
-                    </template>
-
-                    <v-card-item class="grid content-between note-card rounded-xl" style="height: 350px">
-                      <div class="grid" style="height: 320px">
-                        <div>
-                          <div class="mx-2 mt-2 mb-1 text-xl font-bold line-clamp-2 text-gray-600">
-                            s
-                          </div>
-                          <span class="mx-2 mt-2 text-gray-400 italic">s 작성</span>
-                          <div class="mx-2 mt-3 line-clamp-6 text-gray-500">
-                            s
-                          </div>
-                        </div>
-                      </div>
-                    </v-card-item>
-                    <v-divider class="mx-4 mb-1"></v-divider>
-                  </v-card>
-                  <v-card
                     @click="GoSummaryDetail(summary)"
-                    variant="outlined"
-                    class="rounded-lg study-card"
-                    color="#4e4e4e"
+                    variant="text"
+                    class="rounded-xl study-card note-card"
+                    color="#2e2e2e"
                     hover
                     width="250"
                     height="380"
@@ -148,7 +115,7 @@
                           ><span class="tossface">⏲</span> {{ summary.studyAt }}
                         </span>
                       </v-card-subtitle>
-                      <div class="ml-2 mt-2 mb-1 text-3xl leading-normal font-bold note-card">
+                      <div class="ml-2 mt-2 mb-1 text-3xl leading-normal font-bold border-0">
                         <p>{{ summary.topic }}</p>
                       </div>
                       <div class="grid justify-items-start">
@@ -286,6 +253,7 @@ onMounted(() => {
 
 .note-card {
   height: 280px;
+  border: 1px solid #bfbfbf;
 }
 
 .chip {

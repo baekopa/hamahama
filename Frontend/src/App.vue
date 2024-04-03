@@ -20,6 +20,7 @@ function GetMyInfo() {
         authStore.userName = userInfo.name
         authStore.userImgUrl = userInfo.image_url
         authStore.userEmail = userInfo.email
+        authStore.provider = userInfo.provider
       }
     })
     .catch((err) => {
