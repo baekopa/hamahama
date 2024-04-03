@@ -2,23 +2,20 @@
   <div class="page d-flex justify-center align-center flex-column">
     <v-container class="d-flex justify-center align-center">
       <v-row class="content">
-        <div>
-          <img src="@/assets/image/home/main3.png" alt="하마3" width="500px" height="500px" />
-        </div>
         <div class="oval-background ml-16 d-flex flex-column align-center justify-center">
           <div data-aos="zoom-in-down">
             <div class="text-h3 mb-10">
               <p class="my-2">
-                개인 요약도 가능<span class="font-weight-bold text-teal-accent-2">하마하마</span>
+                방문해주셔서 <span class="font-weight-bold text-teal-accent-2">감사감사..</span>하마..
               </p>
-            </div>
-            <div class="text-h4">
-              <p class="my-2">하마하마....</p>
             </div>
           </div>
         </div>
       </v-row>
     </v-container>
+    <div class="moving-image-container mt-40">
+      <img src="@/assets/image/home/flowhama.png" alt="Moving Image">
+    </div>
   </div>
 </template>
 
@@ -46,5 +43,29 @@
 
 .v-col {
   position: relative; /* ::before 가상 요소를 위한 상대 위치 지정 */
+}
+
+.moving-image-container {
+  position: relative;
+  overflow: hidden;
+  width: 1820px; /* Adjust as per your image size */
+  height: 400px; /* Adjust as per your image size */
+}
+
+.moving-image-container img {
+  position: absolute;
+  top: 0;
+  object-fit: cover;
+  left: 100%; /* Start from the right side of the container */
+  animation: moveLeft 11s linear infinite; /* Adjust duration and timing function as needed */
+}
+
+@keyframes moveLeft {
+  0% {
+    left: 100%; /* Start position */
+  }
+  100% {
+    left: -100%; /* End position (completely outside of the container) */
+  }
 }
 </style>
