@@ -49,9 +49,11 @@ public class StudyService {
     }
 
     @Transactional(readOnly = true)
-    public StudyInfoResponseDto getStudyInfo(Long studyId) {
+    public StudyInfoResponseDto getStudyInfo(Member member, Long studyId) {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "올바르지 않은 studyId."));
+
+        studyMemberRepository.findStudyMemberNotInvitation(member, study, StudyMember.StudyMemberType.INVITATION).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_MEMBER_FORBIDDEN_ERROR, "스터디 접근 권한이 없습니다."));
 
         return StudyInfoResponseDto.of(study, studyMemberService.getStudyMembers(study));
     }

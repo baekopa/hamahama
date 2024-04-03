@@ -266,9 +266,26 @@ async function GetPersonalData() {
       console.log(err)
     })
 }
+function GetMyInfo() {
+  instance
+    .get(`api/members/me`)
+    .then((res) => {
+      if (res.data.status == 200) {
+        const userInfo = res.data.data
+        authStore.userName = userInfo.name
+        authStore.userImgUrl = userInfo.image_url
+        authStore.userEmail = userInfo.email
+        authStore.provider = userInfo.provider
+      }
+    })
+    .catch((err) => {
+      router.push({ name: 'login' })
+    })
+}
 
 onMounted(() => {
   GetPersonalData()
+  GetMyInfo()
 })
 </script>
 

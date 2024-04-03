@@ -14,8 +14,10 @@
         </v-col>
 
         <v-col cols="12" md="6" class="d-flex flex-column align-center">
-          <h1 class="mb-10 text-3xl point-font">오늘도 열공<span class="hama point-font"> 하마하마!!</span></h1>
-          <KakaoLogin />
+          <h1 class="mb-10 text-3xl point-font">
+            오늘도 열공<span class="hama point-font"> 하마하마!!</span>
+          </h1>
+          <SocialLogin />
         </v-col>
       </v-row>
     </div>
@@ -23,7 +25,7 @@
 </template>
 
 <script setup>
-import KakaoLogin from '@/components/login/KakaoLogin.vue'
+import SocialLogin from '@/components/login/SocialLogin.vue'
 </script>
 
 <style scoped>

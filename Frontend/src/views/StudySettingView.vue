@@ -272,7 +272,7 @@ const selectMember = (member) => {
   if (!selectedMembers.value.find((m) => m.id === member.id)) {
     selectedMembers.value.push(member.memberId)
     selectedMembersName.value.push(member)
-    memberName.value = member.email;
+    memberName.value = member.email
   }
 }
 
@@ -302,7 +302,7 @@ function InviteStudy() {
           showConfirmButton: false,
           timer: 1500
         })
-        router.go(0);
+        router.go(0)
       } else {
         console.log(res)
       }
@@ -408,6 +408,7 @@ function LoadStudyData() {
       studyStore.studyCategory = data.category
       studyStore.studyMembers = data.members
       studyStore.studyType = data.type
+      studyDate.value = data.studyDay
       const matchingMember = data.members.find((member) => {
         return member.email === authStore.userEmail && member.name === authStore.userName
       })

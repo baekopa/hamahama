@@ -10,45 +10,26 @@
     <div class="mt-10 d-flex justify-start">
       <v-hover v-slot="{ isHovering, props }">
         <v-card
-          @click=""
-          class="mr-8 rounded-lg"
+          @click="GoUserGuide()"
+          class="mr-8 rounded-lg pa-4"
           :class="{ 'on-hover': isHovering }"
           :elevation="isHovering ? 16 : 2"
           v-bind="props"
           height="200"
-          image=""
-          width="200"
-          theme="dark"
-          title="개인스터디 룸"
-        ></v-card>
-      </v-hover>
-      <v-hover v-slot="{ isHovering, props }">
-        <v-card
-          @click="goStudyRoom"
-          class="mr-8 rounded-lg"
-          :class="{ 'on-hover': isHovering }"
-          :elevation="isHovering ? 16 : 2"
-          v-bind="props"
-          height="200"
-          image=""
-          width="200"
-          theme="dark"
-          title="스터디 룸"
-        ></v-card>
-      </v-hover>
-      <v-hover v-slot="{ isHovering, props }">
-        <v-card
-          @click="GoMyNotes()"
-          class="mr-8 rounded-lg"
-          :class="{ 'on-hover': isHovering }"
-          :elevation="isHovering ? 16 : 2"
-          v-bind="props"
           image="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-          height="200"
-          width="200"
-          theme="dark"
-          title="내 노트들"
-        ></v-card>
+          width="800"
+        >
+          <div class="font-weight-black">
+            <p class="text-h5 font-weight-black">영어로 배우는 오늘의 명언</p>
+            <p class="mt-2 text-h6 font-weight-black">
+              {{ quote[randomIndex].eng }}
+            </p>
+            <p class="mt-2 text-h6 font-weight-black">
+              {{ quote[randomIndex].kor }}
+            </p>
+            <p class="mt-2 text-h6 font-weight-black">{{ quote[randomIndex].talker }}</p>
+          </div>
+        </v-card>
       </v-hover>
       <v-hover v-slot="{ isHovering, props }">
         <v-card
@@ -62,7 +43,8 @@
           width="200"
           theme="dark"
           title="사용자 설명서"
-        ></v-card>
+        >
+        </v-card>
       </v-hover>
     </div>
 
@@ -105,6 +87,7 @@ import { useRouter } from 'vue-router'
 import instance from '@/api'
 import MyCalendar from '@/components/mypage/MyCalendar.vue'
 import Swal from 'sweetalert2'
+import axios from 'axios'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -114,11 +97,52 @@ const nextStudyId = ref('1')
 
 const scheduleItems = ref([])
 
+const quote = ref([
+  {
+    id: 1,
+    eng: 'To live is to suffer, to survive is to find some meaning in the suffering.',
+    kor: '사는 것은 고통 받는 것이고, 살아남는 것은 고통 속에서 어떤 의미를 찾는 것이다.',
+    talker: '프리드리히 니체'
+  },
+  {
+    id: 2,
+    eng: 'This thing that we call failure is not the falling down, but the staying down.',
+    kor: '우리가 실패라고 부르는 것은 추락하는 것이 아니라 추락한 채로 있는 것이다.',
+    talker: '메리 픽퍼드'
+  },
+  {
+    id: 3,
+    eng: `In the end, we only regret the chances we didn't take.`,
+    kor: '결국, 우리는 우리가 잡지 않았던 기회들을 후회하게 된다.',
+    talker: '루이스 캐럴'
+  },
+  {
+    id: 4,
+    eng: 'the soul would have no rainbow had the eyes no tears.',
+    kor: '눈물을 흘리지 않으면 영혼에 무지개를 품을 수 없다.',
+    talker: '존 반스 체이니'
+  },
+  {
+    id: 5,
+    eng: 'Laugh, and the world laughs with you Weep, and you weep alone',
+    kor: '웃어라, 세상이 너와 함께 웃을 것이다. 울어라, 너 혼자 울게 될 것이다.',
+    talker: '엘라 윌콕스'
+  },
+  {
+    id: 6,
+    eng: `Something filled up my heart with nothing, someone told me not to cry. Now that I'm older, my heart is colder, I can see that it's a lie.`,
+    kor: '뭔가가 내 마음을 공허로 가득 채웠고, 누군가 나에게 슬퍼하지 말라고 했다. 하지만 나는 이제 더 나이가 들었고, 더 냉정해졌기에, 그것이 거짓말이었다는 것을 안다.',
+    talker: '아케이드 파이어'
+  }
+])
+
+const randomIndex = Math.floor(Math.random() * 6)
+
 const GetDashBoardInfo = () => {
   instance
     .get('api/members/me/dashboard')
     .then((res) => {
-      console.log(res)
+      console.log(res.data.message)
       scheduleItems.value = res.data.data.weekStudies
     })
     .catch((err) => {
@@ -183,7 +207,6 @@ function GoUserGuide() {
 onMounted(() => {
   GetMyInfo()
   GetDashBoardInfo()
-
 })
 </script>
 

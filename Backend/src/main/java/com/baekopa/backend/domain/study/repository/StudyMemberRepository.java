@@ -31,5 +31,8 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
     @Query("SELECT sm.study FROM StudyMember sm WHERE sm.member = :member AND sm.study.type = :studyType AND sm.study.deletedAt is null")
     Optional<Study> findPersonalStudy(@Param("member") Member member, @Param("studyType") StudyType studyType);
 
+    @Query("SELECT sm FROM StudyMember sm WHERE sm.member = :member AND sm.study = :study AND sm.type != :type AND sm.deletedAt is null")
+    Optional<StudyMember> findStudyMemberNotInvitation(@Param(value = "member") Member member, @Param(value="study") Study study, @Param(value = "type") StudyMember.StudyMemberType type);
+
 }
 
