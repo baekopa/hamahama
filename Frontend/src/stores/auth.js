@@ -9,6 +9,7 @@ export const useAuthStore = defineStore('auth', () => {
   const userImgUrl = ref('https://vuejs.org/images/logo.png')
   const userEmail = ref('baekOpa@ssafy.com')
   const accessToken = ref('i10j105d')
+  const provider = ref('')
 
   function Login() {
     isLogin.value = true
@@ -19,5 +20,5 @@ export const useAuthStore = defineStore('auth', () => {
     router.push({ name: 'home' })
   }
 
-  return { isLogin, Login, Logout, userName, userImgUrl, userEmail, accessToken }
+  return { isLogin, Login, Logout, userName, userImgUrl, userEmail, accessToken, provider }
 })
