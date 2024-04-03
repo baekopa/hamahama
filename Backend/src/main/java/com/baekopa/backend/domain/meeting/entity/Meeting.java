@@ -1,5 +1,6 @@
 package com.baekopa.backend.domain.meeting.entity;
 
+import com.baekopa.backend.domain.note.entity.SubmittedNote;
 import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.global.entity.BaseBy;
 import jakarta.persistence.*;
@@ -10,6 +11,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -37,6 +40,21 @@ public class Meeting extends BaseBy {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id", nullable = false)
     private Study study;
+
+    @OneToMany(mappedBy = "meeting")
+    private List<SubmittedNote> submittedNotes = new ArrayList<>();
+
+    @OneToOne(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+    private RemindQuiz remindQuiz;
+
+    @OneToOne(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+    private MeetingScript meetingScript;
+
+    @OneToOne(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+    private MeetingSummary meetingSummary;
+
+    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MeetingKeyword> meetingKeyword = new ArrayList<>();
 
     @Builder
     private Meeting(String topic, LocalDateTime studyAt, String recordFile, Study study) {

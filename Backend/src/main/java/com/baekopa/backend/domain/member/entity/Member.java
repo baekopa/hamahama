@@ -1,5 +1,8 @@
 package com.baekopa.backend.domain.member.entity;
 
+import com.baekopa.backend.domain.note.entity.Note;
+import com.baekopa.backend.domain.notification.entity.Notification;
+import com.baekopa.backend.domain.study.entity.StudyMember;
 import com.baekopa.backend.global.entity.BaseTime;
 import com.baekopa.backend.global.oauth2.dto.OAuthProvider;
 import jakarta.persistence.*;
@@ -11,7 +14,9 @@ import org.hibernate.annotations.SQLDelete;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Entity
@@ -45,6 +50,15 @@ public class Member extends BaseTime implements UserDetails {
 
     @Column(name = "last_notification_event_id")
     private Long lastCheckedEventId;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudyMember> studyMembers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Note> note = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications = new ArrayList<>();
 
     @Builder
     private Member(String name, String providerCode, String email, String image, String role, OAuthProvider provider, Long lastCheckedEventId) {

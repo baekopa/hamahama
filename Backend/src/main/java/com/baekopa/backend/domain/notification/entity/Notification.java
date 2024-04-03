@@ -7,8 +7,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.SQLDelete;
 
 @Entity
@@ -22,7 +20,6 @@ public class Notification extends BaseBy {
     @Column(name = "notification_id")
     private Long id;
 
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member receiver;
@@ -51,10 +48,10 @@ public class Notification extends BaseBy {
         this.isChecked = isChecked;
         this.eventId = eventId;
         this.relatedContentId = relatedContentId;
+        receiver.getNotifications().add(this);
     }
 
     public static Notification of(Member receiver, NotificationType notificationType, String notificationContent, String eventId, String relatedContentId) {
-
         return builder()
                 .receiver(receiver)
                 .notificationType(notificationType)
