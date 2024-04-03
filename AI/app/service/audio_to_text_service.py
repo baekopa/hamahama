@@ -125,7 +125,7 @@ async def speech_to_text(model, pipeline, file):
         print("result 나옴 : ", result)
         cleaned_text = remove_time_from_text(transcribed_text)
         if cleaned_text != '':
-            speaker_num = "화자 " + speaker[i] + " : "
+            speaker_num = "[하마" + speaker[i] + "]"
             transcription_data["transcriptions"].append({"speaker": speaker_num, "text": cleaned_text})
 
             # 결과 출력
