@@ -57,6 +57,7 @@ public class NoteService {
 
         // 새로운 노트 생성
         Note note = Note.of(requestDto.getTitle(), requestDto.getContent(), null, writer);
+        //note.setNote(note);
 
         return noteRepository.save(note).getId();
 
