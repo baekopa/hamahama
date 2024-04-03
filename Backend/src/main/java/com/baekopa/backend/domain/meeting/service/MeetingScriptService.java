@@ -1,7 +1,9 @@
 package com.baekopa.backend.domain.meeting.service;
 
+import com.baekopa.backend.domain.meeting.dto.request.DeduplicationRequestDto;
 import com.baekopa.backend.domain.meeting.dto.request.MeetingScriptRequestDto;
 import com.baekopa.backend.domain.meeting.dto.request.MeetingScriptRequestDto.Transcription;
+import com.baekopa.backend.domain.meeting.dto.response.DeduplicationDTO;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingScriptDTO;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.entity.MeetingScript;
@@ -10,6 +12,8 @@ import com.baekopa.backend.domain.meeting.repository.MeetingScriptRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
 import com.baekopa.backend.global.response.error.exception.BusinessException;
 import com.baekopa.backend.global.service.S3UploadService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +47,7 @@ public class MeetingScriptService {
 
     @Value("${BASE_URL_AI}")
     private String fastUrl;
+    private final RestTemplate restTemplate;
 
     @Transactional
     public void saveS3(MultipartFile file, Long meetingId) {
@@ -60,7 +65,13 @@ public class MeetingScriptService {
 
     @Async
     public CompletableFuture<Map<String, Long>> saveMeetingScriptAsync(Long studyId, Long meetingId, MultipartFile file) {
-        return CompletableFuture.supplyAsync(() -> saveMeetingScript(studyId, meetingId, file))
+        return CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return saveMeetingScript(studyId, meetingId, file);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
                 .thenApply(result -> {
                     // 성공 로직 처리
                     log.info("비동기 처리 결과: {}", result);
@@ -74,15 +85,36 @@ public class MeetingScriptService {
     }
 
     @Transactional
-    public Map<String, Long> saveMeetingScript(Long studyId, Long meetingId, MultipartFile file) {
+    public Map<String, Long> saveMeetingScript(Long studyId, Long meetingId, MultipartFile file) throws JsonProcessingException {
         Map<String, Long> result = new HashMap<>();
 
         String text = getSpeechToText(studyId, meetingId, file); //fast api로 통신하여 STT 실행 및 텍스트 추출
-        Long meetingScriptId = saveScript(meetingId, text);//추출한 script 저장
+
+        String cleanText = getCleanText(text);
+
+        System.out.println("cleanText : " + cleanText);
+
+        Long meetingScriptId = saveScript(meetingId, cleanText);//추출한 script 저장
 
         result.put("meetingscriptId", meetingScriptId);//script id 저장
 
         return result;
+    }
+
+    @Transactional
+    public String getCleanText(String text) throws JsonProcessingException {
+        String serverUrl = fastUrl + "/studies/deduplication";
+
+        DeduplicationRequestDto deduplicationRequestDto = DeduplicationRequestDto.from(text);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Object requestBody = objectMapper.writeValueAsString(deduplicationRequestDto);
+
+        // fast api 통신
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        return restTemplate.postForObject(serverUrl, requestEntity, DeduplicationDTO.class).getDeduplication();
     }
 
     @Transactional
@@ -166,5 +198,13 @@ public class MeetingScriptService {
         meetingScript.updateMeetingScript(meetingScriptDTO.getScriptContent());
 
         return MeetingScriptDTO.from(meetingScript);
+    }
+
+    private String convertObjectToJson(Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new BusinessException(ErrorCode.JSON_PARSE_ERROR, ErrorCode.JSON_PARSE_ERROR.getMessage());
+        }
     }
 }
