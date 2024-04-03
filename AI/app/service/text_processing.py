@@ -1,7 +1,8 @@
-from service.summary_pre_service import chk_origin_text_len, split_origin_text, split_origin_text_list, split_summary_text_for_remind_quiz
+from service.summary_pre_service import remove_hama_tags, chk_origin_text_len, split_origin_text, split_origin_text_list, split_summary_text_for_remind_quiz
 
 def process_text(original_text: str):
-    origin_text_split_list = chk_origin_text_len(original_text)
+    remove_hama = remove_hama_tags(original_text)
+    origin_text_split_list = chk_origin_text_len(remove_hama)
     max_len = len(origin_text_split_list)
     origin_formatted_list = split_origin_text(origin_text_split_list)
     origin_text_list = split_origin_text_list(origin_formatted_list, max_len)
