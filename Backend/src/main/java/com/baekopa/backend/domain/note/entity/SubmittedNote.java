@@ -36,17 +36,18 @@ public class SubmittedNote extends BaseBy {
         this.differenceContent = differenceContent;
         this.note = note;
         this.meeting = meeting;
-        meeting.getSubmittedNotes().add(this);
-        note.getSubmittedNotes().add(this);
     }
 
     // 연관관계 편의 메서드
     public static SubmittedNote createSubmittedNote(String differenceContent, Note note, Meeting meeting) {
-        return builder()
+        SubmittedNote submittedNote = builder()
                 .differenceContent(differenceContent)
                 .note(note)
                 .meeting(meeting)
                 .build();
+        meeting.getSubmittedNotes().add(submittedNote);
+        note.getSubmittedNotes().add(submittedNote);
+        return submittedNote;
     }
 
     public void updateDifferenceContent(String differenceContent) {
