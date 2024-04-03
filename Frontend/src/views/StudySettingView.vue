@@ -2,15 +2,17 @@
   <v-container>
     <v-layout style="max-height: 800px">
       <v-navigation-drawer style="width: 323px; height: 850px">
-        <p class="text-3xl text-center mt-10 point-font text-stone-900">{{ studyStore.studyType }}</p>
+        <p class="text-3xl text-center mt-10 point-font text-stone-900">
+          {{ studyStore.studyType }}
+        </p>
         <v-list lines="two" density="compact" nav>
           <v-list-item three-line>
             <v-list-item-content class="align-self-center">
-              <div class="ml-14 mt-10"
-                ><div class="text-xl font-bold block">
+              <div class="ml-14 mt-10">
+                <div class="text-xl font-bold block">
                   {{ studyStore.studyTitle }}
-                </div></div
-              >
+                </div>
+              </div>
               <v-list-item-subtitle class="ml-14 mt-1"
                 ><div class="text-base">
                   {{ studyStore.studyCategory }}
@@ -117,9 +119,9 @@
                   style="width: 600px"
                   color="info"
                 ></v-divider>
-                <div class="invite-user mt-5">
+                <div v-if="isLeader && studyStore.studyType == '같이하마'" class="invite-user mt-5">
                   <div class="d-flex flex-column">
-                    <div>
+                    <div class="d-flex">
                       <input
                         type="text"
                         id="memberName"
@@ -139,7 +141,7 @@
                           :key="index"
                           @click="selectMember(member)"
                         >
-                          {{ member.name }}
+                          {{ member.name }} <span class="mr-2">{{ member.email }}</span>
                         </li>
                       </ul>
                     </div>
@@ -187,11 +189,10 @@
                       color="info"
                     ></v-divider>
                   </div>
-                  <div class="study-date mr-4" v-for="(date, index) in studyDate" :key="index">
+                  <!-- <div class="study-date mr-4" v-for="(date, index) in studyDate" :key="index">
                     <p v-if="date === '1'">{{ getDayOfWeek(index) }}</p>
                   </div>
-                  <p>{{ studyStartTime }} ~ {{ studyEndTime }}</p>
-                  -->
+                  <p>{{ studyStartTime }} ~ {{ studyEndTime }}</p> -->
                 </div>
                 <v-btn @click="CreateMeeting" class="w-full" color="#3FB1FA">일정추가</v-btn>
                 <div class="schedule-list">
@@ -217,12 +218,15 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStudyStore } from '@/stores/study'
+import { useAuthStore } from '@/stores/auth'
 import Swal from 'sweetalert2'
 import instance from '@/api'
+
 const route = useRoute()
 const router = useRouter()
 const studyId = route.params.id
 const studyStore = useStudyStore()
+const authStore = useAuthStore()
 
 const studyDate = ref('0010100')
 const studyStartTime = ref('19:00')
@@ -245,6 +249,8 @@ const members = ref([])
 const selectedMembers = ref([])
 const selectedMembersName = ref([])
 
+const isLeader = ref(false)
+
 const searchMembers = async () => {
   if (!memberName.value.trim()) {
     members.value = []
@@ -266,6 +272,7 @@ const selectMember = (member) => {
   if (!selectedMembers.value.find((m) => m.id === member.id)) {
     selectedMembers.value.push(member.memberId)
     selectedMembersName.value.push(member)
+    memberName.value = member.email;
   }
 }
 
@@ -295,6 +302,7 @@ function InviteStudy() {
           showConfirmButton: false,
           timer: 1500
         })
+        router.go(0);
       } else {
         console.log(res)
       }
@@ -333,7 +341,7 @@ async function CreateMeeting() {
             .swal2-label {
                 display: inline-block;
                 width: 100px; /* 라벨 너비 조정 */
-                
+
             }
             .swal2-input {
                 width: calc(100% - 200px); /* 입력란 너비 조정 */
@@ -366,7 +374,10 @@ async function CreateMeeting() {
         const data = res.data
         console.log(data.message)
         if (data.status == 201) {
-          Swal.fire(JSON.stringify(formValues))
+          Swal.fire({
+            icon: 'success',
+            title: '일정 추가 성공'
+          })
           LoadMeetingSchedule()
         }
       })
@@ -397,6 +408,12 @@ function LoadStudyData() {
       studyStore.studyCategory = data.category
       studyStore.studyMembers = data.members
       studyStore.studyType = data.type
+      const matchingMember = data.members.find((member) => {
+        return member.email === authStore.userEmail && member.name === authStore.userName
+      })
+      if (matchingMember.type === 'STUDY_LEADER') {
+        isLeader.value = true
+      }
     }
   })
 }
@@ -419,9 +436,8 @@ onMounted(() => {
 }
 .member-list {
   overflow-y: auto;
-  width: 400px;
+  width: 580px;
   height: 200px;
-  border: 1px solid;
 }
 .study-schedule {
   width: 650px;

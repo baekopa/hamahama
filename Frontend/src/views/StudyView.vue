@@ -2,15 +2,17 @@
   <v-container>
     <v-layout style="max-height: 857px">
       <v-navigation-drawer style="width: 323px; height: 800px">
-        <p class="text-3xl text-center mt-10 point-font text-stone-900">{{ studyStore.studyType }}</p>
+        <p class="text-3xl text-center mt-10 point-font text-stone-900">
+          {{ studyStore.studyType }}
+        </p>
         <v-list lines="two" density="compact" nav>
           <v-list-item three-line>
             <v-list-item-content class="align-self-center">
-              <div class="ml-14 mt-10"
-                ><div class="text-xl font-bold block">
+              <div class="ml-14 mt-10">
+                <div class="text-xl font-bold block">
                   {{ studyStore.studyTitle }}
-                </div></div
-              >
+                </div>
+              </div>
               <v-list-item-subtitle class="ml-14 mt-1"
                 ><div class="text-base">
                   {{ studyStore.studyCategory }}
@@ -174,18 +176,22 @@
             </div>
           </div>
           <div v-else>
-            <div class="d-flex flex-column justify-center items-center" style="width: 1300px; height:400px">
-              <img src="@/assets/image/error.png" width="200"/>
+            <div
+              class="d-flex flex-column justify-center items-center"
+              style="width: 1300px; height: 400px"
+            >
+              <img src="@/assets/image/error.png" width="200" />
               <div class="text-3xl m-3 point-font">스터디의 예정된 일정이 없어요!</div>
               <div class="text-xl">아래 버튼을 통해 새로운 일정을 추가하세요</div>
             </div>
             <button
               class="gradient-btn rounded-lg"
-              @click=""
+              @click="CreateMeeting()"
               style="width: 1300px; height: 80px"
             >
               <span class="text-xl point-font"
-                ><v-icon icon="mdi-calendar-range-outline" class="mr-4"></v-icon>스터디 미팅 생성</span
+                ><v-icon icon="mdi-calendar-range-outline" class="mr-4"></v-icon>스터디 미팅
+                생성</span
               >
             </button>
           </div>
@@ -257,6 +263,70 @@ function LoadNextSchedule() {
     .catch((err) => {
       console.log(err)
     })
+}
+
+async function CreateMeeting() {
+  const { value: formValues } = await Swal.fire({
+    title: '스터디 일정 추가하마',
+    html: `
+        <style>
+            .swal2-label {
+                display: inline-block;
+                width: 100px; /* 라벨 너비 조정 */
+
+            }
+            .swal2-input {
+                width: calc(100% - 200px); /* 입력란 너비 조정 */
+            }
+        </style>
+        <label for="swal-input1" class="swal2-label">스터디 주제</label>
+        <input id="swal-input1" class="swal2-input">
+        <label for="swal-input2" class="swal2-label">날짜</label>
+        <input type="date" id="swal-input2" class="swal2-input">
+        <label for="swal-input3" class="swal2-label">시간</label>
+        <input type="time" id="swal-input3" class="swal2-input">
+    `,
+    focusConfirm: false,
+    preConfirm: () => {
+      return [
+        document.getElementById('swal-input1').value,
+        document.getElementById('swal-input2').value,
+        document.getElementById('swal-input3').value
+      ]
+    }
+  })
+
+  if (formValues[0] && formValues[1] && formValues[2]) {
+    instance
+      .post(`api/studies/${studyId}/meetings`, {
+        topic: formValues[0],
+        studyAt: `${formValues[1]} ${formValues[2]}`
+      })
+      .then((res) => {
+        const data = res.data
+        console.log(data.message)
+        if (data.status == 201) {
+          Swal.fire({
+            icon: 'success',
+            title: '일정 추가 성공'
+          })
+          LoadNextSchedule()
+        }
+      })
+      .catch((err) => {
+        Swal.fire({
+          icon: 'error',
+          title: '일정 추가 실패',
+          text: `${err.response.message}`
+        })
+      })
+  } else {
+    Swal.fire({
+      icon: 'error',
+      title: '일정 추가 실패',
+      text: '주제, 날짜, 시간은 필수 입력입니다.'
+    })
+  }
 }
 
 onMounted(() => {
@@ -341,6 +411,11 @@ const stopRecording = () => {
     mediaRecorder.value.onstop = async () => {
       const audioBlob = new Blob(audioChunks.value, { type: 'audio/wav' })
       // console.log('업로드 함수 실행 직전')
+      Swal.fire({
+        icon: 'success',
+        title: '미팅 끝!',
+        text: '요약 생성까지는 좀 걸려요~ '
+      })
       await uploadAudio(audioBlob)
       audioStore.setRecordingStatus(false)
     }
@@ -357,6 +432,7 @@ const uploadAudio = async (audioBlob) => {
   }
   // FastAPI 서버로 오디오 파일 전송
   try {
+    router.go(0)
     console.log('녹음파일 전송')
     const res1 = await instance.post(
       `api/studies/${studyId}/meetings/${meetingID.value}/record`,
@@ -368,6 +444,7 @@ const uploadAudio = async (audioBlob) => {
         timeout: 100000
       }
     )
+    // router.push({ name: 'studySummary', params: { id: studyId } })
   } catch (error) {
     console.error('오류가 발생했습니다:', error)
   }

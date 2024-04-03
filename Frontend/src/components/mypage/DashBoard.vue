@@ -38,7 +38,7 @@
       </v-hover>
       <v-hover v-slot="{ isHovering, props }">
         <v-card
-          @click=""
+          @click="GoMyNotes()"
           class="mr-8 rounded-lg"
           :class="{ 'on-hover': isHovering }"
           :elevation="isHovering ? 16 : 2"
@@ -52,7 +52,7 @@
       </v-hover>
       <v-hover v-slot="{ isHovering, props }">
         <v-card
-          @click=""
+          @click="GoUserGuide()"
           class="mr-8 rounded-lg"
           :class="{ 'on-hover': isHovering }"
           :elevation="isHovering ? 16 : 2"
@@ -61,7 +61,7 @@
           image="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
           width="200"
           theme="dark"
-          title="사용 가이드"
+          title="사용자 설명서"
         ></v-card>
       </v-hover>
     </div>
@@ -112,53 +112,7 @@ const router = useRouter()
 // 다음 스터디
 const nextStudyId = ref('1')
 
-const scheduleItems = ref([
-  {
-    title: '[토익 스터디]',
-    name: 'Ali Connors',
-    date: '2024.03.12'
-  },
-  {
-    title: 'Summer BBQ',
-    name: 'to Alex, Scott, Jennifer',
-    date: '2024.03.12'
-  },
-  {
-    title: 'Oui oui',
-    name: 'Sandra Adams',
-    date: '2024.03.12'
-  },
-  {
-    title: 'Brunch this weekend?',
-    name: 'Ali Connors',
-    date: '2024.03.12'
-  },
-  {
-    title: 'Summer BBQ',
-    name: 'to Alex, Scott, Jennifer',
-    date: '2024.03.12'
-  },
-  {
-    title: 'Oui oui',
-    name: 'Sandra Adams',
-    date: '2024.03.12'
-  },
-  {
-    title: 'Brunch this weekend?',
-    name: 'Ali Connors',
-    date: '2024.03.12'
-  },
-  {
-    title: 'Summer BBQ',
-    name: 'to Alex, Scott, Jennifer',
-    date: '2024.03.12'
-  },
-  {
-    title: 'Oui oui',
-    name: 'Sandra Adams',
-    date: '2024.03.12'
-  }
-])
+const scheduleItems = ref([])
 
 const GetDashBoardInfo = () => {
   instance
@@ -166,7 +120,6 @@ const GetDashBoardInfo = () => {
     .then((res) => {
       console.log(res)
       scheduleItems.value = res.data.data.weekStudies
-      console.log(scheduleItems.value)
     })
     .catch((err) => {
       console.log(err)
@@ -174,7 +127,7 @@ const GetDashBoardInfo = () => {
 }
 const GetMyInfo = () => {
   instance
-    .get('/api/members/me')
+    .get('api/members/me')
     .then((res) => {
       if (res.data.status == 200) {
         authStore.userName = res.data.data.name
@@ -219,19 +172,18 @@ const goStudyRoom = () => {
   router.push({ name: 'study', params: { id: nextStudyId.value } })
 }
 
-const goMyNotes = () => {
-  // router.push({ name: 'notes' })
-  console.log('개인스터디룸 ㄱㄱ')
+function GoMyNotes() {
+  router.push({ name: 'mypagewhere', params: { where: 'MyStudy' } })
 }
 
-const goUserGuide = () => {
-  // 이거 모달로할까
-  console.log('개인스터디룸 ㄱㄱ')
+function GoUserGuide() {
+  router.push({ name: 'manual' })
 }
 
 onMounted(() => {
   GetMyInfo()
   GetDashBoardInfo()
+
 })
 </script>
 
