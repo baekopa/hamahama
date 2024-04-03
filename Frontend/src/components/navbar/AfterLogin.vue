@@ -3,7 +3,7 @@
     <div class="bg-white">
       <div class="mx-20 flex justify-between">
         <div class="">
-          <img @click="GoMain" src="@/assets/image/logo.png" alt="LOGO" class="logo h-16" />
+          <img @click="GoMain" src="@/assets/image/logo.png" alt="LOGO" class="logo h-16 cursor-pointer" />
         </div>
 
         <div class="start flex justify-center">
@@ -137,7 +137,11 @@ notiSource.addEventListener('NEW', (e) => {
 })
 
 notiSource.addEventListener('CONNECT', (e) => {
-  console.log(e)
+  if (e.data == 'false') {
+    hasNewNotification.value = false;
+  } else {
+    hasNewNotification.value = true;
+  }
 })
 
 notiSource.onmessage = (event) => {
