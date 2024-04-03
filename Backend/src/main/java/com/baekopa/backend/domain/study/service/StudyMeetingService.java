@@ -81,7 +81,7 @@ public class StudyMeetingService {
     public StudyMeetingResponseDto getStudyMeeting(Long studyId) {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
-        Meeting meeting = meetingRepository.findTopByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(study, LocalDateTime.now().minusMinutes(30)).orElse(null);
+        Meeting meeting = meetingRepository.findTopByStudyAndDeletedAtIsNullAndRecordFileIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(study, LocalDateTime.now().minusMinutes(30)).orElse(null);
 
         if (meeting == null) {
             return null;
