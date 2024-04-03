@@ -36,7 +36,7 @@
 <img  src="https://img.shields.io/badge/vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white"/> 
 <img  src="https://img.shields.io/badge/vuetify-1867C0?style=flat-square&logo=vuetify&logoColor=white"/>
 <img  src="https://img.shields.io/badge/tailwindcss-06B6D4?style=flat-square&logo=React&logoColor=white"/> 
-<img  src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=Vite&logoColor=white"/> <img  src="https://img.shields.io/badge/axios-5A29E4?style=flat-square&logo=axios&logoColor=white"/> <img  src="https://img.shields.io/badge/mui-007FFF?style=flat-square&logo=mui&logoColor=white"/> <img  src="https://img.shields.io/badge/reactrouter-CA4245?style=flat-square&logo=reactrouter&logoColor=white"/> <img  src="https://img.shields.io/badge/framer-0055FF?style=flat-square&logo=framer&logoColor=white"/>
+<img  src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=Vite&logoColor=white"/> <img  src="https://img.shields.io/badge/axios-5A29E4?style=flat-square&logo=axios&logoColor=white"/> <img  src="https://img.shields.io/badge/pinia-FFDD00?style=flat-square&logo=egghead&logoColor=white"/>
 
 **AI**
 ---
