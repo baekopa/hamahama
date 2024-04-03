@@ -77,7 +77,7 @@ public class MeetingScriptService {
     public Map<String, Long> saveMeetingScript(Long studyId, Long meetingId, MultipartFile file) {
         Map<String, Long> result = new HashMap<>();
 
-        String text = sendFileToFastAPI(studyId, meetingId, file); //fast api로 통신하여 STT 실행 및 텍스트 추출
+        String text = getSpeechToText(studyId, meetingId, file); //fast api로 통신하여 STT 실행 및 텍스트 추출
         Long meetingScriptId = saveScript(meetingId, text);//추출한 script 저장
 
         result.put("meetingscriptId", meetingScriptId);//script id 저장
@@ -102,7 +102,7 @@ public class MeetingScriptService {
     }
 
     // 음성 파일을 FastAPI로 전송하는 메소드
-    public String sendFileToFastAPI(Long studyId, Long meetingId, MultipartFile file) {
+    public String getSpeechToText(Long studyId, Long meetingId, MultipartFile file) {
         try {
             RestTemplate restTemplate = new RestTemplate();
             String serverUrl = fastUrl + "/studies/transcribe/" + studyId + "/" + meetingId;
