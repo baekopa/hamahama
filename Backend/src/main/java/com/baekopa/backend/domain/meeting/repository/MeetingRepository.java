@@ -22,6 +22,8 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
     Optional<Meeting> findTopByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(Study study, LocalDateTime currentDate);
 
+    Optional<Meeting> findTopByStudyAndDeletedAtIsNullAndRecordFileIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(Study study, LocalDateTime currentDate);
+
     Optional<Meeting> findTopByStudyAndDeletedAtIsNullAndStudyAtLessThanEqualOrderByStudyAtDesc(Study study, LocalDateTime currentDate);
 
     @Query(value = "SELECT * FROM Meeting WHERE abs(TIMESTAMPDIFF(MINUTE, study_at, now())) <= 30 AND deleted_at is NULL AND study_at >= now() AND note_summary is NULL", nativeQuery = true)
