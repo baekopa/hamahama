@@ -442,7 +442,7 @@ const stopRecording = () => {
       })
 
       await uploadAudio(audioBlob)
-      router.go(0)
+      // router.go(0)
       audioStore.setRecordingStatus(false)
     }
   } else {
