@@ -91,4 +91,8 @@ onMounted(() => {
 .tossface {
   font-family: Tossface;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
 </style>

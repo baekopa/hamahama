@@ -38,7 +38,7 @@ public class SubmittedNoteSummaryService {
     private String fastUrl;
     private final RestTemplate restTemplate;
 
-    @Scheduled(cron = "0 0/30 * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0/10 * * * *", zone = "Asia/Seoul")
     @Transactional
     public void createSubmittedNoteSummary() {
 

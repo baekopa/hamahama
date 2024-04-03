@@ -43,7 +43,7 @@ public class StudyService {
 
         // 스터디장 지정 및 스터디원 추가
         studyMemberRepository.save(StudyMember.createStudyMember(study, leader, StudyMember.StudyMemberType.STUDY_LEADER));
-        studyMemberService.inviteStudyMembers(study, requestDto.getMembers());
+        studyMemberService.inviteStudyMembers(study, requestDto.getMembers(), leader);
 
         return study.getId();
     }

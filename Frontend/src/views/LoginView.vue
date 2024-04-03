@@ -9,12 +9,12 @@
           <img
             src="@/assets/image/login/main.png"
             alt="Test Image"
-            style="width: 510px; height: 473px"
+            style="width: 510px; height: 510px"
           />
         </v-col>
 
         <v-col cols="12" md="6" class="d-flex flex-column align-center">
-          <h1 class="mb-10">오늘도 열공<span class="hama">하마하마</span></h1>
+          <h1 class="mb-10 text-3xl point-font">오늘도 열공<span class="hama point-font"> 하마하마!!</span></h1>
           <KakaoLogin />
         </v-col>
       </v-row>
