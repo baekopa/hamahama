@@ -13,10 +13,10 @@
                   <span class="font-weight-bold text-light-blue-accent-2 point-font">하마하마</span>와 함께
                 </p>
               </div>
+              <v-chip color="#3FB1FA" size="x-large" @click="goLogin"><div class="text-xl">시작하기</div></v-chip>
               <div class="text-h6">
-                <p class="my-5">스터디 녹음본으로 멋드러진 요약 정리 하마하마....</p>
+                <p class="my-5">환영해요! 저희 서비스에 대해서는 아래 메뉴얼을 확인해보세요 <span class="tossface">😎</span></p>
               </div>
-              <v-btn @click="goLogin"><div class="text-xl">시작하기</div></v-btn>
             </div>
           </v-col>
           <v-col cols="6">

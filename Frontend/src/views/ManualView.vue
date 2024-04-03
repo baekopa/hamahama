@@ -1,33 +1,50 @@
 <template>
   <v-app>
-    <v-container fluid>
-      <v-stepper
-        :items="['공부하마', '같이하마', '노트 생성 및 제출', '녹음', '요약', '리마인드 퀴즈']"
+    <v-container fluid style="width:1300px;">
+      <v-stepper class="border-0"
+        :items="['공부하마', '같이하마', '미팅', '스터디 생성']"
       >
         <template v-slot:item.1>
-          <v-card title="혼자 공부하는 것이 좋다면 공부하마를 이용해보세요!" flat>
-            <!-- <img src='../assets/image/main/irean.jpg'> -->
+          <v-card variant="text" style="height: 620px;">
+            <div class="mt-5">
+              <p class="ml-5 point-font text-2xl mb-5">공부하마 <span class="tossface">😎</span></p>
+              <p class="ml-5 text-xl">공부한 내용을 <span class="point-color font-bold">노트</span> 정리 하세요.</p>
+              <p class="ml-5 text-xl">노트의 <span class="point-color font-bold">요약</span>을 생성하고 미팅에 <span class="point-color font-bold">공유</span>하세요!</p>
+              <div class="d-flex justify-center mt-10 border-2 rounded-md mx-5 border">
+                <img src="@/assets/image/home/note.png" class="manual-image"/>
+              </div>  
+            </div>
           </v-card>
         </template>
-        <template v-slot:item.2>
-          <v-card title="스터디 생성을 눌러 스터디룸을 만들어보세요" flat>...</v-card>
-          <v-card title="같이 공부할 멤버를 초대해보세요" flat>...</v-card>
-          <v-card title="스터디 일정을 정해서 추가해주세요" flat>...</v-card>
+        <template v-slot:item.2 >
+          <div class="mt-5">
+              <p class="ml-5 point-font text-2xl mb-5">같이하마 <span class="tossface">🤼</span></p>
+              <p class="ml-5 text-xl">미팅을 생성하고 스터디 내용을 <span class="point-color font-bold">녹음</span> 하세요.</p>
+              <p class="ml-5 text-xl">스터디원들이 제출한 노트와 생성된 <span class="point-color font-bold">전체 요약</span>을 보며 함께 공부하세요!</p>
+              <div class="d-flex justify-center mt-10 border-2 rounded-md mx-5 border">
+                <img src="@/assets/image/home/meeting.png" class="manual-image"/>
+              </div>  
+            </div>
         </template>
         <template v-slot:item.3>
-          <v-card title="스터디 시작 전, 공부한 내용을 정리해서 노트에 적어봐요" flat>...</v-card>
-          <v-card title="노트를 다음 스터디 미팅에 제출해보세요" flat>...</v-card>
+          <div class="mt-5">
+              <p class="ml-5 point-font text-2xl mb-5">미팅 요약 <span class="tossface">👩‍🏫</span></p>
+              <p class="ml-5 text-xl"><span class="point-color font-bold">STT</span> 결과인 전문을 바탕으로 요약과 키워드를 생성해보세요.</p>
+              <p class="ml-5 text-xl">생성된 산출물은 <span class="point-color font-bold">수정</span>도 가능해요!</p>
+              <div class="d-flex justify-center mt-10 border-2 rounded-md mx-5 border">
+                <img src="@/assets/image/home/afterMeeting.png" class="manual-image"/>
+              </div>  
+            </div>
         </template>
         <template v-slot:item.4>
-          <v-card title="녹음 버튼을 눌러서 스터디 내용을 녹음해주세요" flat>...</v-card>
-          <v-card title="스터디 녹음이 끝나면 잠시 기다려주세요" flat>...</v-card>
-          <v-card title="텍스트 변환이 완료되면 알람이 와요" flat>...</v-card>
-        </template>
-        <template v-slot:item.5>
-          <v-card title="요약 기능을 사용해서 스터디 내용을 요약해보세요" flat>...</v-card>
-        </template>
-        <template v-slot:item.6>
-          <v-card title="공부한 내용을 바탕으로 퀴즈를 만들어보세요" flat>...</v-card>
+          <div class="mt-5">
+              <p class="ml-5 point-font text-2xl mb-5">스터디 생성 <span class="tossface">🤗</span></p>
+              <p class="ml-5 text-xl">그럼 스터디 생성 해볼까요~?</p>
+              <p class="ml-5 text-xl">그전에..! <v-chip class="ml-5 text-xl" @click="goLogin">로그인</v-chip></p>
+              <div class="d-flex justify-center mt-10 border-2 rounded-md mx-5 border">
+                <img src="@/assets/image/home/study.png" class="manual-image"/>
+              </div>  
+            </div>
         </template>
       </v-stepper>
     </v-container>
@@ -35,6 +52,14 @@
 </template>
 
 <script setup>
+import { useRoute, useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goLogin = function () {
+  router.push({ name: 'login' })
+}
+
 const steps = [
   {
     color: 'red-lighten-2',
@@ -76,4 +101,11 @@ const steps = [
 ]
 </script>
 
-<style scoped></style>
+<style scoped>
+
+.manual-image {
+  height: 450px;
+  object-fit: cover;
+  
+}
+</style>
