@@ -49,6 +49,7 @@ public class StudyMeetingService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
 
         Meeting meeting = meetingRepository.save(Meeting.of(requestDto.getTopic(), requestDto.getStudyAt(), study));
+        //meeting.setMeeting(meeting);
 
         List<Member> memberList = studyMemberRepository.findAllByStudyAndDeletedAtIsNull(study).stream()
                 .map((o) -> o.getMember()).toList();

@@ -51,7 +51,7 @@ public class Notification extends BaseBy {
     }
 
     public static Notification of(Member receiver, NotificationType notificationType, String notificationContent, String eventId, String relatedContentId) {
-        Notification notification = builder()
+        return builder()
                 .receiver(receiver)
                 .notificationType(notificationType)
                 .notificationContent(notificationContent)
@@ -59,8 +59,10 @@ public class Notification extends BaseBy {
                 .eventId(eventId)
                 .relatedContentId(relatedContentId)
                 .build();
+    }
+
+    public void setNotification(Notification notification) {
         receiver.getNotifications().add(notification);
-        return notification;
     }
 
     public void updateIsChecked(boolean isChecked) {

@@ -46,13 +46,16 @@ public class StudyMember extends BaseBy {
 
     // 연관관계 편의 메서드
     public static StudyMember createStudyMember(Study study, Member member, StudyMemberType type) {
-        StudyMember studyMember = builder().member(member)
+        return builder()
+                .member(member)
                 .study(study)
                 .type(type)
                 .build();
-        member.getStudyMembers().add(studyMember);
-        study.getStudyMembers().add(studyMember);
-        return studyMember;
+    }
+
+    public void setStudyMember(Study study, Member member) {
+        member.getStudyMembers().add(this);
+        study.getStudyMembers().add(this);
     }
 
     // 스터디원 타입 수정
