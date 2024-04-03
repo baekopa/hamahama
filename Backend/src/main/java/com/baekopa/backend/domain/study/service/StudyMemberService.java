@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,9 +48,14 @@ public class StudyMemberService {
     }
 
     // 스터디 멤버 초대 - 한 명
-    public void inviteStudyMember(Long studyId, Long memberId) {
+    public void inviteStudyMember(Long studyId, Long memberId, Member leader) {
+
+        if (leader.getId().equals(memberId)) {
+            throw new BusinessException(ErrorCode.STUDY_MEMBER_NOT_EXIST, "스터디 장이 자신을 초대할 수 없습니다.");
+        }
 
         Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, "초대 대상 ID가 올바르지 않습니다."));
+
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "올바르지 않은 studyId."));
 
         StudyMember studyMember = studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));
@@ -58,12 +64,18 @@ public class StudyMemberService {
     }
 
     // 스터디 멤버 초대 - 여러 명
-    public void inviteStudyMembers(Study study, List<Long> memberIds) {
+    public void inviteStudyMembers(Study study, List<Long> memberIds, Member leader) {
 
-        List<Member> members = memberIds.stream()
-                .map((id) -> memberRepository.findByIdAndDeletedAtIsNull(id)
-                        .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, "스터디원 ID가 올바르지 않습니다."))
-                ).toList();
+        List<Member> members = new ArrayList<>();
+
+        for (Long id : memberIds) {
+            if (id.equals(leader.getId())) {
+                continue;
+            }
+
+            members.add(memberRepository.findByIdAndDeletedAtIsNull(id)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, "스터디원 ID가 올바르지 않습니다.")));
+        }
 
         members.forEach(member -> {
             StudyMember studyMember = studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));

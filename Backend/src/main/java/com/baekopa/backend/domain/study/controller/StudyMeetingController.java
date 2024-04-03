@@ -5,6 +5,7 @@ import com.baekopa.backend.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.baekopa.backend.domain.meeting.dto.request.UpdateMeetingRequestDto;
 import com.baekopa.backend.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
+import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.study.dto.response.StudyMeetingResponseDto;
 import com.baekopa.backend.domain.study.service.StudyMeetingService;
 import com.baekopa.backend.global.response.success.ApiResponse;
@@ -12,6 +13,9 @@ import com.baekopa.backend.global.response.success.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,6 +63,13 @@ public class StudyMeetingController {
         log.info("스터디({})의 예정된 미팅({}) 일정 수정", studyId, meetingId);
 
         return ApiResponse.of(SuccessCode.MEETING_UPDATE_SUCCESS, studyMeetingService.updateMeeting(studyId, meetingId, requestDto));
+    }
+
+    @Operation(summary = "스터디 녹음본 다운로드", description = "스터디 녹음본을 다운로드 합니다.")
+    @GetMapping("/{study-id}/meetings/{meeting-id}/recordfile")
+    public ResponseEntity<UrlResource> getMeetingRecordFile(@PathVariable(name = "study-id") Long studyId, @PathVariable(name = "meeting-id") Long meetingId) {
+
+        return studyMeetingService.getMeetingRecordFile(meetingId);
     }
 
 }
