@@ -45,16 +45,17 @@ public class Note extends BaseBy {
         this.content = content;
         this.summary = summary;
         this.member = member;
-        member.getNote().add(this);
     }
 
     public static Note of(String title, String content, String summary, Member member) {
-        return Note.builder()
+        Note note = Note.builder()
                 .title(title)
                 .content(content)
                 .summary(summary)
                 .member(member)
                 .build();
+        member.getNote().add(note);
+        return note;
     }
 
     public void updateSummary(String summary) {
