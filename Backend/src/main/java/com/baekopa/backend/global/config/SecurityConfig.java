@@ -1,4 +1,4 @@
-package com.baekopa.backend.global.security.config;
+package com.baekopa.backend.global.config;
 
 import com.baekopa.backend.global.jwt.filter.CustomLogoutFilter;
 import com.baekopa.backend.global.jwt.filter.JWTFilter;
@@ -78,6 +78,7 @@ public class SecurityConfig {
     }
 
     CorsConfigurationSource corsConfigurationSource() {
+
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
 
