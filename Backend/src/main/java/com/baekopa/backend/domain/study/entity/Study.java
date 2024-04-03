@@ -1,5 +1,6 @@
 package com.baekopa.backend.domain.study.entity;
 
+import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.global.entity.BaseBy;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,6 +11,8 @@ import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -52,6 +55,12 @@ public class Study extends BaseBy {
 
     @Column(name = "end_time")
     private LocalTime endTime;
+
+    @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
+    private List<StudyMember> studyMembers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Meeting> meeting = new ArrayList<>();
 
     @Builder
     private Study(StudyType type, String title, String description, String backgroundImage, String category, LocalDate startDate, LocalDate endDate, String day, LocalTime startTime, LocalTime endTime) {

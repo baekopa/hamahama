@@ -36,7 +36,7 @@
 <img  src="https://img.shields.io/badge/vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white"/> 
 <img  src="https://img.shields.io/badge/vuetify-1867C0?style=flat-square&logo=vuetify&logoColor=white"/>
 <img  src="https://img.shields.io/badge/tailwindcss-06B6D4?style=flat-square&logo=React&logoColor=white"/> 
-<img  src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=Vite&logoColor=white"/> <img  src="https://img.shields.io/badge/axios-5A29E4?style=flat-square&logo=axios&logoColor=white"/> <img  src="https://img.shields.io/badge/mui-007FFF?style=flat-square&logo=mui&logoColor=white"/> <img  src="https://img.shields.io/badge/reactrouter-CA4245?style=flat-square&logo=reactrouter&logoColor=white"/> <img  src="https://img.shields.io/badge/framer-0055FF?style=flat-square&logo=framer&logoColor=white"/>
+<img  src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=Vite&logoColor=white"/> <img  src="https://img.shields.io/badge/axios-5A29E4?style=flat-square&logo=axios&logoColor=white"/> <img  src="https://img.shields.io/badge/pinia-FFDD00?style=flat-square&logo=egghead&logoColor=white"/>
 
 **AI**
 ---
@@ -96,6 +96,9 @@
 **Springdoc-openapi**
 - 자동 Api 문서화
 
+**ThreadPool**
+- 스프링부트 비동기(Asynchronous) 처리
+
 **Whisper**
 - Speech-to-Text
 
@@ -119,7 +122,7 @@
 | 이 름 |이수민 |배성규 |윤정영 |김수민 |성영준 |여아정 |
 | -- |-- |-- |-- |-- |-- |-- |  
 |    | FE,BE,Infra	| FE	| FE,AI	| BE,Infra	| BE,Security	| BE,AI	|
-|	 | 팀장, 프론트(CSS, 알림), 백(스터디 관리, 미팅 관리)	| 프론트(로그인, 메인화면, 초기화면, 채워주새우)	| AI(STT, 화자 분리), 프론트(스터디 화면)	 | 백(로그인, 개인 노트 관리) 	| 백(유저 인가, 알림, 산출물 전체 요약, 꼬리질문)	| AI 및 백(산출물 요약, 키워드, 퀴즈 생성)	|
+|	 | 팀장, 프론트(CSS, 알림), 백(스터디 관리, 미팅 관리)	| 프론트(로그인, 메인화면, 초기화면, 채워주새우)	| AI(STT, 화자 분할, 서버 관리), 프론트(스터디 화면)	 | 백(로그인, 개인 노트 관리) 	| 백(유저 인가, 알림, 산출물 전체 요약, 꼬리질문)	| AI 및 백(산출물 요약, 키워드, 퀴즈 생성)	|
 
 
 ## 📧 협업:Notion

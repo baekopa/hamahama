@@ -6,7 +6,7 @@ from pyannote.audio import Pipeline
 from pydub import AudioSegment
 from tempfile import NamedTemporaryFile
 from model.request_dto import OriginalText, QuizRequest, OriginalTextList, DifferenceRequest
-from model.response_dto import SummaryDTO, KeywordDTO, QuizDTO, TailQuestionDTO, UniquificationDTO, DifferenceDTO
+from model.response_dto import SummaryDTO, KeywordDTO, QuizDTO, TailQuestionDTO, UniquificationDTO, DifferenceDTO, DeduplicationDTO
 from service.text_processing import process_text, process_for_remind_quiz
 from service.summary_pre_service import do_summary
 from service.keyword_quiz_pre_service import do_keyword, do_quiz
@@ -14,6 +14,7 @@ from service.tail_question_service import do_tail_question
 from service.audio_to_text_service import convert_audio_ffmpeg, millisec, remove_time_from_text, clean_up_files, convert_audio_sample_rate, speech_to_text
 from service.difference_service import do_difference
 from service.uniquification_service import do_uniquification
+from service.deduplication_service import do_deduplication
 
 
 router=APIRouter(
@@ -48,6 +49,12 @@ async def tail_question_text(origin_dto: OriginalText):
     
     tail_question = do_tail_question(origin_dto.originalText)
     return TailQuestionDTO(tailQuestion=tail_question)
+    
+@router.post("/deduplication", tags=["전문 중복 제거"], response_model=DeduplicationDTO)
+async def tail_question_text(origin_dto: OriginalText):
+    
+    deduplication = do_deduplication(origin_dto.originalText)
+    return DeduplicationDTO(deduplication=deduplication)
     
 @router.post("/uniquification", tags=["요약 중복 제거"], response_model=UniquificationDTO)
 async def tail_question_text(origin_dto: OriginalTextList):

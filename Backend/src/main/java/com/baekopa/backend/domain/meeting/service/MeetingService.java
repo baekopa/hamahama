@@ -297,11 +297,11 @@ public class MeetingService {
 
         MeetingKeywordResponseDTO MeetingKeywordResponseDTO = restTemplate.postForObject(keywordUrl, requestEntity, MeetingKeywordResponseDTO.class);
 
-
         // db 저장
 
         for (int i = 0; i < MeetingKeywordResponseDTO.getKeyword().size(); i++) {
-            meetingKeywordRepository.saveAndFlush(MeetingKeyword.of(meeting, MeetingKeywordResponseDTO.getKeyword().get(i)));
+            MeetingKeyword meetingKeyword = meetingKeywordRepository.saveAndFlush(MeetingKeyword.of(meeting, MeetingKeywordResponseDTO.getKeyword().get(i)));
+            //meetingKeyword.setMeetingKeyword(meetingKeyword);
         }
 
         List<MeetingKeyword> meetingKeywordList = meetingKeywordRepository.findAllByMeetingAndDeletedAtIsNull(meeting);

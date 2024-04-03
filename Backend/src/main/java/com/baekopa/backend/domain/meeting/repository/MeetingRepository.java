@@ -5,9 +5,11 @@ import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.study.entity.Study;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -43,4 +45,8 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
     @Query(value = "SELECT * FROM Meeting WHERE abs(DATEDIFF(study_at, now())) <= 1 AND deleted_at is NULL", nativeQuery = true)
     List<Meeting> findTomorrowMeetings();
+
+    @Modifying
+    @Query(value = "DELETE FROM meeting WHERE MONTH(deleted_at) = :thresholdDate", nativeQuery = true)
+    int deleteSoftDeletedBeforeDate(Timestamp thresholdDate);
 }

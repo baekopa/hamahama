@@ -9,6 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @SQLDelete(sql = "UPDATE note SET deleted_at = NOW() WHERE note_id = ?")
@@ -33,6 +36,9 @@ public class Note extends BaseBy {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToMany(mappedBy = "note")
+    private List<SubmittedNote> submittedNotes = new ArrayList<>();
+
     @Builder
     private Note(String title, String content, String summary, Member member) {
         this.title = title;
@@ -42,12 +48,16 @@ public class Note extends BaseBy {
     }
 
     public static Note of(String title, String content, String summary, Member member) {
-        return Note.builder()
+         return builder()
                 .title(title)
                 .content(content)
                 .summary(summary)
                 .member(member)
                 .build();
+    }
+
+    public void setNote(Note note) {
+        member.getNote().add(note);
     }
 
     public void updateSummary(String summary) {

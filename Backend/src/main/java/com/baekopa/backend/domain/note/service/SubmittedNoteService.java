@@ -54,6 +54,7 @@ public class SubmittedNoteService {
 
         // DB 저장
         SubmittedNote submittedNote = SubmittedNote.createSubmittedNote(null, note, meeting);
+        //submittedNote.setSubmittedNote(submittedNote);
         submittedNoteRepository.save(submittedNote);
 
         return submittedNoteRepository.findByNoteAndDeletedAtIsNull(note).stream()
