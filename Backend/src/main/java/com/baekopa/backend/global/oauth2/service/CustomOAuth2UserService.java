@@ -14,11 +14,13 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 유저 정보 가져오기
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
@@ -94,7 +96,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Study personalStudy = Study.of(title, description, defaultImage, StudyType.PERSONAL);
         personalStudy = studyRepository.save(personalStudy);
 
-        studyMemberRepository.save(StudyMember.createStudyMember(personalStudy, saveMember, StudyMember.StudyMemberType.STUDY_LEADER));
+        StudyMember studyMember = studyMemberRepository.save(StudyMember.createStudyMember(personalStudy, saveMember, StudyMember.StudyMemberType.STUDY_LEADER));
+        //studyMember.setStudyMember(personalStudy, member);
 
         return saveMember;
     }

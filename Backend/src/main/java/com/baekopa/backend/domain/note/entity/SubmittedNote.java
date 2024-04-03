@@ -40,14 +40,16 @@ public class SubmittedNote extends BaseBy {
 
     // 연관관계 편의 메서드
     public static SubmittedNote createSubmittedNote(String differenceContent, Note note, Meeting meeting) {
-        SubmittedNote submittedNote = builder()
+        return builder()
                 .differenceContent(differenceContent)
                 .note(note)
                 .meeting(meeting)
                 .build();
+    }
+
+    public void setSubmittedNote(SubmittedNote submittedNote) {
         meeting.getSubmittedNotes().add(submittedNote);
         note.getSubmittedNotes().add(submittedNote);
-        return submittedNote;
     }
 
     public void updateDifferenceContent(String differenceContent) {
