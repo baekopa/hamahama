@@ -87,9 +87,13 @@
                 <v-chip @click="CreateRemindQuiz()" class="mr-4" variant="elevated" color="#3FB1FA"
                   >리마인드 퀴즈 생성</v-chip
                 >
-                <button>
-                  <img @click="" src="@/assets/image/note/download.svg" alt="download" />
-                </button>
+                <!-- <button>
+                  <img
+                    @click="DownloadAudio()"
+                    src="@/assets/image/note/download.svg"
+                    alt="download"
+                  />
+                </button> -->
               </div>
             </div>
           </div>
@@ -146,12 +150,21 @@
               <div v-if="!isEdit" class="summary-section">
                 <div class="d-flex align-center h-10">
                   <p class="text-lg font-bold mr-4">요약 내용</p>
-                  <v-chip v-if="!isSummaryExist" @click="CreateMeetingSummary()" class="mr-4" variant="elevated" color="#3FB1FA"
+                  <v-chip
+                    v-if="!isSummaryExist"
+                    @click="CreateMeetingSummary()"
+                    class="mr-4"
+                    variant="elevated"
+                    color="#3FB1FA"
                     >미팅 전문 요약 생성</v-chip
                   >
                   <div v-else>
                     <v-btn @click="RegenSummary()" icon="mdi-refresh" variant="text"></v-btn>
-                    <v-btn @click="isEdit = !isEdit" icon="mdi-pencil-outline" variant="text"></v-btn>
+                    <v-btn
+                      @click="isEdit = !isEdit"
+                      icon="mdi-pencil-outline"
+                      variant="text"
+                    ></v-btn>
                   </div>
                 </div>
                 <div class="mt-5">
@@ -190,9 +203,14 @@
             <div v-else-if="toggle == '키워드'">
               <div class="d-flex align-center h-10">
                 <p class="text-lg font-bold mr-4">키워드</p>
-                <v-chip v-if="!isKeywordExist" @click="CreateKeyword" class="mr-4" variant="elevated" color="#3FB1FA"
-                    >키워드 생성</v-chip
-                  >
+                <v-chip
+                  v-if="!isKeywordExist"
+                  @click="CreateKeyword"
+                  class="mr-4"
+                  variant="elevated"
+                  color="#3FB1FA"
+                  >키워드 생성</v-chip
+                >
                 <v-btn v-else @click="CreateKeyword" icon="mdi-refresh" variant="text"></v-btn>
               </div>
               <div class="keywords d-flex mt-5">
@@ -492,6 +510,7 @@ function SearchKeyword(keyword) {
 
 // 산출물 조회 (주제, 요약, 전문, 키워드 , 참여자는 추가예정)
 function LoadAll() {
+  loadStore.isLoading = true
   instance
     .get(`api/studies/${studyId}/meetings/${meetingId}/all`)
     .then((res) => {
@@ -505,9 +524,13 @@ function LoadAll() {
         } else {
           isKeywordExist.value = true
         }
+        loadStore.isLoading = false
       }
+      loadStore.isLoading = false
     })
-    .catch((err) => {})
+    .catch((err) => {
+      loadStore.isLoading = false
+    })
 }
 
 // 미팅 요약 재생성
@@ -659,6 +682,17 @@ function LoadStudyData() {
     }
   })
 }
+
+// function DownloadAudio() {
+//   instance
+//     .get(`api/studies/${studyId}/meetings/${meetingId}/recordfile`)
+//     .then((res) => {
+//       console.log(res)
+//     })
+//     .catch((err) => {
+//       console.log(err)
+//     })
+//}
 
 onMounted(() => {
   LoadStudyData()
