@@ -65,11 +65,13 @@ public class Meeting extends BaseBy {
     }
 
     public static Meeting of(String topic, LocalDateTime studyAt, Study study) {
-        return builder()
+        Meeting meeting = builder()
                 .topic(topic)
                 .studyAt(studyAt)
                 .study(study)
                 .build();
+        study.getMeeting().add(meeting);
+        return meeting;
     }
 
     public void updateTopic(String topic) {
