@@ -7,8 +7,6 @@ import com.baekopa.backend.domain.notification.entity.NotificationStatus;
 import com.baekopa.backend.domain.notification.entity.NotificationType;
 import com.baekopa.backend.domain.notification.repository.EmitterRepository;
 import com.baekopa.backend.domain.notification.repository.NotificationRepository;
-import com.baekopa.backend.global.response.error.ErrorCode;
-import com.baekopa.backend.global.response.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +66,7 @@ public class EmitterService {
                 relatedContentId
         );
         notificationRepository.save(notification);
+        //notification.setNotification(notification);
 
         // cache에 event 저장
         NotificationResponseDto responseDto = NotificationResponseDto.of(notification);

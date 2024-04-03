@@ -9,7 +9,6 @@ import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.entity.RemindQuiz;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
 import com.baekopa.backend.domain.meeting.repository.RemindQuizRepository;
-import com.baekopa.backend.domain.meeting.service.RemindQuizService;
 import com.baekopa.backend.domain.member.dto.request.MyInfoReqeustDto;
 import com.baekopa.backend.domain.member.dto.response.MemberMainResponseDto;
 import com.baekopa.backend.domain.member.dto.response.MyDashboardResponseDto;
@@ -63,10 +62,9 @@ public class MemberService {
     private final NotificationRepository notificationRepository;
     private final SubmittedNoteRepository submittedNoteRepository;
 
-    private final RemindQuizService remindQuizService;
-
     @Transactional(readOnly = true)
     public MyInfoResponseDto getMyInfo(Member currentMember) {
+
         Member member = memberRepository.findById(currentMember.getId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_ID_NOT_EXIST, ErrorCode.MEMBER_ID_NOT_EXIST.getMessage()));
 
@@ -178,6 +176,7 @@ public class MemberService {
     }
 
     private MeetingListDto convertToDto(Meeting meeting) {
+
         return MeetingListDto.of(meeting.getId(),
                 meeting.getTopic(),
                 meeting.getStudyAt());
@@ -186,6 +185,7 @@ public class MemberService {
     // 내 스터디 조회
     @Transactional(readOnly = true)
     public List<StudyListResponseDto> getMyStudies(Member member) {
+
         List<StudyListResponseDto> allStudies = studyMemberRepository.findAllByMemberAndDeletedAtIsNull(member)
                 .stream()
                 .map(this::convertToDto)
@@ -304,6 +304,7 @@ public class MemberService {
     // 내 스터디 최근 몇 개 조회
     @Transactional(readOnly = true)
     public List<NearMeetingStudyDto> getRecentStudy(Member member, int n) {
+
         List<Long> studies = studyMemberRepository.findStudyAllByMemberAndTypeIsNot(member, StudyMember.StudyMemberType.INVITATION, StudyType.GROUP).stream().map(Study::getId).toList();
 
         return meetingRepository.findAllStudyOrderByMeeting(studies, PageRequest.of(0, n));

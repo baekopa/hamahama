@@ -42,7 +42,8 @@ public class RemindQuiz extends BaseTime {
     }
 
     public static RemindQuiz of(Meeting meeting, LocalDateTime openDate, String content) {
-        return builder().meeting(meeting)
+        return builder()
+                .meeting(meeting)
                 .openDate(openDate)
                 .content(content)
                 .content(IsolationEnum.USING.toString())

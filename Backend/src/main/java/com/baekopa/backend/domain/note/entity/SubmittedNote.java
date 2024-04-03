@@ -24,11 +24,11 @@ public class SubmittedNote extends BaseBy {
     private String differenceContent;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "note_id", nullable = false)
+    @JoinColumn(name = "note_id", nullable = true)
     private Note note;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meeting_id", nullable = false)
+    @JoinColumn(name = "meeting_id", nullable = true)
     private Meeting meeting;
 
     @Builder
@@ -45,6 +45,11 @@ public class SubmittedNote extends BaseBy {
                 .note(note)
                 .meeting(meeting)
                 .build();
+    }
+
+    public void setSubmittedNote(SubmittedNote submittedNote) {
+        meeting.getSubmittedNotes().add(submittedNote);
+        note.getSubmittedNotes().add(submittedNote);
     }
 
     public void updateDifferenceContent(String differenceContent) {
