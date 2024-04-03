@@ -42,6 +42,8 @@ public class StudyMember extends BaseBy {
         this.member = member;
         this.study = study;
         this.type = type;
+        member.getStudyMembers().add(this);
+        study.getStudyMembers().add(this);
     }
 
     // 연관관계 편의 메서드
@@ -54,7 +56,6 @@ public class StudyMember extends BaseBy {
 
     // 스터디원 타입 수정
     public void updateStudyMemberType(StudyMemberType type) {
-
         this.type = type;
     }
 

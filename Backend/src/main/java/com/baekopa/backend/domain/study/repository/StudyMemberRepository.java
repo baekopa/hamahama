@@ -5,9 +5,11 @@ import com.baekopa.backend.domain.study.entity.Study;
 import com.baekopa.backend.domain.study.entity.StudyMember;
 import com.baekopa.backend.domain.study.entity.StudyType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +35,9 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
 
     @Query("SELECT sm FROM StudyMember sm WHERE sm.member = :member AND sm.study = :study AND sm.type != :type AND sm.deletedAt is null")
     Optional<StudyMember> findStudyMemberNotInvitation(@Param(value = "member") Member member, @Param(value="study") Study study, @Param(value = "type") StudyMember.StudyMemberType type);
-
+    
+    @Modifying
+    @Query(value = "DELETE FROM study_member WHERE MONTH(deleted_at) = :thresholdDate", nativeQuery = true)
+    int deleteSoftDeletedBeforeDate(Timestamp thresholdDate);
 }
 
