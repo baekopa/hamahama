@@ -1,73 +1,117 @@
 <template>
-  <v-container>
-    <div v-if="isList" class="remind-quiz">
-      <span class="title text-h6">리마인드 퀴즈</span>
+        <v-container>
+          <div v-if="isList" class="remind-quiz">
+            <div class="d-flex justify-between">
+              <div class="title d-flex flex-column">
+                <span class="text-2xl ml-5 font-bold">
+                  <span class="tossface text-3xl">📭 </span
+                  >리마인드 퀴즈</span
+                >
+                <p class="text-base ml-5 mt-2 italic text-gray-500">
+                  <span>{{ '스터디에서 학습한 내용을 복습해보세요.' }}</span>
+                </p>
+              </div>
+            </div>
+            <v-divider
+              :thickness="2"
+              class="border-opacity-50 my-3"
+              style="width: 1300px"
+              color="info"
+            ></v-divider>
 
-      <v-card rounded="0" elevation="3" class="study-list">
-        <div class="study-section">
-          <v-row class="pt-10 pl-10" v-for="study in studyList" :key="study.id">
-            <v-card
-              @click="GoQuizDetail(study)"
-              elevation="4"
-              width="810"
-              height="70"
-              variant="outlined"
-              class="d-flex"
-            >
-              <div class="quiz-data d-flex align-center">
-                <span class="truncate-text">{{ study.topic }}</span>
-                <span>{{ study.studyName }}</span>
-                <span>미팅 일시 : {{ study.studyAt }}</span>
+            <v-card rounded="0" style="width: 1300px" variant="flat" class="study-list">
+              <div class="study-section">
+                <v-row class="pt-10 pl-10" v-for="study in studyList" :key="study.remindQuizId">
+                  <v-card
+                    @click="GoQuizDetail(study.remindQuizId, study.studyId)"
+                    width="950"
+                    height="72"
+                    variant="tonal"
+                    class="d-flex items-center justify-between px-6"
+                    color=""
+                  >
+                    <div class="truncate-text">
+                      <span>{{ study.topic }}</span>
+                    </div>
+                    <div class="d-flex items-center">
+                      <div>{{ study.studyName }}</div>
+                      <v-divider
+                        :thickness="2"
+                        class="border-opacity-100 mx-3"
+                        style="height: 50px"
+                        vertical
+                        color="info"
+                      ></v-divider>
+                      <div>미팅: {{ study.studyAt }}</div>
+                    </div>
+                  </v-card>
+                  <div class="date d-flex flex-column ml-5 justify-center">
+                    <span>공개일: {{ study.openAt }}</span>
+                    <span>최종 수정 일시: {{ study.lastModifiedAt }}</span>
+                  </div>
+                </v-row>
               </div>
             </v-card>
-            <div class="date d-flex flex-column">
-              <span>공개일: {{ study.openAt }}</span>
-              <span>최종 수정 일시:{{ study.lastModifiedAt }}</span>
+          </div>
+
+          <!-- 선택한 퀴즈  -->
+          <div v-else class="quiz-detail">
+            <div class="d-flex justify-between">
+              <div class="title d-flex flex-column">
+                <span class="text-2xl ml-5 font-bold">
+                  <span class="text-2xl font-normal" @click="TogglePage">< </span
+                  ><span class="tossface text-3xl">📌 </span
+                  ><span class="point-color font-bold">{{ remindQuiz.topic }}</span
+                  >에 대한 리마인드 퀴즈</span
+                >
+                <p class="text-base ml-5 mt-2 italic text-gray-500">
+                  <span
+                    >{{ remindQuiz.openAt }} 에 공개된 {{ remindQuiz.studyName }}의
+                    퀴즈입니다.</span
+                  >
+                </p>
+              </div>
             </div>
-          </v-row>
-        </div>
-      </v-card>
-    </div>
+            <v-divider
+              :thickness="2"
+              class="border-opacity-50 my-3"
+              style="width: 1300px"
+              color="info"
+            ></v-divider>
 
-    <div v-else class="quiz-detail">
-      <v-btn @click="TogglePage">돌아가기</v-btn>
-      <h1 class="title my-4">{{ quizSubject }}</h1>
-      <div class="keyword-section">
-        <div class="d-flex py-6 pl-12 align-center">
-          <h2>키워드</h2>
-          <v-btn @click="regenKeyword()" icon="mdi-refresh" variant="text"></v-btn>
-          <v-btn @click="editKeyWord()" icon="mdi-pencil-outline" variant="text"></v-btn>
-        </div>
-        <div class="d-flex justify-space-around">
-          <v-chip
-            class="keyword justify-center"
-            v-for="keyword in keyWordList"
-            :key="keyword.id"
-            @click="searchOnGoogle(keyword.keyword)"
-          >
-            <p class="text-center">#{{ keyword.keyword }}</p>
-          </v-chip>
-        </div>
-      </div>
-
-      <div class="quiz-section mt-16">
-        <h3>리마인드 퀴즈</h3>
-        <v-list>
-          <v-list-item v-for="(quiz, index) in remindQuizList" :key="quiz.id"
-            ><p>Q{{ index + 1 }}.{{ quiz.quiz }}</p>
-          </v-list-item>
-        </v-list>
-      </div>
-    </div>
-  </v-container>
+            <!-- <div class="keyword-section">
+              <div class="d-flex py-6 pl-12 align-center">
+                <h2>키워드</h2>
+                <v-btn @click="regenKeyword()" icon="mdi-refresh" variant="text"></v-btn>
+                <v-btn @click="editKeyWord()" icon="mdi-pencil-outline" variant="text"></v-btn>
+              </div>
+              <div class="d-flex justify-space-around">
+                <v-chip
+                  class="keyword justify-center"
+                  v-for="keyword in keyWordList"
+                  :key="keyword.id"
+                  @click="searchOnGoogle(keyword.keyword)"
+                >
+                  <p class="text-center">#{{ keyword.keyword }}</p>
+                </v-chip>
+              </div>
+            </div> -->
+            <div class="quiz-section mt-16 text-2xl border-0">
+              <p>{{ remindQuiz.content }}</p>
+            </div>
+          </div>
+        </v-container>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import instance from '@/api'
 import { onMounted } from 'vue'
+import study from '@/router/study';
 
 const isList = ref(true)
+
+const remindQuiz = ref()
 
 const studyList = ref([
   {
@@ -153,7 +197,8 @@ function GetQuizList() {
     .get('api/members/me/remind-quiz')
     .then((res) => {
       if (res.data.status === 200) {
-        studyList.value = res.data.data
+        studyList.value = res.data.data;
+        console.log(studyList.value);
       }
     })
     .catch((err) => {
@@ -190,30 +235,35 @@ function isOpen(openAt) {
   return openTime > currentTime
 }
 
-async function GoQuizDetail(study) {
-  if (study.opened === true || isOpen(study.openAt)) {
-    try {
-      const keywordResponse = await instance.get(`api/study/${id}/keywords`)
-      const remindQuizResponse = await instance.get(
-        `api/studies/${studyId}/remind-quiz/${study.remindQuizId}`
-      )
-      console.log(keywordResponse)
-      console.log(remindQuizResponse)
-      // keyWordList.value = keywordResponse.data
-      // remindQuizList.value = remindQuizResponse.data
-      isList.value = !isList.value
-      const matchedStudy = studyList.value.find((item) => item.id === id)
-      quizSubject.value = matchedStudy.subject
-      selectedStudyId.value = id.value
-    } catch (error) {
-      console.log('Error fetching data:', error)
-      isList.value = !isList.value
-      const matchedStudy = studyList.value.find((item) => item.id === id)
-      quizSubject.value = matchedStudy.subject
-      selectedStudyId.value = id
-    }
-  } else {
-    console.log('hi')
+async function GoQuizDetail(id, studyId) {
+  try {
+    const keywordResponse = await instance.get(`api/study/${id}/keywords`)
+    const remindQuizResponse = await instance.get(`api/studies/${studyId}/remind-quiz/${id}`)
+    console.log(keywordResponse)
+    console.log(remindQuizResponse)
+    // keyWordList.value = keywordResponse.data
+    // remindQuizList.value = remindQuizResponse.data
+
+    const matchedStudy = studyList.value.find((item) => item.remindQuizId === id)
+    // if (matchedStudy && (new Date(matchedStudy.openAt) < new Date() || matchedStudy.opened))
+    // if (matchedStudy && (new Date(matchedStudy.openAt) < new Date() || matchedStudy.opened)) {
+    remindQuiz.value = remindQuizResponse.data.data
+    console.log(remindQuiz.value);
+    isList.value = !isList.value
+    // } else {
+    //   Swal.fire({
+    //     title: 'Error!',
+    //     text: 'Do you want to continue',
+    //     icon: 'error',
+    //     confirmButtonText: 'Cool'
+    //   })
+    // }
+  } catch (error) {
+    console.log('Error fetching data:', error)
+    isList.value = !isList.value
+    const matchedStudy = studyList.value.find((item) => item.id === id)
+    // quizSubject.value = matchedStudy.subject
+    selectedStudyId.value = id
   }
 }
 
@@ -240,7 +290,7 @@ async function regenKeyword() {
 }
 
 onMounted(() => {
-  GetQuizList()
+  GetQuizList();
 })
 </script>
 

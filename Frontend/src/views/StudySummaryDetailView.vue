@@ -83,15 +83,14 @@
               </div>
             </div>
             <div class="mr-40 mt-14">
-              <div class="mr-5">
-                <v-chip @click="CreateRemindQuiz()" variant="elevated" color="#3FB1FA"
+              <div class="mr-5 d-flex items-center">
+                <v-chip @click="CreateRemindQuiz()" class="mr-4" variant="elevated" color="#3FB1FA"
                   >리마인드 퀴즈 생성</v-chip
                 >
+                <button>
+                  <img @click="" src="@/assets/image/note/download.svg" alt="download" />
+                </button>
               </div>
-
-              <button>
-                <img @click="" src="@/assets/image/note/download.svg" alt="download" />
-              </button>
             </div>
           </div>
           <v-divider
@@ -147,11 +146,13 @@
               <div v-if="!isEdit" class="summary-section">
                 <div class="d-flex align-center h-10">
                   <p class="text-lg font-bold mr-4">요약 내용</p>
-                  <v-btn v-if="!isSummaryExist" @click="CreateMeetingSummary()">
-                    <p>미팅 전문 요약 생성</p>
-                  </v-btn>
-                  <v-btn @click="RegenSummary()" icon="mdi-refresh" variant="text"></v-btn>
-                  <v-btn @click="isEdit = !isEdit" icon="mdi-pencil-outline" variant="text"></v-btn>
+                  <v-chip v-if="!isSummaryExist" @click="CreateMeetingSummary()" class="mr-4" variant="elevated" color="#3FB1FA"
+                    >미팅 전문 요약 생성</v-chip
+                  >
+                  <div v-else>
+                    <v-btn @click="RegenSummary()" icon="mdi-refresh" variant="text"></v-btn>
+                    <v-btn @click="isEdit = !isEdit" icon="mdi-pencil-outline" variant="text"></v-btn>
+                  </div>
                 </div>
                 <div class="mt-5">
                   <p v-html="addLineBreaks(meetingContents.summaryContent)"></p>
@@ -189,7 +190,9 @@
             <div v-else-if="toggle == '키워드'">
               <div class="d-flex align-center h-10">
                 <p class="text-lg font-bold mr-4">키워드</p>
-                <v-btn v-if="!isKeywordExist" @click="CreateKeyword">키워드 생성</v-btn>
+                <v-chip v-if="!isKeywordExist" @click="CreateKeyword" class="mr-4" variant="elevated" color="#3FB1FA"
+                    >키워드 생성</v-chip
+                  >
                 <v-btn v-else @click="CreateKeyword" icon="mdi-refresh" variant="text"></v-btn>
               </div>
               <div class="keywords d-flex mt-5">

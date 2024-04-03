@@ -183,6 +183,7 @@ function GoUserGuide() {
 onMounted(() => {
   GetMyInfo()
   GetDashBoardInfo()
+
 })
 </script>
 
