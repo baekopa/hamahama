@@ -59,7 +59,7 @@
                     <div class="mx-2 mt-2 mb-1 text-xl font-bold line-clamp-2 text-gray-600">
                       {{ note.title }}
                     </div>
-                    <span class="mx-2 mt-2 text-gray-400 italic">{{ note.time }} 작성</span>
+                    <span class="mx-2 mt-2 text-gray-400 italic">{{ note.modifiedAt }} 작성</span>
                     <div class="mx-2 mt-3 line-clamp-6 text-gray-500">
                       {{ note.content }}
                     </div>

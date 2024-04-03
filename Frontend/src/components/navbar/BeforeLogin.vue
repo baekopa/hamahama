@@ -7,11 +7,11 @@
             @click="goHome"
             src="@/assets/image/logo.png"
             alt="LOGO"
-            class="logo h-16"
+            class="logo h-16 cursor-pointer"
           />
         </div>
 
-        <div class="start my-auto">
+        <div class="start my-auto cursor-pointer">
           <p @click="goLogin">시작하기</p>
         </div>
       </div>

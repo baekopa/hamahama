@@ -1,12 +1,13 @@
 <template>
   <div>
     <img
+      class="cursor-pointer"
       @click="Login('kakao')"
       style="width: 300px"
       src="@/assets/image/login/kakao_login_large_narrow.png"
     />
     <img
-      class="mt-10"
+      class="mt-10 cursor-pointer"
       style="width: 300px"
       @click="Login('naver')"
       src="@/assets/image/login/naverLoginButton.png"
@@ -14,7 +15,7 @@
     />
     <img
       @click="Login('google')"
-      class="mt-10"
+      class="mt-10 cursor-pointer"
       style="width: 300px"
       src="@/assets/image/login/web_neutral_sq_SI.svg"
       alt=""
