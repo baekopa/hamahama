@@ -1,5 +1,8 @@
 from service.summary_service import ko_summary
 
+def remove_hama_tags(origin_text):
+    return ' '.join([origin_text.replace(f"[하마{i}]", "") for i in range(1, 7)])
+
 def chk_origin_text_len(origin_text):
     origin_text.replace("  "," ")
     origin_text.replace(". ",".\n")
