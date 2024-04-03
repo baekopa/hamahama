@@ -12,6 +12,7 @@ export const useStudyStore = defineStore('study', () => {
   const studyAt = ref('')
 
   const meetingTopic = ref('')
+  const studyType = ref('')
 
   return {
     studyTitle,
@@ -20,6 +21,7 @@ export const useStudyStore = defineStore('study', () => {
     studyCategory,
     studyMembers,
     studyAt,
-    meetingTopic
+    meetingTopic,
+    studyType
   }
 })

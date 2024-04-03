@@ -3,7 +3,7 @@
     <div class="bg-white d-flex flex-column items-center mt-15">
       <div class="d-flex flex-column" style="width: 1300px">
         <div class="text-gray-500 point-font">
-          <span class="text-xl mr-2"><</span><span class="tossface text-xl">📝</span> 공부하마 노트
+          <span class="text-xl mr-2 cursor-pointer" @click="router.go(-1)"><</span><span class="tossface text-xl">📝</span> 공부하마 노트
         </div>
         <div class="note-title">{{ title }}</div>
         <div class="d-flex justify-between">
@@ -26,8 +26,15 @@
                 src="@/assets/image/note/edit.svg"
                 alt="pencil"
               />
-              <v-btn @click="EditNote()" v-else
-                ><img src="@/assets/image/note/edit.svg" alt="" />수정</v-btn
+              <v-btn
+                v-else
+                @click="EditNote()"
+                size="large"
+                class="save"
+                variant="flat"
+                color="#3fb1fa"
+                rounded="xl"
+                >수정완료</v-btn
               >
             </div>
           </div>
