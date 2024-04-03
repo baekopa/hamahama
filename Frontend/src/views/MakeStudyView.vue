@@ -132,8 +132,9 @@
         </div>
         <div class="d-flex flex-column mt-20" style="width: 1300px">
           <div class="note-title point-font mt-14">스터디 추가 정보</div>
-          <input
+          <v-text-field
             v-model="studyCategory"
+            maxlength="10"
             variant="plain"
             placeholder="스터디 주제를 작성해주세요."
             class="my-3 note-content"
@@ -149,7 +150,15 @@
             rounded="xl"
             >스터디 생성</v-btn
           >
-          <v-btn size="large" @click="router.go(-1)" class="mx-5" variant="flat" color="#FF6B74" rounded="xl">취소</v-btn>
+          <v-btn
+            size="large"
+            @click="router.go(-1)"
+            class="mx-5"
+            variant="flat"
+            color="#FF6B74"
+            rounded="xl"
+            >취소</v-btn
+          >
         </div>
       </div>
     </div>
@@ -216,7 +225,7 @@ const searchMembers = async () => {
 
 const selectMember = (member) => {
   // 이미 선택된 멤버인지 확인
-  if (!selectedMembers.value.find((m) => m.id === member.id)) {
+  if (!selectedMembers.value.find((m) => m.id === member.memberId)) {
     selectedMembers.value.push(member.memberId)
     selectedMembersName.value.push(member)
   }
