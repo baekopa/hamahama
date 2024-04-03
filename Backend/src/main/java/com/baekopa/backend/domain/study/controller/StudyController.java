@@ -43,9 +43,9 @@ public class StudyController {
 
     @Operation(summary = "스터디 조회", description = "스터디 정보를 조회합니다.")
     @GetMapping("/studies/{study-id}/settings")
-    public ApiResponse<StudyInfoResponseDto> getStudyInfo(@PathVariable(value = "study-id") Long studyId) {
+    public ApiResponse<StudyInfoResponseDto> getStudyInfo(@PathVariable(value = "study-id") Long studyId, @AuthenticationPrincipal Member member) {
 
-        return ApiResponse.of(SuccessCode.STUDY_GET_SUCCESS, studyService.getStudyInfo(studyId));
+        return ApiResponse.of(SuccessCode.STUDY_GET_SUCCESS, studyService.getStudyInfo(member, studyId));
     }
 
     @Operation(summary = "스터디 기본 정보 수정", description = "스터디 제목, 내용, 배경사진, 카테고리를 수정합니다.")

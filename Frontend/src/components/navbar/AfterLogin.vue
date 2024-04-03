@@ -3,7 +3,12 @@
     <div class="bg-white">
       <div class="mx-20 flex justify-between">
         <div class="">
-          <img @click="GoMain" src="@/assets/image/logo.png" alt="LOGO" class="logo h-16 cursor-pointer" />
+          <img
+            @click="GoMain"
+            src="@/assets/image/logo.png"
+            alt="LOGO"
+            class="logo h-16 cursor-pointer"
+          />
         </div>
 
         <div class="start flex justify-center">
@@ -138,9 +143,9 @@ notiSource.addEventListener('NEW', (e) => {
 
 notiSource.addEventListener('CONNECT', (e) => {
   if (e.data == 'false') {
-    hasNewNotification.value = false;
+    hasNewNotification.value = false
   } else {
-    hasNewNotification.value = true;
+    hasNewNotification.value = true
   }
 })
 
@@ -248,8 +253,8 @@ const joinStudy = (invitationId) => {
 }
 
 const LogOut = () => {
-  sessionStorage.removeItem('isLoginHAMAHAMA')
   authStore.isLogin = false
+  sessionStorage.clear()
   router.push({ name: 'home' })
 }
 

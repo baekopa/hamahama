@@ -1,14 +1,15 @@
 <template>
-  <!-- 로그인 처리 페이지 -->
-  <div>로그인처리중</div>
+  <div>로그인 중입니다.</div>
 </template>
 
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useLoadStore } from '@/stores/load'
 
 const authStore = useAuthStore()
+const loadStore = useLoadStore()
 const router = useRouter()
 
 // 서버에서 쿠키에 set한 accessToken(Authorization)을
@@ -17,6 +18,7 @@ const router = useRouter()
 // 로그인 처리 후
 // 메인페이지로 라우팅
 const SetAccessToken = () => {
+  loadStore.isLoading = true
   const authorizationCookie = document.cookie.match(/Authorization=([^;]+)/)
 
   if (authorizationCookie) {
@@ -24,7 +26,13 @@ const SetAccessToken = () => {
     document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
     sessionStorage.setItem('isLoginHAMAHAMA', true)
     authStore.isLogin = true
-    router.push({ name: 'main' })
+    loadStore.isLoading = false
+    setTimeout(() => {
+      loadStore.isLoading = false
+      router.push({ name: 'main' })
+    }, 1000)
+  } else {
+    loadStore.isLoading = false
   }
 }
 
