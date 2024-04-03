@@ -17,8 +17,11 @@ import com.baekopa.backend.domain.study.repository.StudyMemberRepository;
 import com.baekopa.backend.domain.study.repository.StudyRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
 import com.baekopa.backend.global.response.error.exception.BusinessException;
+import com.baekopa.backend.global.service.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +39,7 @@ public class StudyMeetingService {
     private final SubmittedNoteRepository submittedNoteRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final EmitterService emitterService;
+    private final S3UploadService s3UploadService;
 
     // 스터디 미팅 생성
     @Transactional
@@ -106,5 +110,10 @@ public class StudyMeetingService {
 
         return getScheduledMeeting(studyId);
 
+    }
+
+    public ResponseEntity<UrlResource> getMeetingRecordFile(Long meetingId) {
+
+        return s3UploadService.downloadFile(meetingRepository.findByIdAndDeletedAtIsNull(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, "알 수 없는 미팅")).getRecordFile());
     }
 }
