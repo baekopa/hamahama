@@ -119,7 +119,7 @@
                   style="width: 600px"
                   color="info"
                 ></v-divider>
-                <div v-if="isLeader" class="invite-user mt-5">
+                <div v-if="isLeader && studyStore.studyType == 'GROUP'" class="invite-user mt-5">
                   <div class="d-flex flex-column">
                     <div>
                       <input
