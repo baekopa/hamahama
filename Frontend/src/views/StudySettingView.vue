@@ -119,9 +119,9 @@
                   style="width: 600px"
                   color="info"
                 ></v-divider>
-                <div v-if="isLeader && studyStore.studyType == 'GROUP'" class="invite-user mt-5">
+                <div v-if="isLeader && studyStore.studyType == '같이하마'" class="invite-user mt-5">
                   <div class="d-flex flex-column">
-                    <div>
+                    <div class="d-flex">
                       <input
                         type="text"
                         id="memberName"
@@ -141,7 +141,7 @@
                           :key="index"
                           @click="selectMember(member)"
                         >
-                          {{ member.name }}
+                          {{ member.name }} <span class="mr-2">{{ member.email }}</span>
                         </li>
                       </ul>
                     </div>
@@ -272,6 +272,7 @@ const selectMember = (member) => {
   if (!selectedMembers.value.find((m) => m.id === member.id)) {
     selectedMembers.value.push(member.memberId)
     selectedMembersName.value.push(member)
+    memberName.value = member.email;
   }
 }
 
@@ -301,6 +302,7 @@ function InviteStudy() {
           showConfirmButton: false,
           timer: 1500
         })
+        router.go(0);
       } else {
         console.log(res)
       }
