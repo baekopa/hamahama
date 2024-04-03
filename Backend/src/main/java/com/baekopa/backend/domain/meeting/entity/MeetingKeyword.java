@@ -33,16 +33,18 @@ public class MeetingKeyword extends BaseBy {
         this.meeting = meeting;
         this.keyword = keyword;
         this.status = status;
+        meeting.getMeetingKeyword().add(this);
     }
 
-    public static MeetingKeyword of(Meeting meeting, String keyword){
+    public static MeetingKeyword of(Meeting meeting, String keyword) {
         return builder().meeting(meeting)
                 .keyword(keyword)
                 .status(IsolationEnum.DONE)
                 .build();
     }
-    public void updateMeetingKeyword(String keyword){
-        this.keyword=keyword;
-        this.status=IsolationEnum.DONE;
+
+    public void updateMeetingKeyword(String keyword) {
+        this.keyword = keyword;
+        this.status = IsolationEnum.DONE;
     }
 }
