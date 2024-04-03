@@ -206,11 +206,13 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStudyStore } from '@/stores/study'
 import { useAudioStore } from '@/stores/audioStore'
+import { useLoadStore } from '@/stores/load'
 import instance from '@/api'
 import Swal from 'sweetalert2'
 
 const studyStore = useStudyStore()
 const audioStore = useAudioStore()
+const loadStore = useLoadStore()
 
 const route = useRoute()
 const router = useRouter()
@@ -233,20 +235,42 @@ function GoQuiz() {
 }
 
 function LoadStudyData() {
-  instance.get(`api/studies/${studyId}/settings`).then((res) => {
-    const data = res.data.data
-    if (res.data.status == 200) {
-      console.log(res.data.message)
-      studyStore.studyTitle = data.title
-      studyStore.studyDescription = data.description
-      studyStore.studyBackgroundImage = data.backgroundImage
-      studyStore.studyCategory = data.category
-      studyStore.studyMembers = data.members
-      studyStore.studyType = data.type
-    } else {
-      console.log(res.data.message)
-    }
-  })
+  loadStore.isLoading = true
+  instance
+    .get(`api/studies/${studyId}/settings`)
+    .then((res) => {
+      const data = res.data.data
+      if (res.data.status == 200) {
+        console.log(res.data.message)
+        studyStore.studyTitle = data.title
+        studyStore.studyDescription = data.description
+        studyStore.studyBackgroundImage = data.backgroundImage
+        studyStore.studyCategory = data.category
+        studyStore.studyMembers = data.members
+        studyStore.studyType = data.type
+        loadStore.isLoading = false
+      } else {
+        console.log(res.data.message)
+        loadStore.isLoading = false
+      }
+    })
+    .catch((err) => {
+      loadStore.isLoading = false
+      if (err.response.data.status == 403) {
+        Swal.fire({
+          icon: 'error',
+          title: '접근 불가',
+          text: `${err.response.data.message}`,
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: '확인'
+        }).then((swal) => {
+          if (swal.isConfirmed) {
+            router.go(-1)
+          }
+        })
+      }
+      console.log(err.response.data)
+    })
 }
 
 function LoadNextSchedule() {
@@ -416,7 +440,9 @@ const stopRecording = () => {
         title: '미팅 끝!',
         text: '요약 생성까지는 좀 걸려요~ '
       })
+
       await uploadAudio(audioBlob)
+      router.go(0)
       audioStore.setRecordingStatus(false)
     }
   } else {
@@ -432,7 +458,6 @@ const uploadAudio = async (audioBlob) => {
   }
   // FastAPI 서버로 오디오 파일 전송
   try {
-    router.go(0)
     console.log('녹음파일 전송')
     const res1 = await instance.post(
       `api/studies/${studyId}/meetings/${meetingID.value}/record`,
@@ -444,7 +469,6 @@ const uploadAudio = async (audioBlob) => {
         timeout: 100000
       }
     )
-    // router.push({ name: 'studySummary', params: { id: studyId } })
   } catch (error) {
     console.error('오류가 발생했습니다:', error)
   }
@@ -457,8 +481,6 @@ const uploadAudio = async (audioBlob) => {
   background: linear-gradient(to right, #3fb1fa, #05d4c0);
   color: white;
   padding: 20px 20px;
-}
-.content {
 }
 
 .submitted-note,

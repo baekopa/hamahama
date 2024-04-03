@@ -2,15 +2,17 @@
   <v-container>
     <v-layout style="max-height: 800px">
       <v-navigation-drawer style="width: 323px; height: 800px">
-        <p class="text-3xl text-center mt-10 point-font text-stone-900">{{ studyStore.studyType }}</p>
+        <p class="text-3xl text-center mt-10 point-font text-stone-900">
+          {{ studyStore.studyType }}
+        </p>
         <v-list lines="two" density="compact" nav>
           <v-list-item three-line>
             <v-list-item-content class="align-self-center">
-              <div class="ml-14 mt-10"
-                ><div class="text-xl font-bold block">
+              <div class="ml-14 mt-10">
+                <div class="text-xl font-bold block">
                   {{ studyStore.studyTitle }}
-                </div></div
-              >
+                </div>
+              </div>
               <v-list-item-subtitle class="ml-14 mt-1"
                 ><div class="text-base">
                   {{ studyStore.studyCategory }}
@@ -214,71 +216,7 @@ function searchOnGoogle(keyword) {
 const quizSubject = ref('')
 const selectedStudyId = ref()
 
-const studyList = ref([
-  {
-    remindQuizId: 1,
-    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당1',
-    studyName: '스터디 명',
-    studyAt: '2024.03.09',
-    openAt: '2024.04.01',
-    lastModifiedAt: '2024.03.22',
-    opened: false
-  },
-  {
-    remindQuizId: 2,
-    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당2',
-    studyName: '스터디 명수는 열두살',
-    studyAt: '2024.03.09',
-    openAt: '2024.03.11',
-    lastModifiedAt: '2024.03.22',
-    opened: true
-  },
-  {
-    remindQuizId: 3,
-    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당3',
-    studyName: '스터디 명',
-    studyAt: '2024.03.09',
-    openAt: '2024.03.11',
-    lastModifiedAt: '2024.03.22',
-    opened: true
-  },
-  {
-    remindQuizId: 4,
-    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
-    studyName: '스터디 명',
-    studyAt: '2024.03.09',
-    openAt: '2024.03.11',
-    lastModifiedAt: '2024.03.22',
-    opened: true
-  },
-  {
-    remindQuizId: 5,
-    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
-    studyName: '스터디 명',
-    studyAt: '2024.03.09',
-    openAt: '2024.03.11',
-    lastModifiedAt: '2024.03.22',
-    opened: true
-  },
-  {
-    remindQuizId: 6,
-    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
-    studyName: '스터디 명',
-    studyAt: '2024.03.09',
-    openAt: '2024.03.11',
-    lastModifiedAt: '2024.03.22',
-    opened: true
-  },
-  {
-    remindQuizId: 7,
-    topic: '스터디 주제는 어쩌구저쩌구구절절교회교회성당성당',
-    studyName: '스터디 명',
-    studyAt: '2024.03.09',
-    openAt: '2024.03.11',
-    lastModifiedAt: '2024.03.22',
-    opened: true
-  }
-])
+const studyList = ref([])
 
 const LoadQuizList = () => {
   loadStore.isLoading = true
@@ -370,7 +308,6 @@ onMounted(() => {
   LoadStudyData()
   LoadQuizList()
 })
-
 </script>
 
 <style scoped>

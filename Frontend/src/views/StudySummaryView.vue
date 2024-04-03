@@ -2,15 +2,17 @@
   <v-container>
     <v-layout style="max-height: 800px">
       <v-navigation-drawer style="width: 323px; height: 800px">
-        <p class="text-3xl text-center mt-10 point-font text-stone-900">{{ studyStore.studyType }}</p>
+        <p class="text-3xl text-center mt-10 point-font text-stone-900">
+          {{ studyStore.studyType }}
+        </p>
         <v-list lines="two" density="compact" nav>
           <v-list-item three-line>
             <v-list-item-content class="align-self-center">
-              <div class="ml-14 mt-10"
-                ><div class="text-xl font-bold block">
+              <div class="ml-14 mt-10">
+                <div class="text-xl font-bold block">
                   {{ studyStore.studyTitle }}
-                </div></div
-              >
+                </div>
+              </div>
               <v-list-item-subtitle class="ml-14 mt-1"
                 ><div class="text-base">
                   {{ studyStore.studyCategory }}
@@ -79,7 +81,7 @@
             color="info"
           ></v-divider>
 
-          <v-card rounded="0" variant="flat"  class="note-list">
+          <v-card rounded="0" variant="flat" class="note-list">
             <div class="list-section" v-if="summaryList.length != 0">
               <v-row class="pa-10">
                 <v-col
@@ -142,8 +144,11 @@
               </v-row>
             </div>
             <div v-else>
-              <div class="d-flex flex-column justify-center items-center" style="width: 1300px; height:400px">
-                <img src="@/assets/image/error.png" width="200"/>
+              <div
+                class="d-flex flex-column justify-center items-center"
+                style="width: 1300px; height: 400px"
+              >
+                <img src="@/assets/image/error.png" width="200" />
                 <div class="text-3xl m-3 point-font">마무리된 미팅이 없어요.</div>
                 <div class="text-xl">미팅을 녹음하고 요약본을 받아보세요</div>
               </div>
@@ -160,8 +165,10 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import instance from '@/api/index'
 import { useStudyStore } from '@/stores/study'
+import { useLoadStore } from '@/stores/load'
 
 const studyStore = useStudyStore()
+const loadStore = useLoadStore()
 const router = useRouter()
 const route = useRoute()
 const studyId = route.params.id
@@ -188,20 +195,26 @@ function GoSummaryDetail(info) {
 }
 
 function LoadSummaryList() {
+  loadStore.isLoading = true
   instance
     .get(`api/studies/${studyId}/meetings/end`)
     .then((res) => {
       if (res.data.status == 200) {
+        loadStore.isLoading = false
         summaryList.value = res.data.data.meetingStudyDTOList
+      } else {
+        loadStore.isLoading = false
+        console.log(res.data.message)
       }
-      console.log(res.data.message)
     })
     .catch((err) => {
+      loadStore.isLoading = false
       console.log(err)
     })
 }
 
 function LoadStudyData() {
+  loadStore.isLoading = true
   instance.get(`api/studies/${studyId}/settings`).then((res) => {
     const data = res.data.data
     if (res.data.status == 200) {
@@ -214,6 +227,7 @@ function LoadStudyData() {
       studyStore.studyType = data.type
     }
   })
+  loadStore.isLoading = false
 }
 
 onMounted(() => {
