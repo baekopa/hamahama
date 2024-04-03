@@ -2,18 +2,18 @@
   <v-container>
     <v-layout style="max-height: 800px">
       <v-navigation-drawer style="width: 323px; height: 800px">
-        <p class="text-3xl text-center mt-10 point-font text-stone-900">같이하마</p>
+        <p class="text-3xl text-center mt-10 point-font text-stone-900">{{ studyStore.studyType }}</p>
         <v-list lines="two" density="compact" nav>
           <v-list-item three-line>
             <v-list-item-content class="align-self-center">
-              <v-list-item-title class="ml-14 mt-10"
-                ><div class="text-2xl font-bold">
+              <div class="ml-14 mt-10"
+                ><div class="text-xl font-bold block">
                   {{ studyStore.studyTitle }}
-                </div></v-list-item-title
+                </div></div
               >
               <v-list-item-subtitle class="ml-14 mt-1"
                 ><div class="text-base">
-                  {{ studyStore.studyDescription }}
+                  {{ studyStore.studyCategory }}
                 </div></v-list-item-subtitle
               >
             </v-list-item-content>
@@ -81,9 +81,9 @@
               </div>
             </div>
             <div class="mr-40 mt-14">
-              <button class="mr-10" @click="CreateRemindQuiz()">
-                <p>리마인드 퀴즈 생성</p>
-              </button>
+              <div class="mr-5">
+                <v-chip @click="CreateRemindQuiz()" variant="elevated" color="#3FB1FA">리마인드 퀴즈 생성</v-chip>
+              </div>
 
               <button>
                 <img @click="" src="@/assets/image/note/download.svg" alt="download" />
@@ -634,7 +634,23 @@ function addLineBreaks(text) {
   return text.replace(/\n/g, '<br>')
 }
 
+function LoadStudyData() {
+  instance.get(`api/studies/${studyId}/settings`).then((res) => {
+    const data = res.data.data
+    if (res.data.status == 200) {
+      console.log(data)
+      studyStore.studyTitle = data.title
+      studyStore.studyDescription = data.description
+      studyStore.studyBackgroundImage = data.backgroundImage
+      studyStore.studyCategory = data.category
+      studyStore.studyMembers = data.members
+      studyStore.studyType = data.type
+    }
+  })
+}
+
 onMounted(() => {
+  LoadStudyData()
   LoadAll()
   LoadEntireScript()
   LoadDiffrence()

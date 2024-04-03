@@ -37,7 +37,7 @@
         ></v-divider>
 
         <div class="flex" style="width: 1500px">
-          <div class="d-flex ml-5 mt-5">
+          <div class="d-flex ml-5 mt-5" v-if="noteList != null && noteList.length != 0" style="">
             <div class="mr-6 mb-8" v-for="note in noteList" :key="note.id">
               <v-card
                 @click="GoNoteDetail(note.id)"
@@ -72,19 +72,24 @@
                       </div>
                     </div>
                     <div class="place-self-end">
-                      <v-chip v-if="note.isShared == true" variant="flat" color="#aaaaaa">
-                        공유중
-                        <!-- <img :src=note.studyImage class="shared-study-image" end /> -->
-                      </v-chip>
-                      <v-chip v-else variant="flat" color="#aaaaaa">
-                        아직 공유하지 않은 노트에요
-                        <!-- <img :src=note.studyImage class="shared-study-image" end /> -->
-                      </v-chip>
+                      <div v-if="note.isShared == true" >
+                        <v-chip variant="flat" color="#aaaaaa">
+                          공유중
+                          <!-- <img :src=note.studyImage class="shared-study-image" end /> -->
+                        </v-chip>
+                      </div>
                     </div>
                   </div>
                 </v-card-item>
               </v-card>
             </div>
+            <div>
+            </div>
+          </div>
+          <!-- 공유되지 않은 노트 -->
+          <div v-else style="height:400px; width:1500px">
+            <div class="d-flex justify-center items-center text-2xl mt-40">현재 {{ authStore.userName }}님이 만든 노트가 없어요 <span class="tossface mr-3 text-3xl">😥 </span></div>
+            <div class="d-flex justify-center items-center text-base mt-2 text-gray-500">노트 작성을 눌러 공부한 내용을 기록해주세요.</div>
           </div>
         </div>
       </v-card>
@@ -194,7 +199,8 @@
                 <v-divider class="mx-4 mb-1"></v-divider>
                 <div class="px-4">
                   <v-chip-group>
-                    <v-chip>{{ study.category }}</v-chip>
+                    <v-chip style="height: 32px" v-if="study.category != ''"> {{ study.category }} </v-chip>
+                    <div class="mb-2" style="height: 32px" v-else></div>
                   </v-chip-group>
                 </div>
                 <v-card-title>{{ study.title }}</v-card-title>

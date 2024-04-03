@@ -79,7 +79,12 @@
 
               <v-card-item>
                 <v-card-subtitle class="mt-1">
-                  <span class="me-1"><span class="tossface">⏲</span> {{ study.time }}</span>
+                  <span v-if="study.futureMeeting" class="me-1"
+                    ><span class="tossface">⏲ </span> {{ study.futureMeeting }}</span
+                  >
+                  <span v-else class="me-1"
+                    ><span class="tossface">⏲ </span>예정된 일정 없음</span
+                  >
                 </v-card-subtitle>
               </v-card-item>
               <img
@@ -90,8 +95,9 @@
               <v-divider class="mx-4 mb-1"></v-divider>
               <div class="px-4">
                 <v-chip-group>
-                  <v-chip>{{ study.category }}</v-chip>
-                </v-chip-group>
+                    <v-chip style="height: 32px" v-if="study.category != ''"> {{ study.category }} </v-chip>
+                    <div class="mb-2" style="height: 32px" v-else></div>
+                  </v-chip-group>
               </div>
               <v-card-title>{{ study.title }}</v-card-title>
             </v-card>
