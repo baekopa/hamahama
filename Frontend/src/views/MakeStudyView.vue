@@ -4,7 +4,7 @@
       <div class="bg-white d-flex flex-column items-center mt-15">
         <div class="d-flex flex-column" style="width: 1300px">
           <div class="text-gray-500 point-font">
-            <span @click="router.go(-1)" class="text-xl mr-2"><</span
+            <span @click="router.go(-1)" class="text-xl mr-2 cursor-pointer"><</span
             ><span class="tossface text-xl">👨‍👨‍👧‍👧</span> 스터디 생성
           </div>
           <div class="note-title point-font mt-14">
@@ -149,7 +149,7 @@
             rounded="xl"
             >스터디 생성</v-btn
           >
-          <v-btn size="large" class="mx-5" variant="flat" color="#FF6B74" rounded="xl">취소</v-btn>
+          <v-btn size="large" @click="router.go(-1)" class="mx-5" variant="flat" color="#FF6B74" rounded="xl">취소</v-btn>
         </div>
       </div>
     </div>
@@ -207,7 +207,6 @@ const searchMembers = async () => {
 
   try {
     const response = await instance.get(`api/members?q=${memberName.value}`)
-    console.log(response)
     members.value = response.data.data
   } catch (error) {
     console.error('멤버 검색 오류:', error)

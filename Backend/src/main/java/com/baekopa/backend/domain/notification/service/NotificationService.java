@@ -23,18 +23,12 @@ public class NotificationService {
     @Transactional
     public NotificationListResponseDto getNotificationList(Member member) {
 
+        member.updateLastNotificationEventId();
+
         return NotificationListResponseDto.from(
                 notificationRepository.findAllByReceiverAndIsCheckedIsFalseAndDeletedAtIsNullOrderByCreatedAtDesc(member).stream()
-                        .map(NotificationResponseDto::of).toList(),
-                member.getLastNotificationEventId()
+                        .map(NotificationResponseDto::of).toList()
         );
-    }
-
-    // 미확인 알림 목록 확인 시간 갱신
-    @Transactional
-    public void updateLastEventId(Member member, String lastEventId) {
-
-        member.updateLastNotificationEventId(lastEventId);
     }
 
     // 특정 알림 확인

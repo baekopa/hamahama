@@ -11,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -35,18 +37,19 @@ public class StudyMemberController {
     @Operation(summary = "스터디원 초대", description = "새로운 스터디원을 초대 요청을 보냅니다. (memberId만 필수)")
     @PostMapping("/studies/{study-id}/members")
     public ApiResponse<Void> inviteStudyMember(@PathVariable(value = "study-id") Long studyId, @RequestBody StudyMemberDto studyMember, @AuthenticationPrincipal Member member) {
-        studyMemberService.inviteStudyMember(studyId, studyMember.getMemberId());
+        studyMemberService.inviteStudyMember(studyId, studyMember.getMemberId(), member);
 
         return ApiResponse.of(SuccessCode.STUDY_MEMBER_INVITE_SUCCESS);
     }
 
     @Operation(summary = "스터디 초대 승낙", description = "초대 승낙으로 새로운 스터디에 참여합니다.")
     @PutMapping("/members/me/invitations/{invitation-id}")
-    public ApiResponse<Void> joinStudy(@PathVariable(value = "invitation-id") Long invitationId, @AuthenticationPrincipal Member member) {
+    public ApiResponse<Map<String, Long>> joinStudy(@PathVariable(value = "invitation-id") Long invitationId, @AuthenticationPrincipal Member member) {
 
-        studyMemberService.joinStudy(invitationId, member);
+        Map<String, Long> result = new HashMap<>();
+        result.put("studyId", studyMemberService.joinStudy(invitationId, member));
 
-        return ApiResponse.of(SuccessCode.STUDY_MEMBER_JOIN_UPDATE_SUCCESS);
+        return ApiResponse.of(SuccessCode.STUDY_MEMBER_JOIN_UPDATE_SUCCESS, result);
     }
 
     @Operation(summary = "스터디 초대 거절", description = "현재 스터디에 대한 초대를 거절합니다.")

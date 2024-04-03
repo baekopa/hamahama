@@ -3,7 +3,7 @@
     <div class="bg-white d-flex flex-column items-center mt-15">
       <div class="d-flex flex-column" style="width: 1300px">
         <div class="text-gray-500 point-font">
-          <span class="text-xl mr-2"><</span><span class="tossface text-xl">📝</span> 공부하마 노트
+          <span class="text-xl mr-2 cursor-pointer" @click="router.go(-1)"><</span><span class="tossface text-xl">📝</span> 공부하마 노트
         </div>
         <div class="note-title">{{ title }}</div>
         <div class="d-flex justify-between">
@@ -26,8 +26,15 @@
                 src="@/assets/image/note/edit.svg"
                 alt="pencil"
               />
-              <v-btn @click="EditNote()" v-else
-                ><img src="@/assets/image/note/edit.svg" alt="" />수정</v-btn
+              <v-btn
+                v-else
+                @click="EditNote()"
+                size="large"
+                class="save"
+                variant="flat"
+                color="#3fb1fa"
+                rounded="xl"
+                >수정완료</v-btn
               >
             </div>
           </div>
@@ -51,7 +58,16 @@
       </div>
       <div class="d-flex flex-column mt-20" style="width: 1300px">
         <div class="d-flex items-end justify-between">
-          <div class="note-title point-font">요약 <span class="tossface">💻</span></div>
+          <div>
+            <div class="note-title point-font">
+              요약 및 꼬리 질문 <span class="tossface">💻</span>
+            </div>
+            <div>
+              <div class="note-content text-gray-500">
+                작성한 노트를 바탕으로 노트 요약과 꼬리 질문을 생성합니다.
+              </div>
+            </div>
+          </div>
           <v-btn
             @click="MakeSummary"
             size="large"
@@ -136,6 +152,10 @@ import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import instance from '@/api/index'
 import Swal from 'sweetalert2'
+import { useLoadStore } from '@/stores/load'
+
+const loadStore = useLoadStore()
+
 const route = useRoute()
 const router = useRouter()
 const noteId = route.params.id
@@ -188,8 +208,6 @@ const selectedMeeting = ref(null)
 const handleMeetingSelection = () => {
   if (selectedMeeting.value) {
     const selectedMeetingId = selectedMeeting.value
-    // 여기서 선택된 항목의 ID를 사용하여 원하는 작업을 수행할 수 있습니다.
-    console.log('선택된 미팅 ID:', selectedMeetingId)
   }
 }
 // 노트 내용 조회
@@ -217,7 +235,6 @@ function LoadMeetingSchedule() {
   instance
     .get(`api/members/me/meetings`)
     .then((res) => {
-      console.log(res)
       if (res.data.status == 200) {
         console.log(res.data.message)
         studyMeetingScheduleList.value = res.data.data
@@ -292,16 +309,20 @@ function ShareNote() {
     })
 }
 
+// 요약 생성하기
 const MakeSummary = () => {
+  loadStore.isLoading = true
   instance
     .post(`api/notes/${noteId}/summary`, {}, { timeout: 1000000 })
     .then((res) => {
+      loadStore.isLoading = false
       if (res.data.status == 201) {
         noteSummary.value = res.data.data.noteSummary
         console.log(res.data.message)
       }
     })
     .catch((err) => {
+      loadStore.isLoading = false
       console.log(err)
     })
 }

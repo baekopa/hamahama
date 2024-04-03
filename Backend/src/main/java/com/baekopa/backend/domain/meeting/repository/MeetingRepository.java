@@ -38,4 +38,7 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
     List<Meeting> findAllByStudyAndDeletedAtIsNullAndRecordFileIsNotNullOrderByStudyAtDesc(Study study);
 
     List<Meeting> findAllByStudyAndDeletedAtIsNullAndStudyAtBetweenOrderByStudyAtAsc(Study study, LocalDateTime startDate, LocalDateTime endDate);
+
+    @Query(value = "SELECT * FROM Meeting WHERE abs(DATEDIFF(study_at, now())) <= 1 AND deleted_at is NULL", nativeQuery = true)
+    List<Meeting> findTomorrowMeetings();
 }

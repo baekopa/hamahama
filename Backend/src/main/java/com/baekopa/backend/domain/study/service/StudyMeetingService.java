@@ -6,15 +6,22 @@ import com.baekopa.backend.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.baekopa.backend.domain.meeting.dto.response.MeetingListDto;
 import com.baekopa.backend.domain.meeting.entity.Meeting;
 import com.baekopa.backend.domain.meeting.repository.MeetingRepository;
+import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.domain.note.dto.SubmittedNoteDto;
 import com.baekopa.backend.domain.note.repository.SubmittedNoteRepository;
+import com.baekopa.backend.domain.notification.entity.NotificationType;
+import com.baekopa.backend.domain.notification.service.EmitterService;
 import com.baekopa.backend.domain.study.dto.response.StudyMeetingResponseDto;
 import com.baekopa.backend.domain.study.entity.Study;
+import com.baekopa.backend.domain.study.repository.StudyMemberRepository;
 import com.baekopa.backend.domain.study.repository.StudyRepository;
 import com.baekopa.backend.global.response.error.ErrorCode;
 import com.baekopa.backend.global.response.error.exception.BusinessException;
+import com.baekopa.backend.global.service.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +37,9 @@ public class StudyMeetingService {
     private final MeetingRepository meetingRepository;
     private final StudyRepository studyRepository;
     private final SubmittedNoteRepository submittedNoteRepository;
+    private final StudyMemberRepository studyMemberRepository;
+    private final EmitterService emitterService;
+    private final S3UploadService s3UploadService;
 
     // 스터디 미팅 생성
     @Transactional
@@ -39,6 +49,12 @@ public class StudyMeetingService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
 
         Meeting meeting = meetingRepository.save(Meeting.of(requestDto.getTopic(), requestDto.getStudyAt(), study));
+
+        List<Member> memberList = studyMemberRepository.findAllByStudyAndDeletedAtIsNull(study).stream()
+                .map((o) -> o.getMember()).toList();
+        for (Member member : memberList) {
+            emitterService.send(member, NotificationType.SCHEDULE, study.getTitle() + "의 새로운 미팅 일정이 있습니다.", studyId + "");
+        }
 
         return CreateMeetingResponseDto.of(meeting.getId(), meeting.getTopic(), meeting.getStudyAt());
     }
@@ -94,5 +110,10 @@ public class StudyMeetingService {
 
         return getScheduledMeeting(studyId);
 
+    }
+
+    public ResponseEntity<UrlResource> getMeetingRecordFile(Long meetingId) {
+
+        return s3UploadService.downloadFile(meetingRepository.findByIdAndDeletedAtIsNull(meetingId).orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, "알 수 없는 미팅")).getRecordFile());
     }
 }

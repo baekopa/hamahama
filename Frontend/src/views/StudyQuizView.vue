@@ -2,18 +2,18 @@
   <v-container>
     <v-layout style="max-height: 800px">
       <v-navigation-drawer style="width: 323px; height: 800px">
-        <p class="text-3xl text-center mt-10 point-font text-stone-900">같이하마</p>
+        <p class="text-3xl text-center mt-10 point-font text-stone-900">{{ studyStore.studyType }}</p>
         <v-list lines="two" density="compact" nav>
           <v-list-item three-line>
             <v-list-item-content class="align-self-center">
-              <v-list-item-title class="ml-14 mt-10"
-                ><div class="text-2xl font-bold">
+              <div class="ml-14 mt-10"
+                ><div class="text-xl font-bold block">
                   {{ studyStore.studyTitle }}
-                </div></v-list-item-title
+                </div></div
               >
               <v-list-item-subtitle class="ml-14 mt-1"
                 ><div class="text-base">
-                  {{ studyStore.studyDescription }}
+                  {{ studyStore.studyCategory }}
                 </div></v-list-item-subtitle
               >
             </v-list-item-content>
@@ -176,7 +176,9 @@ import { useRoute, useRouter } from 'vue-router'
 import instance from '@/api/index'
 import { useStudyStore } from '@/stores/study'
 import Swal from 'sweetalert2'
+import { useLoadStore } from '@/stores/load'
 
+const loadStore = useLoadStore()
 const studyStore = useStudyStore()
 const route = useRoute()
 const router = useRouter()
@@ -280,13 +282,21 @@ const studyList = ref([
 ])
 
 const LoadQuizList = () => {
-  instance.get(`api/studies/${studyId}/remind-quiz`).then((res) => {
-    const data = res.data.data
-    console.log(res)
-    if (res.data.status == 200) {
-      studyList.value = res.data.data
-    }
-  })
+  loadStore.isLoading = true
+  instance
+    .get(`api/studies/${studyId}/remind-quiz`)
+    .then((res) => {
+      console.log(res.data.message)
+      if (res.data.status == 200) {
+        loadStore.isLoading = false
+        studyList.value = res.data.data
+      }
+      loadStore.isLoading = false
+    })
+    .catch((err) => {
+      console.log(err)
+      loadStore.isLoading = false
+    })
 }
 
 async function GoQuizDetail(id) {
@@ -342,7 +352,26 @@ async function regenKeyword() {
   } catch (error) {}
 }
 
-onMounted(LoadQuizList)
+function LoadStudyData() {
+  instance.get(`api/studies/${studyId}/settings`).then((res) => {
+    const data = res.data.data
+    if (res.data.status == 200) {
+      console.log(data)
+      studyStore.studyTitle = data.title
+      studyStore.studyDescription = data.description
+      studyStore.studyBackgroundImage = data.backgroundImage
+      studyStore.studyCategory = data.category
+      studyStore.studyMembers = data.members
+      studyStore.studyType = data.type
+    }
+  })
+}
+
+onMounted(() => {
+  LoadStudyData()
+  LoadQuizList()
+})
+
 </script>
 
 <style scoped>

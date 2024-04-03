@@ -31,18 +31,18 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MeetingScriptService {
 
+    private final MeetingScriptRepository meetingScriptRepository;
+    private final MeetingRepository meetingRepository;
+    private final S3UploadService s3UploadService;
+
     @Value("${BASE_URL_AI}")
     private String fastUrl;
-
-    private final MeetingRepository meetingRepository;
-    private final MeetingScriptRepository meetingScriptRepository;
-    private final S3UploadService s3UploadService;
 
     @Transactional
     public void saveS3(MultipartFile file, Long meetingId) {
@@ -139,7 +139,7 @@ public class MeetingScriptService {
                 sb.append(transcription.getSpeaker()).append("  ").append(textWithSpaces).append("\n");
             }
             String text = sb.toString();
-
+            System.out.println("text = " + text);
             return text; // FastAPI로부터 받은 응답(변환된 텍스트의 리스트)
         } catch (Exception e) {
             e.printStackTrace();
@@ -159,8 +159,8 @@ public class MeetingScriptService {
     }
 
     @Transactional
-    public MeetingScriptDTO updateMeetingScript(MeetingScriptDTO meetingScriptDTO){
-        MeetingScript meetingScript=meetingScriptRepository.findByIdAndDeletedAtIsNull(meetingScriptDTO.getMeetingScriptId())
+    public MeetingScriptDTO updateMeetingScript(MeetingScriptDTO meetingScriptDTO) {
+        MeetingScript meetingScript = meetingScriptRepository.findByIdAndDeletedAtIsNull(meetingScriptDTO.getMeetingScriptId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_SCRIPT_NOT_FOUND, ErrorCode.MEETING_SCRIPT_NOT_FOUND.getMessage()));
 
         meetingScript.updateMeetingScript(meetingScriptDTO.getScriptContent());
