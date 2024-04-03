@@ -159,8 +159,7 @@
               </div>
             </div> -->
 
-            <div class="quiz-section mt-16">
-              <h3>리마인드 퀴즈</h3>
+            <div class="quiz-section mt-16 text-2xl">
               <p>{{ remindQuiz.content }}</p>
             </div>
           </div>
