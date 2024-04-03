@@ -44,16 +44,16 @@ public class Member extends BaseTime implements UserDetails {
     private OAuthProvider provider;
 
     @Column(name = "last_notification_event_id")
-    private String lastNotificationEventId;
+    private Long lastCheckedEventId;
 
     @Builder
-    private Member(String name, String providerCode, String email, String image, String role, OAuthProvider provider, String lastNotificationEventId) {
+    private Member(String name, String providerCode, String email, String image, String role, OAuthProvider provider, Long lastCheckedEventId) {
         this.name = name;
         this.email = email;
         this.image = image;
         this.provider = provider;
         this.providerCode = providerCode;
-        this.lastNotificationEventId = lastNotificationEventId;
+        this.lastCheckedEventId = lastCheckedEventId;
         this.role = role;
     }
 
@@ -65,7 +65,7 @@ public class Member extends BaseTime implements UserDetails {
                 .image(image)
                 .role(role)
                 .provider(provider)
-                .lastNotificationEventId(initLastNotificationEventId(email, provider))
+                .lastCheckedEventId(System.currentTimeMillis())
                 .build();
     }
 
@@ -81,13 +81,9 @@ public class Member extends BaseTime implements UserDetails {
         this.image = image;
     }
 
-    public static String initLastNotificationEventId(String email, OAuthProvider provider) {
-
-        StringBuilder stringBuilder = new StringBuilder();
-        return stringBuilder.append(email).append("_").append(provider.name()).append("_").append(System.currentTimeMillis()).toString();
+    public void updateLastNotificationEventId() {
+        this.lastCheckedEventId = System.currentTimeMillis();
     }
-
-    public void updateLastNotificationEventId(String lastNotificationEventId) { this.lastNotificationEventId = lastNotificationEventId;}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

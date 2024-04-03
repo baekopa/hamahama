@@ -2,18 +2,18 @@
   <v-container>
     <v-layout style="max-height: 800px">
       <v-navigation-drawer style="width: 323px; height: 800px">
-        <p class="text-3xl text-center mt-10 point-font text-stone-900">같이하마</p>
+        <p class="text-3xl text-center mt-10 point-font text-stone-900">{{ studyStore.studyType }}</p>
         <v-list lines="two" density="compact" nav>
           <v-list-item three-line>
             <v-list-item-content class="align-self-center">
-              <v-list-item-title class="ml-14 mt-10"
-                ><div class="text-2xl font-bold">
+              <div class="ml-14 mt-10"
+                ><div class="text-xl font-bold block">
                   {{ studyStore.studyTitle }}
-                </div></v-list-item-title
+                </div></div
               >
               <v-list-item-subtitle class="ml-14 mt-1"
                 ><div class="text-base">
-                  {{ studyStore.studyDescription }}
+                  {{ studyStore.studyCategory }}
                 </div></v-list-item-subtitle
               >
             </v-list-item-content>
@@ -80,7 +80,7 @@
           ></v-divider>
 
           <v-card rounded="0" variant="flat" class="note-list">
-            <div class="list-section">
+            <div class="list-section" v-if="summaryList.length != 0">
               <v-row class="pa-10">
                 <v-col
                   cols="12"
@@ -91,6 +91,39 @@
                   v-for="summary in summaryList"
                   :key="summary.id"
                 >
+                  <v-card
+                    @click="GoNoteDetail(s)"
+                    variant="text"
+                    class="rounded-xl study-card"
+                    color="#2e2e2e"
+                    hover
+                    width="250"
+                    height="350"
+                  >
+                    <template v-slot:loader="{ isActive }">
+                      <v-progress-linear
+                        :active="isActive"
+                        color="deep-purple"
+                        height="4"
+                        indeterminate
+                      ></v-progress-linear>
+                    </template>
+
+                    <v-card-item class="grid content-between note-card rounded-xl" style="height: 350px">
+                      <div class="grid" style="height: 320px">
+                        <div>
+                          <div class="mx-2 mt-2 mb-1 text-xl font-bold line-clamp-2 text-gray-600">
+                            s
+                          </div>
+                          <span class="mx-2 mt-2 text-gray-400 italic">s 작성</span>
+                          <div class="mx-2 mt-3 line-clamp-6 text-gray-500">
+                            s
+                          </div>
+                        </div>
+                      </div>
+                    </v-card-item>
+                    <v-divider class="mx-4 mb-1"></v-divider>
+                  </v-card>
                   <v-card
                     @click="GoSummaryDetail(summary)"
                     variant="outlined"
@@ -141,6 +174,13 @@
                 </v-col>
               </v-row>
             </div>
+            <div v-else>
+              <div class="d-flex flex-column justify-center items-center" style="width: 1300px; height:400px">
+                <img src="@/assets/image/error.png" width="200"/>
+                <div class="text-3xl m-3 point-font">마무리된 미팅이 없어요.</div>
+                <div class="text-xl">미팅을 녹음하고 요약본을 받아보세요</div>
+              </div>
+            </div>
           </v-card>
         </v-container>
       </v-main>
@@ -174,7 +214,6 @@ function GoSummaryDetail(info) {
   studyStore.studyAt = info.studyAt
   studyStore.meetingTopic = info.topic
   studyStore.meetingMembers = info.memberInfoDTOList
-  console.log(studyStore.studyAt)
   router.push({
     name: 'studySummaryDetail',
     params: { id: info.id, studyId: studyId }
@@ -188,14 +227,30 @@ function LoadSummaryList() {
       if (res.data.status == 200) {
         summaryList.value = res.data.data.meetingStudyDTOList
       }
-      console.log(res)
+      console.log(res.data.message)
     })
     .catch((err) => {
       console.log(err)
     })
 }
 
+function LoadStudyData() {
+  instance.get(`api/studies/${studyId}/settings`).then((res) => {
+    const data = res.data.data
+    if (res.data.status == 200) {
+      console.log(data)
+      studyStore.studyTitle = data.title
+      studyStore.studyDescription = data.description
+      studyStore.studyBackgroundImage = data.backgroundImage
+      studyStore.studyCategory = data.category
+      studyStore.studyMembers = data.members
+      studyStore.studyType = data.type
+    }
+  })
+}
+
 onMounted(() => {
+  LoadStudyData()
   LoadSummaryList()
 })
 </script>

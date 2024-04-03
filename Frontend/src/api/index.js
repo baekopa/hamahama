@@ -49,15 +49,19 @@ instance.interceptors.response.use(
   },
 
   async (error) => {
-    if (error.response?.status == 401) {
-      await tokenRefresh()
-      console.log('hi')
+    console.log(error)
+    const originalConfig = error.config
+    if (error.response?.status == 401 && originalConfig.retry) {
+      await instance.post('/reissue', { withCredentials: true })
+      console.log('reissue 끝 토큰세팅 시작')
+      const newAccessToken = document.cookie.match(/Authorization=([^;]+)/)
+      localStorage.setItem('accessToken', newAccessToken[1]) // 로컬 스토리지에 액세스 토큰 저장
+      document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
       const accessToken = localStorage.getItem('accessToken')
       error.config.headers = {
         Authorization: `Bearer ${accessToken}`
       }
-
-      const response = await instance.request(error.config)
+      const response = await instance.request(originalConfig)
       return response
     }
     return Promise.reject(error)
