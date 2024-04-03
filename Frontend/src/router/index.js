@@ -62,11 +62,14 @@ router.beforeEach((to, from, next) => {
   next()
 })
 // const authStore = useAuthStore()
+router.beforeEach((to, from, next) => {
+  const isLoginHAMAHAMA = sessionStorage.getItem('isLoginHAMAHAMA')
 
-// router.beforeEach((to, from) => {
-//   if (!authStore.isLogin && to.name !== 'login') {
-//     return { name: 'login' }
-//   }
-// })
+  if (!isLoginHAMAHAMA && !['login', 'auth', 'home'].includes(to.name)) {
+    next({ name: 'login' })
+  } else {
+    next()
+  }
+})
 
 export default router
