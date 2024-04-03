@@ -23,6 +23,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: ${JPA_HIBERNATE_DDL_AUTO}
+    open-in-view: false
 
   #새로운 oauth2.0
   security:
