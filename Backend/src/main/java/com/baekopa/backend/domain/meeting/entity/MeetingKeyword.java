@@ -36,12 +36,15 @@ public class MeetingKeyword extends BaseBy {
     }
 
     public static MeetingKeyword of(Meeting meeting, String keyword) {
-        MeetingKeyword meetingKeyword = builder().meeting(meeting)
+        return builder()
+                .meeting(meeting)
                 .keyword(keyword)
                 .status(IsolationEnum.DONE)
                 .build();
+    }
+
+    public void setMeetingKeyword(MeetingKeyword meetingKeyword) {
         meeting.getMeetingKeyword().add(meetingKeyword);
-        return meetingKeyword;
     }
 
     public void updateMeetingKeyword(String keyword) {

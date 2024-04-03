@@ -58,7 +58,9 @@ public class StudyMemberService {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, "올바르지 않은 studyId."));
 
+
         StudyMember studyMember = studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));
+        //studyMember.setStudyMember(study, member);
 
         emitterService.send(member, NotificationType.INVITE, study.getTitle() + " 스터디에 초대됐습니다.", studyMember.getId() + "");
     }
@@ -79,6 +81,7 @@ public class StudyMemberService {
 
         members.forEach(member -> {
             StudyMember studyMember = studyMemberRepository.save(StudyMember.createStudyMember(study, member, StudyMember.StudyMemberType.INVITATION));
+            //studyMember.setStudyMember(study, member);
 
             emitterService.send(member, NotificationType.INVITE, study.getTitle() + " 스터디에 초대됐습니다.", studyMember.getId() + "");
         });
