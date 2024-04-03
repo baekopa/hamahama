@@ -2,15 +2,17 @@
   <v-container>
     <v-layout style="max-height: 800px">
       <v-navigation-drawer style="width: 323px; height: 800px">
-        <p class="text-3xl text-center mt-10 point-font text-stone-900">{{ studyStore.studyType }}</p>
+        <p class="text-3xl text-center mt-10 point-font text-stone-900">
+          {{ studyStore.studyType }}
+        </p>
         <v-list lines="two" density="compact" nav>
           <v-list-item three-line>
             <v-list-item-content class="align-self-center">
-              <div class="ml-14 mt-10"
-                ><div class="text-xl font-bold block">
+              <div class="ml-14 mt-10">
+                <div class="text-xl font-bold block">
                   {{ studyStore.studyTitle }}
-                </div></div
-              >
+                </div>
+              </div>
               <v-list-item-subtitle class="ml-14 mt-1"
                 ><div class="text-base">
                   {{ studyStore.studyCategory }}
@@ -82,7 +84,9 @@
             </div>
             <div class="mr-40 mt-14">
               <div class="mr-5">
-                <v-chip @click="CreateRemindQuiz()" variant="elevated" color="#3FB1FA">리마인드 퀴즈 생성</v-chip>
+                <v-chip @click="CreateRemindQuiz()" variant="elevated" color="#3FB1FA"
+                  >리마인드 퀴즈 생성</v-chip
+                >
               </div>
 
               <button>
@@ -191,6 +195,7 @@
               <div class="keywords d-flex mt-5">
                 <v-chip-group>
                   <v-chip
+                    @click="SearchKeyword(keyword.keyword)"
                     class="mr-5"
                     size="x-large"
                     v-for="keyword in meetingContents.keyword"
@@ -336,7 +341,6 @@ import { useStudyStore } from '@/stores/study'
 import Swal from 'sweetalert2'
 import { useLoadStore } from '@/stores/load'
 import { useAuthStore } from '@/stores/auth'
-import { resolveDirective } from 'vue'
 
 const authStore = useAuthStore()
 const loadStore = useLoadStore()
@@ -389,8 +393,7 @@ const meetingContents = ref({
         writerImage: ''
       }
     ],
-    entireSummary:
-      '1. 대구 지역 한 대학병원 전공의 A씨의 발언에 대해 어떻게 생각하시나요?\n- 대구 지역 한 대학병원 전공의 A씨의 발언은 그의 의견이며, 그만의 이유와 배경이 있을 것으로 생각됩니다.\n\n2. 계명대학교 의과대학 신입생들의 행동에 동의하시나요?\n- 계명대학교 의과대학 신입생들의 행동에 대한 동의 여부는 각자의 판단에 따라 다를 수 있을 것으로 생각됩니다.\n\n3. 의료계와 정부의 출구 없는 갈등에 대해 어떤 해결책이 필요하다고 생각하시나요?\n- 의료계와 정부의 충돌을 해소하기 위해서는 상호 협의와 대화를 통한 해결책 모색이 필요하다고 생각됩니다.\n\n4. 대한의사협회 비상대책위원회의 주 40시간 준법 진료에 대한 반발 움직임에 대해 어떻게 생각하시나요?\n- 대한의사협회 비상대책위원회의 주 40시간 준법 진료에 대한 반발 움직임은 의료계 내부의 다양한 의견이 반영되고 있는 것으로 보입니다.\n\n5. 이번 의료계와 관련된 갈등 상황이 어떻게 발전될 것으로 예상하시나요?\n- 이번 의료계와 관련된 갈등 상황은 상황에 따라 다양한 변화가 있을 수 있으며, 현재는 예측하기 어려운 상황입니다.'
+    entireSummary: ''
   }
 })
 
@@ -477,6 +480,11 @@ async function CreateKeyword() {
       loadStore.isLoading = false
       console.log(err)
     })
+}
+
+function SearchKeyword(keyword) {
+  const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(keyword)}`
+  window.open(searchUrl, '_blank')
 }
 
 // 산출물 조회 (주제, 요약, 전문, 키워드 , 참여자는 추가예정)
