@@ -51,14 +51,14 @@ public class Member extends BaseTime implements UserDetails {
     @Column(name = "last_notification_event_id")
     private Long lastCheckedEventId;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StudyMember> studyMembers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Note> note = new ArrayList<>();
-
-    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Notification> notifications = new ArrayList<>();
+    //@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<StudyMember> studyMembers = new ArrayList<>();
+    //
+    //@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<Note> note = new ArrayList<>();
+    //
+    //@OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<Notification> notifications = new ArrayList<>();
 
     @Builder
     private Member(String name, String providerCode, String email, String image, String role, OAuthProvider provider, Long lastCheckedEventId) {

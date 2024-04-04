@@ -51,7 +51,7 @@ public class SubmittedNoteSummaryService {
         //// 요약 해야하는 제출된 노트 조회
         for (Meeting meeting : meetingList) {
 
-            List<SubmittedNote> submittedNoteList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
+            List<SubmittedNote> submittedNoteList = submittedNoteRepository.findByMeetingAndDeletedAtIsNull(meeting);
             List<String> summaryList = submittedNoteList.stream().map((submittedNote) -> submittedNote.getNote().getSummary()).toList();
 
             SubmittedNoteListDTO submittedNoteListDTO = SubmittedNoteListDTO.of(summaryList);

@@ -12,15 +12,23 @@ import java.util.List;
 
 public interface SubmittedNoteRepository extends JpaRepository<SubmittedNote, Long> {
 
+    List<SubmittedNote> findByNote(Note note);
+
+    List<SubmittedNote> findByMeeting(Meeting meeting);
+
     List<SubmittedNote> findByNoteAndDeletedAtIsNull(Note note);
 
-    boolean existsByNoteAndMeetingAndDeletedAtIsNull(Note existNote, Meeting existMeeting);
-
-    List<SubmittedNote> findAllByMeetingAndDeletedAtIsNull(Meeting meeting);
+    List<SubmittedNote> findByMeetingAndDeletedAtIsNull(Meeting meeting);
 
     boolean existsByNoteAndDeletedAtIsNull(Note note);
 
+    boolean existsByNoteAndMeetingAndDeletedAtIsNull(Note existNote, Meeting existMeeting);
+
     @Modifying
-    @Query(value = "DELETE FROM submitted_note WHERE MONTH(deleted_at) = :thresholdDate", nativeQuery = true)
+    @Query(value = "DELETE FROM submitted_note WHERE MONTH(deleted_at)  <= MONTH(:thresholdDate)", nativeQuery = true)
     int deleteSoftDeletedBeforeDate(Timestamp thresholdDate);
+
+    @Modifying
+    @Query(value = "UPDATE submitted_note SET note_id = null WHERE note_id = :noteId", nativeQuery = true)
+    void updateNoteIdToNull(Long noteId);
 }
