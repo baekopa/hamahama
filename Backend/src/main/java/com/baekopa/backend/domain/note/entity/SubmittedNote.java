@@ -47,14 +47,20 @@ public class SubmittedNote extends BaseBy {
                 .build();
     }
 
-    public void setSubmittedNote(SubmittedNote submittedNote) {
-        meeting.getSubmittedNotes().add(submittedNote);
-        note.getSubmittedNotes().add(submittedNote);
-    }
+    //public void setSubmittedNote(SubmittedNote submittedNote) {
+    //    meeting.getSubmittedNotes().add(submittedNote);
+    //    note.getSubmittedNotes().add(submittedNote);
+    //}
 
     public void updateDifferenceContent(String differenceContent) {
         this.differenceContent = differenceContent;
     }
 
+    public void updateNote(Note note) {
+        this.note = note;
+    }
 
+    public void updateMeeting(Meeting meeting) {
+        this.meeting = meeting;
+    }
 }

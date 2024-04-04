@@ -112,7 +112,7 @@ public class MemberService {
     public MyDashboardResponseDto getMyDashboard(Member member) {
 
         // 알림 목록 조회 ( 전체 )
-        List<NotificationResponseDto> notificationList = notificationRepository.findAllByReceiverAndDeletedAtIsNullOrderByCreatedAtDesc(member)
+        List<NotificationResponseDto> notificationList = notificationRepository.findByReceiverAndDeletedAtIsNullOrderByCreatedAtDesc(member)
                 .stream().map(NotificationResponseDto::of).toList();
 
         LocalDateTime weekStartDate = LocalDateTime.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
@@ -124,12 +124,12 @@ public class MemberService {
         log.info("이번주 시작일 : {} ~ 이번주 종료일 : {}", weekStartDate, weekEndDate);
 
         // 예정된 미팅 일정 조회
-        List<StudyMember> studyMemberList = studyMemberRepository.findAllByMemberAndDeletedAtIsNull(member);
+        List<StudyMember> studyMemberList = studyMemberRepository.findByMemberAndDeletedAtIsNull(member);
         List<StudyMeetingListDto> weekStudyList = new ArrayList<>();
 
         for (StudyMember st : studyMemberList) {
 
-            List<MeetingListDto> meetingList = meetingRepository.findAllByStudyAndDeletedAtIsNullAndStudyAtBetweenOrderByStudyAtAsc(st.getStudy(), weekStartDate, weekEndDate)
+            List<MeetingListDto> meetingList = meetingRepository.findByStudyAndDeletedAtIsNullAndStudyAtBetweenOrderByStudyAtAsc(st.getStudy(), weekStartDate, weekEndDate)
                     .stream().map(MeetingListDto::from).toList();
 
             if (meetingList.size() == 0) {
@@ -154,14 +154,14 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<StudyMeetingListDto> getStudyMeetings(Member member) {
 
-        List<StudyMember> studyMemberList = studyMemberRepository.findAllByMemberAndDeletedAtIsNull(member);
+        List<StudyMember> studyMemberList = studyMemberRepository.findByMemberAndDeletedAtIsNull(member);
 
         List<StudyMeetingListDto> responseList = new ArrayList<>();
 
         // 내가 속한 스터디의 일정 목록 조회
         for (StudyMember st : studyMemberList) {
 
-            List<MeetingListDto> meetingList = meetingRepository.findAllByStudyAndDeletedAtIsNull(st.getStudy())
+            List<MeetingListDto> meetingList = meetingRepository.findByStudyAndDeletedAtIsNull(st.getStudy())
                     .stream().map(this::convertToDto).toList();
 
             if (meetingList.size() == 0) {
@@ -186,7 +186,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<StudyListResponseDto> getMyStudies(Member member) {
 
-        List<StudyListResponseDto> allStudies = studyMemberRepository.findAllByMemberAndDeletedAtIsNull(member)
+        List<StudyListResponseDto> allStudies = studyMemberRepository.findByMemberAndDeletedAtIsNull(member)
                 .stream()
                 .map(this::convertToDto)
                 .toList();
@@ -228,7 +228,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<NoteListResponseDto> getMyNotes(Member member) {
 
-        return noteRepository.findAllByMemberAndDeletedAtIsNull(member).stream()
+        return noteRepository.findByMemberAndDeletedAtIsNull(member).stream()
                 .map(note -> NoteListResponseDto.of(note, submittedNoteRepository.existsByNoteAndDeletedAtIsNull(note))).toList();
     }
 
@@ -236,14 +236,14 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<RemindQuizListResponseDto> getMyRemindQuiz(Member member) {
 
-        List<StudyMember> studyMemberList = studyMemberRepository.findAllByMemberAndDeletedAtIsNull(member);
+        List<StudyMember> studyMemberList = studyMemberRepository.findByMemberAndDeletedAtIsNull(member);
 
         List<RemindQuizListResponseDto> responseDtoList = new ArrayList<>();
 
         // 내가 속한 스터디의 일정 목록 조회
         for (StudyMember st : studyMemberList) {
 
-            List<Meeting> meetingList = meetingRepository.findAllByStudyAndDeletedAtIsNull(st.getStudy());
+            List<Meeting> meetingList = meetingRepository.findByStudyAndDeletedAtIsNull(st.getStudy());
 
             for (Meeting meeting : meetingList) {
 
@@ -307,6 +307,6 @@ public class MemberService {
 
         List<Long> studies = studyMemberRepository.findStudyAllByMemberAndTypeIsNot(member, StudyMember.StudyMemberType.INVITATION, StudyType.GROUP).stream().map(Study::getId).toList();
 
-        return meetingRepository.findAllStudyOrderByMeeting(studies, PageRequest.of(0, n));
+        return meetingRepository.findStudyOrderByMeeting(studies, PageRequest.of(0, n));
     }
 }

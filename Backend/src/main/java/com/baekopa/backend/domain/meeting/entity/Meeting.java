@@ -41,20 +41,20 @@ public class Meeting extends BaseBy {
     @JoinColumn(name = "study_id", nullable = false)
     private Study study;
 
-    @OneToMany(mappedBy = "meeting")
-    private List<SubmittedNote> submittedNotes = new ArrayList<>();
-
-    @OneToOne(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
-    private RemindQuiz remindQuiz;
-
-    @OneToOne(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
-    private MeetingScript meetingScript;
-
-    @OneToOne(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
-    private MeetingSummary meetingSummary;
-
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MeetingKeyword> meetingKeyword = new ArrayList<>();
+    //@OneToMany(mappedBy = "meeting")
+    //private List<SubmittedNote> submittedNotes = new ArrayList<>();
+    //
+    //@OneToOne(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private RemindQuiz remindQuiz;
+    //
+    //@OneToOne(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private MeetingScript meetingScript;
+    //
+    //@OneToOne(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private MeetingSummary meetingSummary;
+    //
+    //@OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<MeetingKeyword> meetingKeyword = new ArrayList<>();
 
     @Builder
     private Meeting(String topic, LocalDateTime studyAt, String recordFile, Study study) {
@@ -72,9 +72,9 @@ public class Meeting extends BaseBy {
                 .build();
     }
 
-    public void setMeeting(Meeting meeting) {
-        study.getMeeting().add(meeting);
-    }
+    //public void setMeeting(Meeting meeting) {
+    //    study.getMeeting().add(meeting);
+    //}
 
     public void updateTopic(String topic) {
         this.topic = topic;

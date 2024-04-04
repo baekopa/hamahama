@@ -53,10 +53,10 @@ public class StudyMember extends BaseBy {
                 .build();
     }
 
-    public void setStudyMember(Study study, Member member) {
-        member.getStudyMembers().add(this);
-        study.getStudyMembers().add(this);
-    }
+    //public void setStudyMember(Study study, Member member) {
+    //    member.getStudyMembers().add(this);
+    //    study.getStudyMembers().add(this);
+    //}
 
     // 스터디원 타입 수정
     public void updateStudyMemberType(StudyMemberType type) {

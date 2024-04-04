@@ -61,9 +61,9 @@ public class Notification extends BaseBy {
                 .build();
     }
 
-    public void setNotification(Notification notification) {
-        receiver.getNotifications().add(notification);
-    }
+    //public void setNotification(Notification notification) {
+    //    receiver.getNotifications().add(notification);
+    //}
 
     public void updateIsChecked(boolean isChecked) {
         this.isChecked = isChecked;

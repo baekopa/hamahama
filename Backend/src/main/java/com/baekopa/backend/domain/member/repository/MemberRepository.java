@@ -10,13 +10,17 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
-    Optional<Member> findByProviderCodeAndDeletedAtIsNull(String providerCode);
 
     Optional<Member> findByIdAndDeletedAtIsNull(Long id);
 
-    List<Member> findAllByEmailContainsAndDeletedAtIsNull(String query);
+    Optional<Member> findByProviderCodeAndDeletedAtIsNull(String providerCode);
+
+    List<Member> findByEmailContainsAndDeletedAtIsNull(String query);
+
+    @Query(value = "SELECT * FROM member WHERE MONTH(deleted_at) <= MONTH(:thresholdDate)", nativeQuery = true)
+    List<Member> findSoftDeletedBeforeDate(Timestamp thresholdDate);
 
     @Modifying
-    @Query(value = "DELETE FROM member WHERE MONTH(deleted_at) = :thresholdDate", nativeQuery = true)
+    @Query(value = "DELETE FROM member WHERE MONTH(deleted_at)  <= MONTH(:thresholdDate)", nativeQuery = true)
     int deleteSoftDeletedBeforeDate(Timestamp thresholdDate);
 }
