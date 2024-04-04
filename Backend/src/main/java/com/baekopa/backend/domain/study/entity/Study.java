@@ -56,11 +56,11 @@ public class Study extends BaseBy {
     @Column(name = "end_time")
     private LocalTime endTime;
 
-    @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
-    private List<StudyMember> studyMembers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Meeting> meeting = new ArrayList<>();
+    //@OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
+    //private List<StudyMember> studyMembers = new ArrayList<>();
+    //
+    //@OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<Meeting> meeting = new ArrayList<>();
 
     @Builder
     private Study(StudyType type, String title, String description, String backgroundImage, String category, LocalDate startDate, LocalDate endDate, String day, LocalTime startTime, LocalTime endTime) {

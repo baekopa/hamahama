@@ -18,6 +18,10 @@ public interface MeetingKeywordRepository extends JpaRepository<MeetingKeyword, 
     List<MeetingKeyword> findAllByMeetingAndDeletedAtIsNull(Meeting meeting);
 
     @Modifying
-    @Query(value = "DELETE FROM meeting_keyword WHERE MONTH(deleted_at) = :thresholdDate", nativeQuery = true)
+    @Query(value = "DELETE FROM meeting_keyword WHERE MONTH(deleted_at)  <= MONTH(:thresholdDate)", nativeQuery = true)
     int deleteSoftDeletedBeforeDate(Timestamp thresholdDate);
+
+    @Modifying
+    @Query(value = "DELETE FROM meeting_keyword WHERE meeting_id = :meetingId", nativeQuery = true)
+    int deleteByMeeting(Long meetingId);
 }
