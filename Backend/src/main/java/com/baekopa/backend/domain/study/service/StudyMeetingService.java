@@ -51,7 +51,7 @@ public class StudyMeetingService {
         Meeting meeting = meetingRepository.save(Meeting.of(requestDto.getTopic(), requestDto.getStudyAt(), study));
         //meeting.setMeeting(meeting);
 
-        List<Member> memberList = studyMemberRepository.findAllByStudyAndDeletedAtIsNull(study).stream()
+        List<Member> memberList = studyMemberRepository.findByStudyAndDeletedAtIsNull(study).stream()
                 .map((o) -> o.getMember()).toList();
         for (Member member : memberList) {
             emitterService.send(member, NotificationType.SCHEDULE, study.getTitle() + "의 새로운 미팅 일정이 있습니다.", studyId + "");
@@ -68,7 +68,7 @@ public class StudyMeetingService {
 
         LocalDateTime current = LocalDateTime.now();
 
-        return meetingRepository.findAllByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(study, current)
+        return meetingRepository.findByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(study, current)
                 .stream().map(this::convertToDto).toList();
 
     }
@@ -88,7 +88,7 @@ public class StudyMeetingService {
             return null;
         }
 
-        List<SubmittedNoteDto> submittedNoteDtoList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
+        List<SubmittedNoteDto> submittedNoteDtoList = submittedNoteRepository.findByMeetingAndDeletedAtIsNull(meeting)
                 .stream().map(SubmittedNoteDto::of).toList();
 
         return StudyMeetingResponseDto.of(meeting, submittedNoteDtoList);

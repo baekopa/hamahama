@@ -26,7 +26,7 @@ public class NotificationService {
         member.updateLastNotificationEventId();
 
         return NotificationListResponseDto.from(
-                notificationRepository.findAllByReceiverAndIsCheckedIsFalseAndDeletedAtIsNullOrderByCreatedAtDesc(member).stream()
+                notificationRepository.findByReceiverAndIsCheckedIsFalseAndDeletedAtIsNullOrderByCreatedAtDesc(member).stream()
                         .map(NotificationResponseDto::of).toList()
         );
     }

@@ -14,11 +14,16 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
 
     Optional<Note> findByIdAndDeletedAtIsNull(Long noteId);
 
-    List<Note> findAllByMemberAndDeletedAtIsNull(Member member);
+    List<Note> findByMember(Member member);
+
+    List<Note> findByMemberAndDeletedAtIsNull(Member member);
 
     List<Note> findTop5ByMemberAndDeletedAtIsNullOrderByModifiedAtDesc(Member member);
 
+    @Query(value = "SELECT * FROM note WHERE MONTH(deleted_at) <= MONTH(:thresholdDate)", nativeQuery = true)
+    List<Note> findSoftDeletedBeforeDate(Timestamp thresholdDate);
+
     @Modifying
-    @Query(value = "DELETE FROM note WHERE MONTH(deleted_at) = :thresholdDate", nativeQuery = true)
+    @Query(value = "DELETE FROM note WHERE MONTH(deleted_at) <= MONTH(:thresholdDate)", nativeQuery = true)
     int deleteSoftDeletedBeforeDate(Timestamp thresholdDate);
 }

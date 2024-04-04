@@ -11,9 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RemindQuizRepository extends JpaRepository<RemindQuiz, Long> {
-    Optional<RemindQuiz> findByMeetingAndDeletedAtIsNull(Meeting meeting);
 
     Optional<RemindQuiz> findByIdAndDeletedAtIsNull(Long remindQuizId);
+
+    Optional<RemindQuiz> findByMeetingAndDeletedAtIsNull(Meeting meeting);
 
     boolean existsByMeetingAndDeletedAtIsNull(Meeting meeting);
 
@@ -21,6 +22,10 @@ public interface RemindQuizRepository extends JpaRepository<RemindQuiz, Long> {
     List<RemindQuiz> findUpcomingRemindQuizzes();
 
     @Modifying
-    @Query(value = "DELETE FROM remind_quiz WHERE MONTH(deleted_at) = :thresholdDate", nativeQuery = true)
+    @Query(value = "DELETE FROM remind_quiz WHERE MONTH(deleted_at)  <= MONTH(:thresholdDate)", nativeQuery = true)
     int deleteSoftDeletedBeforeDate(Timestamp thresholdDate);
+
+    @Modifying
+    @Query(value = "DELETE FROM remind_quiz WHERE meeting_id = :meetingId", nativeQuery = true)
+    int deleteByMeeting(Long meetingId);
 }

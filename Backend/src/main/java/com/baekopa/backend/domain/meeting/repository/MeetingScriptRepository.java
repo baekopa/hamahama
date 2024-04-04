@@ -12,9 +12,14 @@ import java.util.Optional;
 public interface MeetingScriptRepository extends JpaRepository<MeetingScript, Long> {
 
     Optional<MeetingScript> findByIdAndDeletedAtIsNull(Long aLong);
+
     Optional<MeetingScript> findByMeetingAndDeletedAtIsNull(Meeting meeting);
 
     @Modifying
-    @Query(value = "DELETE FROM meeting_script WHERE MONTH(deleted_at) = :thresholdDate", nativeQuery = true)
+    @Query(value = "DELETE FROM meeting_script WHERE MONTH(deleted_at)  <= MONTH(:thresholdDate)", nativeQuery = true)
     int deleteSoftDeletedBeforeDate(Timestamp thresholdDate);
+
+    @Modifying
+    @Query(value = "DELETE FROM meeting_script WHERE meeting_id = :meetingId", nativeQuery = true)
+    int deleteByMeeting(Long meetingId);
 }
