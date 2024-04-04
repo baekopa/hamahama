@@ -15,17 +15,17 @@ import java.util.Optional;
 
 public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> {
 
-    List<StudyMember> findAllByStudyAndDeletedAtIsNull(Study study);
-
-    List<StudyMember> findMemberAndTypeAllByStudyIdAndDeletedAtIsNull(Long studyId);
-
     Optional<StudyMember> findByIdAndDeletedAtIsNull(Long id);
-
-    Optional<StudyMember> findByStudyAndMemberAndTypeAndDeletedAtIsNull(Study study, Member member, StudyMember.StudyMemberType type);
 
     Optional<StudyMember> findByStudyIdAndMemberIdAndDeletedAtIsNull(Long studyId, Long memberId);
 
-    List<StudyMember> findAllByMemberAndDeletedAtIsNull(Member member);
+    Optional<StudyMember> findByStudyAndMemberAndTypeAndDeletedAtIsNull(Study study, Member member, StudyMember.StudyMemberType type);
+
+    List<StudyMember> findByStudyAndDeletedAtIsNull(Study study);
+
+    List<StudyMember> findByMemberAndDeletedAtIsNull(Member member);
+
+    List<StudyMember> findMemberAndTypeAllByStudyIdAndDeletedAtIsNull(Long studyId);
 
     @Query("SELECT sm.study FROM StudyMember sm WHERE sm.member = :member AND sm.type <> :type AND sm.study.type = :studyType AND sm.study.deletedAt is null")
     List<Study> findStudyAllByMemberAndTypeIsNot(@Param(value = "member") Member member, @Param(value = "type") StudyMember.StudyMemberType type, @Param("studyType") StudyType studyType);
@@ -37,7 +37,15 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
     Optional<StudyMember> findStudyMemberNotInvitation(@Param(value = "member") Member member, @Param(value="study") Study study, @Param(value = "type") StudyMember.StudyMemberType type);
     
     @Modifying
-    @Query(value = "DELETE FROM study_member WHERE MONTH(deleted_at) = :thresholdDate", nativeQuery = true)
+    @Query(value = "DELETE FROM study_member WHERE MONTH(deleted_at)  <= MONTH(:thresholdDate)", nativeQuery = true)
     int deleteSoftDeletedBeforeDate(Timestamp thresholdDate);
+
+    @Modifying
+    @Query(value = "DELETE FROM study_member WHERE study_id = :studyId", nativeQuery = true)
+    int deleteByStudy(Long studyId);
+
+    @Modifying
+    @Query(value = "DELETE FROM study_member WHERE member_id = :memberId", nativeQuery = true)
+    int deleteByMember(Long memberId);
 }
 

@@ -63,7 +63,7 @@ public class MeetingService {
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
 
-        List<Meeting> meetingList = meetingRepository.findAllByStudyAndDeletedAtIsNullAndRecordFileIsNotNullOrderByStudyAtDesc(study);
+        List<Meeting> meetingList = meetingRepository.findByStudyAndDeletedAtIsNullAndRecordFileIsNotNullOrderByStudyAtDesc(study);
         List<MeetingStudyDTO> meetingStudyDTOList = new ArrayList<>();
         List<MeetingKeywordDTO> meetingKeywordDTOList = new ArrayList<>();
         List<MeetingMemberInfoDTO> meetingMemberInfoDTOList = new ArrayList<>();
@@ -78,7 +78,7 @@ public class MeetingService {
             }
 
             // 미팅 참여자
-            List<SubmittedNote> submittedNoteList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
+            List<SubmittedNote> submittedNoteList = submittedNoteRepository.findByMeetingAndDeletedAtIsNull(meeting);
             List<Note> noteList = new ArrayList<>();
             for (SubmittedNote submittedNote : submittedNoteList) {
                 noteList.add(submittedNote.getNote());
@@ -112,14 +112,14 @@ public class MeetingService {
         }
 
         //제출된 개인 요약, 전체 요약 조회
-        List<SubmittedNoteDto> submittedNoteDtoList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
+        List<SubmittedNoteDto> submittedNoteDtoList = submittedNoteRepository.findByMeetingAndDeletedAtIsNull(meeting)
                 .stream().map(SubmittedNoteDto::of).toList();
 
         MeetingSubmittedNoteResponseDto submittedNoteSummary = MeetingSubmittedNoteResponseDto.of(submittedNoteDtoList, meeting.getNoteSummary());
 
 
         // 미팅 참여자
-        List<SubmittedNote> submittedNoteList = submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting);
+        List<SubmittedNote> submittedNoteList = submittedNoteRepository.findByMeetingAndDeletedAtIsNull(meeting);
         List<Note> noteList = new ArrayList<>();
         for (SubmittedNote submittedNote : submittedNoteList) {
             noteList.add(submittedNote.getNote());
@@ -313,7 +313,7 @@ public class MeetingService {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
-        List<Member> memberList = studyMemberRepository.findAllByStudyAndDeletedAtIsNull(study).stream()
+        List<Member> memberList = studyMemberRepository.findByStudyAndDeletedAtIsNull(study).stream()
                 .map((o) -> o.getMember()).toList();
         for (Member member : memberList) {
             emitterService.send(member, NotificationType.KEYWORD, study.getTitle() + " " + meeting.getTopic() + "의 키워드 생성이 완료되었습니다.", studyId + "/" + meetingId);
@@ -365,7 +365,7 @@ public class MeetingService {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
 
-        return submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
+        return submittedNoteRepository.findByMeetingAndDeletedAtIsNull(meeting)
                 .stream()
                 .map((o) -> o.getNote().getMember()).collect(Collectors.toList());
     }
@@ -378,7 +378,7 @@ public class MeetingService {
 
         // 조회된 미팅에 대한 처리
         for (Meeting meeting : upcomingMeetings) {
-            List<Member> memberList = studyMemberRepository.findAllByStudyAndDeletedAtIsNull(meeting.getStudy()).stream()
+            List<Member> memberList = studyMemberRepository.findByStudyAndDeletedAtIsNull(meeting.getStudy()).stream()
                     .map((o) -> (o.getMember())).toList();
 
             String message = "'" + meeting.getStudy().getTitle() + "' 미팅 일정이 있습니다.";

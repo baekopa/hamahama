@@ -16,17 +16,23 @@ import java.util.Optional;
 
 public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
-    List<Meeting> findAllByStudyAndDeletedAtIsNull(Study study);
-
     Optional<Meeting> findByIdAndDeletedAtIsNull(Long meetingId);
 
-    List<Meeting> findAllByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(Study study, LocalDateTime current);
+    Optional<Meeting> findTopByStudyAndDeletedAtIsNullAndStudyAtLessThanEqualOrderByStudyAtDesc(Study study, LocalDateTime currentDate);
 
     Optional<Meeting> findTopByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(Study study, LocalDateTime currentDate);
 
     Optional<Meeting> findTopByStudyAndDeletedAtIsNullAndRecordFileIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(Study study, LocalDateTime currentDate);
 
-    Optional<Meeting> findTopByStudyAndDeletedAtIsNullAndStudyAtLessThanEqualOrderByStudyAtDesc(Study study, LocalDateTime currentDate);
+    List<Meeting> findByStudy(Study study);
+
+    List<Meeting> findByStudyAndDeletedAtIsNull(Study study);
+
+    List<Meeting> findByStudyAndDeletedAtIsNullAndStudyAtBetweenOrderByStudyAtAsc(Study study, LocalDateTime startDate, LocalDateTime endDate);
+
+    List<Meeting> findByStudyAndDeletedAtIsNullAndRecordFileIsNotNullOrderByStudyAtDesc(Study study);
+
+    List<Meeting> findByStudyAndDeletedAtIsNullAndStudyAtGreaterThanEqualOrderByStudyAtAsc(Study study, LocalDateTime current);
 
     @Query(value = "SELECT * FROM Meeting WHERE abs(TIMESTAMPDIFF(MINUTE, study_at, now())) <= 30 AND deleted_at is NULL AND study_at >= now() AND note_summary is NULL", nativeQuery = true)
     List<Meeting> findUpcomingMeetings();
@@ -37,16 +43,15 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
             "MAX(CASE WHEN study_at < NOW() THEN study_at ELSE  null END) AS past_meeting FROM meeting m GROUP BY study_id) m " +
             "ON s.study_id = m.study_id WHERE s.study_id in :studies ORDER BY NOW() - m.future_meeting DESC, " +
             "m.past_meeting - NOW() DESC; ", nativeQuery = true)
-    List<NearMeetingStudyDto> findAllStudyOrderByMeeting(@Param("studies") List<Long> studies, Pageable pageable);
-
-    List<Meeting> findAllByStudyAndDeletedAtIsNullAndRecordFileIsNotNullOrderByStudyAtDesc(Study study);
-
-    List<Meeting> findAllByStudyAndDeletedAtIsNullAndStudyAtBetweenOrderByStudyAtAsc(Study study, LocalDateTime startDate, LocalDateTime endDate);
+    List<NearMeetingStudyDto> findStudyOrderByMeeting(@Param("studies") List<Long> studies, Pageable pageable);
 
     @Query(value = "SELECT * FROM Meeting WHERE abs(DATEDIFF(study_at, now())) <= 1 AND deleted_at is NULL", nativeQuery = true)
     List<Meeting> findTomorrowMeetings();
 
+    @Query(value = "SELECT * FROM meeting WHERE MONTH(deleted_at) <= MONTH(:thresholdDate)", nativeQuery = true)
+    List<Meeting> findSoftDeletedBeforeDate(Timestamp thresholdDate);
+
     @Modifying
-    @Query(value = "DELETE FROM meeting WHERE MONTH(deleted_at) = :thresholdDate", nativeQuery = true)
+    @Query(value = "DELETE FROM meeting WHERE MONTH(deleted_at)  <= MONTH(:thresholdDate)", nativeQuery = true)
     int deleteSoftDeletedBeforeDate(Timestamp thresholdDate);
 }

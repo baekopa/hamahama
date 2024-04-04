@@ -90,7 +90,7 @@ public class MeetingDifferenceService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEETING_NOT_FOUND, ErrorCode.MEETING_NOT_FOUND.getMessage()));
 
         // Member와 Meeting을 기준으로 SubmittedNote 조회
-        return submittedNoteRepository.findAllByMeetingAndDeletedAtIsNull(meeting)
+        return submittedNoteRepository.findByMeetingAndDeletedAtIsNull(meeting)
                 .stream()
                 .filter(submittedNote -> submittedNote.getNote().getMember().getId() == member.getId())
                 .findFirst()
