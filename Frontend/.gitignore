@@ -28,3 +28,9 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+
+### dotenv ###
+.env
+.env.development
+.env.production
