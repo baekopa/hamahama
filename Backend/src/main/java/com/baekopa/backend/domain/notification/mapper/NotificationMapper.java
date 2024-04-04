@@ -12,5 +12,4 @@ public interface NotificationMapper {
 
     NotificationResponseDto notificationToNotificationResponseDto(Notification notification);
 
-
 }

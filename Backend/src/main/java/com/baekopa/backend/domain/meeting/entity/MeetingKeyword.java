@@ -43,9 +43,9 @@ public class MeetingKeyword extends BaseBy {
                 .build();
     }
 
-    public void setMeetingKeyword(MeetingKeyword meetingKeyword) {
-        meeting.getMeetingKeyword().add(meetingKeyword);
-    }
+    //public void setMeetingKeyword(MeetingKeyword meetingKeyword) {
+    //    meeting.getMeetingKeyword().add(meetingKeyword);
+    //}
 
     public void updateMeetingKeyword(String keyword) {
         this.keyword = keyword;

@@ -12,13 +12,17 @@ import java.util.Optional;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    List<Notification> findAllByReceiverAndIsCheckedIsFalseAndDeletedAtIsNullOrderByCreatedAtDesc(Member receiver);
-
     Optional<Notification> findByIdAndReceiverAndDeletedAtIsNull(Long id, Member receiver);
 
-    List<Notification> findAllByReceiverAndDeletedAtIsNullOrderByCreatedAtDesc(Member member);
+    List<Notification> findByReceiverAndDeletedAtIsNullOrderByCreatedAtDesc(Member member);
+
+    List<Notification> findByReceiverAndIsCheckedIsFalseAndDeletedAtIsNullOrderByCreatedAtDesc(Member receiver);
 
     @Modifying
-    @Query(value = "DELETE FROM notification WHERE MONTH(deleted_at) = :thresholdDate", nativeQuery = true)
+    @Query(value = "DELETE FROM notification WHERE MONTH(deleted_at)  <= MONTH(:thresholdDate)", nativeQuery = true)
     int deleteSoftDeletedBeforeDate(Timestamp thresholdDate);
+
+    @Modifying
+    @Query(value = "DELETE FROM notification WHERE member_id = :memberId", nativeQuery = true)
+    int deleteByReceiver(Long memberId);
 }

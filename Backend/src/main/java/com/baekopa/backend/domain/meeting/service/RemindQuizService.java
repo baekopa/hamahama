@@ -107,7 +107,7 @@ public class RemindQuizService {
 
         // db 저장
         RemindQuizDTO remindQuizDTO = RemindQuizDTO.of(meetingRemindQuizResponseDTO.getQuiz());
-        //remindQuizRepository.save(RemindQuiz.from(meeting, remindQuizDTO));
+        remindQuizRepository.save(RemindQuiz.from(meeting, remindQuizDTO));
         remindQuiz.updateRemindQuiz(remindQuizDTO.getQuiz());
 
         return meetingRemindQuizResponseDTO;
@@ -153,7 +153,7 @@ public class RemindQuizService {
     public List<RemindQuizListResponseDto> getStudyRemindQuiz(Long studyId) {
 
         Study study = studyRepository.findByIdAndDeletedAtIsNull(studyId).orElseThrow(() -> new BusinessException(ErrorCode.STUDY_NOT_EXIST, ErrorCode.STUDY_NOT_EXIST.getMessage()));
-        List<Meeting> meetingList = meetingRepository.findAllByStudyAndDeletedAtIsNullAndRecordFileIsNotNullOrderByStudyAtDesc(study);
+        List<Meeting> meetingList = meetingRepository.findByStudyAndDeletedAtIsNullAndRecordFileIsNotNullOrderByStudyAtDesc(study);
 
         List<RemindQuizListResponseDto> response = new ArrayList<>();
 
@@ -200,7 +200,7 @@ public class RemindQuizService {
 
             Meeting meeting = remindQuiz.getMeeting();
 
-            List<Member> memberList = studyMemberRepository.findAllByStudyAndDeletedAtIsNull(meeting.getStudy()).stream()
+            List<Member> memberList = studyMemberRepository.findByStudyAndDeletedAtIsNull(meeting.getStudy()).stream()
                     .map((o) -> (o.getMember())).toList();
 
             String message = "'" + meeting.getStudy().getTitle() + "' '" + meeting.getTopic() + "' 리마인드 퀴즈 생성이 완료되었습니다.";

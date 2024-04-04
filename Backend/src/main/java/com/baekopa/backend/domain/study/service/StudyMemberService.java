@@ -32,7 +32,7 @@ public class StudyMemberService {
     // 전체 멤버(사용자) 리스트 조회
     @Transactional(readOnly = true)
     public List<StudyMemberDto> getStudyMembers(Study study) {
-        return studyMemberRepository.findAllByStudyAndDeletedAtIsNull(study).stream().map((sm) -> StudyMemberDto.of(sm.getMember(), sm.getType())).toList();
+        return studyMemberRepository.findByStudyAndDeletedAtIsNull(study).stream().map((sm) -> StudyMemberDto.of(sm.getMember(), sm.getType())).toList();
     }
 
     @Transactional(readOnly = true)
@@ -44,7 +44,7 @@ public class StudyMemberService {
     @Transactional(readOnly = true)
     public List<MemberResponseDto> searchMembers(String query) {
 
-        return memberRepository.findAllByEmailContainsAndDeletedAtIsNull(query).stream().map(MemberResponseDto::from).toList();
+        return memberRepository.findByEmailContainsAndDeletedAtIsNull(query).stream().map(MemberResponseDto::from).toList();
     }
 
     // 스터디 멤버 초대 - 한 명
@@ -99,7 +99,7 @@ public class StudyMemberService {
 
         studyMember.updateStudyMemberType(StudyMember.StudyMemberType.STUDY_MEMBER);
 
-        List<Member> memberList = studyMemberRepository.findAllByStudyAndDeletedAtIsNull(studyMember.getStudy()).stream()
+        List<Member> memberList = studyMemberRepository.findByStudyAndDeletedAtIsNull(studyMember.getStudy()).stream()
                 .map((o) -> o.getMember()).toList();
         for (Member member : memberList) {
             emitterService.send(member, NotificationType.ENTER, member.getName() + "님이 " + studyMember.getStudy().getTitle() + " 스터디에 참가했습니다.", studyMember.getStudy().getId() + "");
