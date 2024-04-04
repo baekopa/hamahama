@@ -585,24 +585,21 @@ function CreateRemindQuiz() {
     })
 }
 
-// 전문 요약 생성
 async function CreateMeetingSummary() {
   loadStore.isLoading = true
-  await instance
-    .post(`api/studies/${studyId}/meetings/${meetingId}/summary`)
-    .then((res) => {
-      console.log(res.data.message)
-      if (res.data.status === 201) {
-        LoadAll()
-        loadStore.isLoading = false
-      } else {
-        loadStore.isLoading = false
-      }
+  try {
+    const response = await instance.post(`api/studies/${studyId}/meetings/${meetingId}/summary`, {
+      timeout: 100000 // 100 seconds timeout
     })
-    .catch((err) => {
-      loadStore.isLoading = false
-      console.log(err)
-    })
+    console.log(response.data.message)
+    if (response.data.status === 201) {
+      LoadAll()
+    }
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loadStore.isLoading = false
+  }
 }
 
 // 차이점 조회
