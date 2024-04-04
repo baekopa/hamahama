@@ -5,6 +5,7 @@ import com.baekopa.backend.domain.notification.dto.response.NotificationResponse
 import com.baekopa.backend.domain.notification.entity.Notification;
 import com.baekopa.backend.domain.notification.entity.NotificationStatus;
 import com.baekopa.backend.domain.notification.entity.NotificationType;
+import com.baekopa.backend.domain.notification.mapper.NotificationMapper;
 import com.baekopa.backend.domain.notification.repository.EmitterRepository;
 import com.baekopa.backend.domain.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -69,7 +70,8 @@ public class EmitterService {
         //notification.setNotification(notification);
 
         // cache에 event 저장
-        NotificationResponseDto responseDto = NotificationResponseDto.of(notification);
+        //NotificationResponseDto responseDto = NotificationResponseDto.of(notification);
+        NotificationResponseDto responseDto = NotificationMapper.INSTANCE.notificationToNotificationResponseDto(notification);
         emitterRepository.saveEvent(eventId, responseDto);
 
         // 수신자 event 전송
