@@ -37,7 +37,6 @@ async function TokenRefresh() {
         document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
         sessionStorage.setItem('isLoginHAMAHAMA', true)
       } else {
-        authStore.isLogin = false
         localStorage.clear()
         sessionStorage.clear()
       }
@@ -60,7 +59,7 @@ instance.interceptors.response.use(
       response: { status }
     } = error
 
-    if (status === 401 && !config._retry) {
+    if (status === 401 && !config._retry && config.url != '/reissue') {
       config._retry = true
       try {
         const reissue = await TokenRefresh()
@@ -74,6 +73,7 @@ instance.interceptors.response.use(
     } else if (status === 404) {
       router.push({ name: 'notFound' })
     }
+    console.log('akfjadkljfaljflk')
     return Promise.reject(error)
   }
 )
