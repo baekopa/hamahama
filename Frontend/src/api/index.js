@@ -52,8 +52,9 @@ instance.interceptors.response.use(
     console.log(error)
     const originalConfig = error.config
     if (error.response?.status == 401 && originalConfig.retry) {
-      await instance.post('/reissue', { withCredentials: true })
+      const reissue = await instance.post('/reissue', { withCredentials: true })
       console.log('reissue 끝 토큰세팅 시작')
+      console.log(reissue)
       const newAccessToken = document.cookie.match(/Authorization=([^;]+)/)
       localStorage.setItem('accessToken', newAccessToken[1]) // 로컬 스토리지에 액세스 토큰 저장
       document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
