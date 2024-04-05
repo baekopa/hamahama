@@ -16,6 +16,7 @@ function GetMyInfo() {
     .get(`api/members/me`)
     .then((res) => {
       if (res.data.status == 200) {
+        console.log(res.data.message)
         const userInfo = res.data.data
         authStore.userName = userInfo.name
         authStore.userImgUrl = userInfo.image_url
@@ -27,10 +28,14 @@ function GetMyInfo() {
       router.push({ name: 'login' })
     })
 }
-
-onMounted(() => {
-  GetMyInfo()
+router.beforeEach((to, from, next) => {
+  if (to.name !== 'home' && to.name !== 'login' && to.name !== 'auth') {
+    GetMyInfo()
+  }
+  next()
 })
+
+onMounted(() => {})
 </script>
 
 <template>
