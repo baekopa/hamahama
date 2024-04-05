@@ -30,7 +30,6 @@ async function TokenRefresh() {
     try {
       console.log('reissue보냄')
       const response = await instance.post('/reissue')
-      console.log('res_data', response.data)
       console.log('res', response)
       const newAccessToken = document.cookie.match(/Authorization=([^;]+)/) // 새로운 액세스 토큰
       if (newAccessToken) {
@@ -56,12 +55,26 @@ instance.interceptors.response.use(
   },
   async (error) => {
     console.log(error)
-    const { config, response } = error
+    const {
+      config,
+      response: { status }
+    } = error
 
-    const reissue = await TokenRefresh()
-    console.log(reissue)
-
-    return instance(config)
+    if (status === 401 && config._retry) {
+      config._retry = true
+      try {
+        const reissue = await TokenRefresh()
+        console.log(reissue)
+        config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
+        return instance(config)
+      } catch (error) {
+        router.push({ name: 'login' })
+        return Promise.reject(error)
+      }
+    } else if (status === 404) {
+      router.push({ name: 'notFound' })
+    }
+    return Promise.reject(error)
   }
 )
 
