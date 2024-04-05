@@ -50,8 +50,7 @@ instance.interceptors.response.use(
 
   async (error) => {
     console.log(error)
-    const originalConfig = error.config
-    if (error.response?.status == 401 && originalConfig.retry) {
+    if (error.response?.status == 401) {
       const reissue = await instance.post('/reissue', { withCredentials: true })
       console.log('reissue 끝 토큰세팅 시작')
       console.log(reissue)
