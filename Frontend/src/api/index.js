@@ -38,8 +38,8 @@ async function TokenRefresh() {
         sessionStorage.setItem('isLoginHAMAHAMA', true)
       } else {
         authStore.isLogin = false
-        localStorage.clear
-        sessionStorage.clear
+        localStorage.clear()
+        sessionStorage.clear()
       }
     } catch (error) {
       router.push({ name: 'login' }) // 토큰 갱신에 실패한 경우 로그인 페이지로 이동
@@ -60,7 +60,7 @@ instance.interceptors.response.use(
       response: { status }
     } = error
 
-    if (status === 401 && config._retry) {
+    if (status === 401 && !config._retry) {
       config._retry = true
       try {
         const reissue = await TokenRefresh()
