@@ -2,6 +2,7 @@ package com.baekopa.backend.domain.notification.entity;
 
 import com.baekopa.backend.domain.member.entity.Member;
 import com.baekopa.backend.global.entity.BaseBy;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -22,6 +23,7 @@ public class Notification extends BaseBy {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
+    @JsonIgnore
     private Member receiver;
 
     @Enumerated(EnumType.STRING)
