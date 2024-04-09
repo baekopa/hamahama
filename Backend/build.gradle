@@ -21,8 +21,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // db
-    // runtimeOnly 'com.mysql:mysql-connector-j'
-    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+     runtimeOnly 'com.mysql:mysql-connector-j'
+//    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
     // jpa + lombok
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -35,6 +35,9 @@ dependencies {
     // mapstruct (!! lombok보다 뒤에 선언되야 하므로 임의로 순서 변경 금지)
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+    // modelMapper for test
+    implementation 'org.modelmapper:modelmapper:3.0.0'
 
     // s3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
@@ -50,6 +53,9 @@ dependencies {
 
     // oauth2 client
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // mockito
+    testImplementation 'org.mockito:mockito-core:5.8.0'
 }
 
 tasks.named('test') {

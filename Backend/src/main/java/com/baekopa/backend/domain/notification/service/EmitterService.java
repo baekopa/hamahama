@@ -109,7 +109,7 @@ public class EmitterService {
             emitter.send(SseEmitter.event()
                     .id(eventId)
                     .name(notificationName)
-//                    .reconnectTime(1000L) // 재연결 시도
+                    //.reconnectTime(1000L) // 재연결 시도
                     .data(data));
 
         } catch (IllegalStateException | IOException exception) {
