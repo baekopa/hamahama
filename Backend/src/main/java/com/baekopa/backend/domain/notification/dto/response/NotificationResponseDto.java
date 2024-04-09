@@ -40,4 +40,8 @@ public class NotificationResponseDto {
                 .notificationType(notification.getNotificationType())
                 .build();
     }
+
+    public void setNotificationId(Long notificationId) {
+        this.notificationId = notificationId;
+    }
 }
