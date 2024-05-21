@@ -58,57 +58,57 @@
 
 ## 📺 서비스 화면
 ### 랜딩 페이지
-|![랜딩화면](/uploads/28d7950fa6e7c826135d9e1cae39807b/랜딩화면.gif)|
+|![하마하마_랜딩화면](https://github.com/baekopa/hamahama/assets/108220312/8e3357d4-349b-46f1-b93e-971659e2dfe2)|
 |--|
 |**로그인 전 화면 표시**|
 |로그인 전 사용자를 위한 소개 패이지입니다.|
 
 ### 로그인
-|![로그인화면](/uploads/4dfaf606fd6c563ff2b293e835c8c718/로그인화면.gif)|
+|![하마하마_로그인화면](https://github.com/baekopa/hamahama/assets/108220312/4de6cd90-bef7-4288-b03f-2c0e64077e11)|
 |--|
 |**네이버 카카오 구글 소셜 로그인 기능**|
 |소셜 서비스를 통한 로그인을 지원합니다.|
 
 ### 메인화면
-|![메인화면](/uploads/400ae0f52c48b5089520a3e2ea2f2df2/메인화면.gif)|
+|![하마하마_메인화면](https://github.com/baekopa/hamahama/assets/108220312/6673561b-fbc5-40fd-a84a-8e784e895273)|
 |--|
 |**로그인 후 화면 표시**|
 |스터디와 관련된 메뉴들이 모여있는 메인 페이지입니다.|
 
 ### 스터디 생성
-|![스터디_생성_1](/uploads/decffef372ff0c60701c8d34a062eda4/스터디_생성_1.gif)
-![스터디_생성_2](/uploads/28762b14dd049a20719cc2cff6548aee/스터디_생성_2.gif)|
+|![하마하마_스터디_생성](https://github.com/baekopa/hamahama/assets/108220312/6205845b-088f-4aa4-98ee-b301b693dd84) 
+![하마하마_스터디_생성_2](https://github.com/baekopa/hamahama/assets/108220312/6ec35f84-4a3d-44f4-b3d7-c9f4c398a45b)|
 |--|
 |**스터디 생성 및 설정**|
 |스터디 명, 소개, 이미지, 팀원, 주기, 주제 등 세부사항을 설정합니다.|
 
 ### 알림(스터디 초대)
-|![스터디_초대_알림](/uploads/9c541751269cf1164d4f21cedcd28b90/스터디_초대_알림.gif)|
+|![하마하마_스터디_초대_알림](https://github.com/baekopa/hamahama/assets/108220312/e55df54c-ccdf-43ad-b6ac-8ac5245a4f80)|
 |--|
 |**알림 수신**|
 |스터디 초대, 수락, 강퇴, 리더위임/요약 ,키워드, 꼬리질문, 생성/미팅 일정, 리마인드 퀴즈 일정 에 대한 알림을 지원합니다.|
 
 ### 미팅 생성
-|![미팅_일정_생성](/uploads/b8a58e59d4ba7f73834394b77828bc99/미팅_일정_생성.gif)|
+|![하마하마_미팅_일정_생성](https://github.com/baekopa/hamahama/assets/108220312/35fb17fd-8d95-4d80-905e-e641c7b60936)|
 |--|
 |**다음 미팅 일정 설정**|
 |스터디 내에서 다음 미팅 일정을 설정합니다.|
 
 ### 개인 노트 작성
-|![개인_노트_작성_1](/uploads/3219df34a192cdd12026f0d87170677b/개인_노트_작성_1.gif)
-![개인_노트_작성_2](/uploads/d01130ab7dc2bb38f9922b7f9ef24c0a/개인_노트_작성_2.gif)|
+|![하마하마_개인_노트_작성_1](https://github.com/baekopa/hamahama/assets/108220312/9f939fe5-cc0f-4197-a3a4-fb30e0e70dd0)
+![하마하마_개인_노트_작성_2](https://github.com/baekopa/hamahama/assets/108220312/22a6909b-e251-4707-a86a-5f4c26d97ce2)|
 |--|
 |**개인 공부 정리 및 제출**|
 |개인적으로 공부 내용 정리하고 요약, 키워드, 꼬리질문을 생성 후 원하는 미팅에 제출합니다.|
 
 ### 미팅 전(제출된 산출물 확인)
-|![스터디_전](/uploads/0ef8bcad0ea0bf3dafa331df9875b5d3/스터디_전.gif)|
+|![하마하마_스터디_전](https://github.com/baekopa/hamahama/assets/108220312/fd84ba52-d7f2-46e8-954e-bb10cc3cc6d7)|
 |--|
 |**미팅 일정 직전 페이지**|
 |미팅 일정 직전 제출 노트 확인 및 전체 요약을 확인합니다.|
 
 ### 미팅 후(생성된 산출물 확인)
-|![스터디_후](/uploads/179daeb69f9a2ff0f3321f720957b30c/스터디_후.gif)|
+|![하마하마_스터디_후](https://github.com/baekopa/hamahama/assets/108220312/0ca4a959-0e69-4481-b9c7-560172d7ac87)|
 |--|
 |**미팅 일정 직후 페이지**|
 |미팅 내용에 대한 STT, 요약, 키워드, 산출물 차이점을 확인합니다.|
@@ -161,53 +161,53 @@
 
 ## 🗺️ 설계 문서
 ### ERD
-![image](/uploads/06fd0a85bc66932772f48d41451f1801/image.png)
+![하마하마_erd](https://github.com/baekopa/hamahama/assets/108220312/d68c4ac3-d2f6-44c4-9ef1-cb2a7b207f44)
 
 ### 아키텍처
-![image](/uploads/2d7a3d2c0a7d4a232ff6c58fa5dcd879/image.png)
+![하마하마_아키텍처](https://github.com/baekopa/hamahama/assets/108220312/b4ae26e8-2451-42e4-a4e4-f2a32c0a4ac6)
 
 ### 기획서
-![image](/uploads/e8b3598d0b8818f504cac9a675343e98/image.png)
+![하마하마_기획서](https://github.com/baekopa/hamahama/assets/108220312/007ecc68-f295-4d3a-9417-4ae1bf14dc81)
 
 ### 기능명세서
-![image](/uploads/4435f7fb1495d3918c0234e8b1632058/image.png)
-![image](/uploads/817e9985394fa576588b14ec4dbb7104/image.png)
+![하마하마_명세서](https://github.com/baekopa/hamahama/assets/108220312/7ae14905-b66d-4c2c-9904-a8a5fd3b49cc)
+![하마하마_명세서1 5](https://github.com/baekopa/hamahama/assets/108220312/f10aa3c0-faac-4ff2-9f90-29da07403119)
 
 ### API명세서
-![image](/uploads/aa2b23f218d97c11821274383cc01747/image.png)
-![image](/uploads/a4c4f75f33c42e9249b608d576982a9d/image.png)
-![image](/uploads/fc1001fb00cba1b277965587dbba6cc8/image.png)
-![image](/uploads/f992d5a7b6bf40b3270a3f2c07d29a84/image.png)
+![하마하마_명세서2](https://github.com/baekopa/hamahama/assets/108220312/b74046d9-2b4c-4fb5-a321-ad57d609cc6a)
+![하마하마_명세서3](https://github.com/baekopa/hamahama/assets/108220312/00dfc9a0-2664-4e3b-b6c1-ec8a26a5b7bb)
+![하마하마_명세서4](https://github.com/baekopa/hamahama/assets/108220312/09ed5781-208a-48ea-b9b1-9ec43eaea6a6)
+![하마하마_명세서5](https://github.com/baekopa/hamahama/assets/108220312/29bb8510-ec54-4276-b91a-f24f2998d444)
 
 ### 시퀀스 다이어그램
-![image](/uploads/6e939f749e436c165d83dda06e3edd03/image.png)
+![하마하마_시퀀스다이어그램](https://github.com/baekopa/hamahama/assets/108220312/90adc935-17f8-4d07-8150-330faa1c7598)
 
 ### 와이어프레임
-![image](/uploads/040e47ff492f4fae8b8bc461c8a7fdd7/image.png)
+![하마하마_와이어프레임](https://github.com/baekopa/hamahama/assets/108220312/11afcd2f-952d-4771-a90a-a0a01c0f2185)
 
 ### 간트차트
-![image](/uploads/f5ead9c674b7da88eb213fc6342b1daf/image.png)
-![image](/uploads/7a5725fd97fc2df6fb7b7598537439ba/image.png)
-![image](/uploads/bb472b7f4311621b68dc28928b6f6605/image.png)
+![하마하마_간트차트1](https://github.com/baekopa/hamahama/assets/108220312/1e9f4bff-448c-4714-8f88-6393a335163f)
+![하마하마_간트차트2](https://github.com/baekopa/hamahama/assets/108220312/5307958d-5697-4830-85c8-2522395d655f)
+![하마하마_간트차트3](https://github.com/baekopa/hamahama/assets/108220312/43129924-3c4b-4371-80fb-d939bddbb337)
 
 ### 학습 공유
-![image](/uploads/4a8b09755c5bfc33f63d9065be617b0a/image.png)
-![image](/uploads/ef12a9feb5154319cc93b7bbb49d2223/image.png)
-![image](/uploads/8d60b9d76c16c703ce5b65e24ba4be1a/image.png)
+![하마하마_학습](https://github.com/baekopa/hamahama/assets/108220312/ae6c1099-9816-4c3b-967c-0cbc8592eb27)
+![하마하마_학습2](https://github.com/baekopa/hamahama/assets/108220312/baad1fbc-b450-450a-9063-e376c6121151)
+![하마하마_학습3](https://github.com/baekopa/hamahama/assets/108220312/5956acd1-ff6b-40bc-8f70-ccbd18268c76)
 
 ### commit 컨벤션
-![image](/uploads/59e3282908152ec3437cf9cd7d012b15/image.png)
+![하마하마_컨벤션](https://github.com/baekopa/hamahama/assets/108220312/3e0dba80-39a3-4e57-aa66-37091ae2dc23)
 
 ### Jira 컨벤션
-![image](/uploads/8a01c8871a7e69a2ed68c5aad185f90f/image.png)
+![하마하마_컨벤션2](https://github.com/baekopa/hamahama/assets/108220312/0a55f8b9-8909-4ab6-8914-f956f415eb5f)
 
 ### git 컨벤션
-![image](/uploads/67d91d39a21e04e3633dba5436a0bc63/image.png)
+![하마하마_git컨벤션](https://github.com/baekopa/hamahama/assets/108220312/70db82f0-4bae-4c48-99ac-36f7f2148079)
 
 ### code 컨벤션
-![image](/uploads/11635a58cd87ad690cd5a338c01bfb52/image.png)
-![image](/uploads/87ee8605a0bc526314f516d022009097/image.png)
-![image](/uploads/f0baaf029696a9a699a03c3dcc0cebdf/image.png)
+![하마하마_코드컨벤션](https://github.com/baekopa/hamahama/assets/108220312/dcc2a276-6bd2-4ec0-8c99-e4df74f796ec)
+![하마하마_BE](https://github.com/baekopa/hamahama/assets/108220312/b31d107e-12a4-49bc-8bf0-cca46e083098)
+![하마하마_BE2](https://github.com/baekopa/hamahama/assets/108220312/51d73632-c1f9-4999-8270-11f7830097c3)
 
 ## 🧑‍🧒 팀원 소개
 | 이 름 |이수민 |배성규 |윤정영 |김수민 |성영준 |여아정 |
